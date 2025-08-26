@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chapter 2 - Fill-in-the-Blank Quiz (Constitutional Democracy)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 900px; margin: auto; }
+    .question { margin-bottom: 20px; }
+    .answers label { display: block; margin: 6px 0; }
+    #submitBtn { padding: 10px 16px; font-size: 16px; margin-top: 10px; }
+    .correct-answer { color: green; font-weight: bold; }
+    .muted { color: #666; font-size: 0.95em; }
+    .controls { display: flex; gap: 10px; margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <h2>Chapter 2 - Fill-in-the-Blank Quiz (Constitutional Democracy)</h2>
+  <div id="quizContainer"></div>
+  <div class="controls">
+    <button id="submitBtn">Submit</button>
+  </div>
+  <script>
+  (function(){
+  function esc(s){return String(s).replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];});}
+  var data = [["Define constitutionalism.", "Government power defined and limited by a constitution and the rule of law."], ["State the principle of popular sovereignty.", "The people are the ultimate source of governmental authority."], ["What did the Great (Connecticut) Compromise create?", "A bicameral Congress with population-based House and equal-state Senate."], ["What issue did the Three-Fifths Compromise address?", "How enslaved persons would count for representation and taxation."], ["Name the clause granting Congress flexibility to carry out its enumerated powers.", "Necessary and proper (elastic) clause."], ["Identify the clause that establishes federal laws as supreme.", "Supremacy clause."], ["Define enumerated powers.", "Powers specifically listed in the Constitution for the national government."], ["Define implied powers.", "Powers reasonably inferred from the Necessary and Proper Clause."], ["What is judicial review?", "The power of courts to declare laws and actions unconstitutional."], ["Which case established judicial review?", "Marbury v. Madison (1803)."], ["Summarize Federalist No. 10 in a phrase.", "A large republic controls factions and protects liberty."], ["Summarize Federalist No. 51 in a phrase.", "Separation of powers and checks and balances guard against tyranny."], ["What did Anti-Federalists demand as a condition for ratification?", "A bill of rights."], ["Which article outlines the amendment process?", "Article V."], ["Describe the most common method of formally amending the Constitution.", "Proposal by two-thirds of Congress and ratification by three-fourths of state legislatures."], ["What does bicameralism mean?", "A legislature with two chambers."], ["Give an example of an inherent power of the national government.", "Controlling national borders."], ["What body formally selects the president and vice president?", "The Electoral College."], ["What is the first step in the most common amendment method?", "Proposal by two-thirds vote in both houses of Congress."], ["What is the second step in the most common amendment method?", "Ratification by three-fourths of the state legislatures."], ["Which clause requires states to honor each other's public acts and records?", "Full faith and credit clause."], ["Which clause prevents discrimination against out-of-state citizens?", "Privileges and immunities clause."], ["What is the core aim of separation of powers?", "Preventing the concentration of authority by dividing it among branches."], ["Name one check the president has on Congress.", "Veto legislation."], ["Name one check the Supreme Court has on Congress.", "Declare a law unconstitutional."], ["Name one check Congress has on the judiciary.", "Confirm or reject judicial nominees."], ["Define rule of law.", "Everyone, including officials, is subject to and accountable under the law."], ["What system concentrates authority in the national government over local units?", "Unitary system."], ["What is a confederation?", "A loose association of states retaining sovereignty and delegating limited powers to a central body."], ["Why was the Bill of Rights added?", "To secure ratification by addressing Anti-Federalist concerns."]];
+  function load(){
+    var c=document.getElementById('quizContainer'); c.innerHTML='';
+    data.forEach(function(item, idx){
+      var q=document.createElement('div'); q.className='question';
+      var id='q'+idx;
+      q.innerHTML='<label for="'+id+'"><strong>'+(idx+1)+'. '+esc(item.q)+'</strong></label><textarea id="'+id+'" rows="2" style="width:100%;font-size:15px;"></textarea>';
+      c.appendChild(q);
+    });
+  }
+  function submit(){
+    var c=document.getElementById('quizContainer'); c.innerHTML='<h3>Results</h3><p class="muted">Self-grade by comparing your answer with the correct answer.</p>';
+    data.forEach(function(item, idx){
+      var user=(document.getElementById('q'+idx).value||'').trim();
+      var d=document.createElement('div'); d.className='question';
+      d.innerHTML='<p><strong>'+(idx+1)+'. '+esc(item.q)+'</strong><br>Your answer: '+(user? esc(user):'<em>(blank)</em>')+'<br><span class="correct-answer">Correct answer: '+esc(item.a)+'</span></p>';
+      c.appendChild(d);
+    });
+    document.getElementById('submitBtn').style.display='none';
+  }
+  document.addEventListener('DOMContentLoaded', function(){load(); document.getElementById('submitBtn').addEventListener('click', submit);});
+})();
+  </script>
+</body>
+</html>

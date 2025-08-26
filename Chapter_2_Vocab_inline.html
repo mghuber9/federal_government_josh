@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chapter 2 - Vocabulary Quiz (Constitutional Democracy)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 900px; margin: auto; }
+    .question { margin-bottom: 20px; }
+    .answers label { display: block; margin: 6px 0; }
+    #submitBtn { padding: 10px 16px; font-size: 16px; margin-top: 10px; }
+    .correct-answer { color: green; font-weight: bold; }
+    .muted { color: #666; font-size: 0.95em; }
+    .controls { display: flex; gap: 10px; margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <h2>Chapter 2 - Vocabulary Quiz (Constitutional Democracy)</h2>
+  <div id="quizContainer"></div>
+  <div class="controls">
+    <button id="submitBtn">Submit</button>
+  </div>
+  <script>
+  (function(){
+  function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}}
+  var data = [{"term": "constitutionalism", "def": "Government authority defined and limited by a constitution; officials are bound by the rule of law."}, {"term": "popular sovereignty", "def": "The people are the ultimate source of governmental authority."}, {"term": "limited government", "def": "Government powers are defined and restricted by a constitution."}, {"term": "republicanism", "def": "Power resides in the people and is exercised by their elected representatives."}, {"term": "rule of law", "def": "All persons, including officials, are subject to and accountable under the law."}, {"term": "separation of powers", "def": "Division of power among legislative, executive, and judicial branches."}, {"term": "checks and balances", "def": "Each branch can limit the powers of the other branches."}, {"term": "bicameralism", "def": "A legislature with two chambers (for example, House and Senate)."}, {"term": "Great (Connecticut) Compromise", "def": "Created a bicameral Congress: population-based House and equal-state Senate."}, {"term": "Three-Fifths Compromise", "def": "Three-fifths of enslaved persons counted for representation and taxation."}, {"term": "Electoral College", "def": "Body that formally selects the president and vice president."}, {"term": "commerce clause", "def": "Congress may regulate interstate and foreign trade (Article I, Section 8)."}, {"term": "necessary and proper (elastic) clause", "def": "Congress may pass laws needed to carry out enumerated powers."}, {"term": "supremacy clause", "def": "Constitution, federal laws, and treaties are the supreme law of the land (Article VI)."}, {"term": "enumerated (expressed) powers", "def": "Powers specifically listed in the Constitution for the national government."}, {"term": "implied powers", "def": "Powers not listed but inferred from the necessary and proper clause."}, {"term": "inherent powers", "def": "Powers that belong to sovereign nations, such as controlling borders."}, {"term": "judicial review", "def": "Courts can declare laws and actions unconstitutional."}, {"term": "Marbury v. Madison (1803)", "def": "Supreme Court case that established judicial review."}, {"term": "Federalists", "def": "Supporters of the Constitution favoring a stronger national government."}, {"term": "Anti-Federalists", "def": "Opposed ratification and demanded a bill of rights."}, {"term": "Federalist No. 10", "def": "Madison argued a large republic controls factions."}, {"term": "Federalist No. 51", "def": "Madison explained separation of powers and checks and balances."}, {"term": "Bill of Rights", "def": "First ten amendments protecting individual liberties."}, {"term": "Article V", "def": "Outlines the formal amendment process."}, {"term": "amendment", "def": "A change or addition to the Constitution."}, {"term": "ratification", "def": "Formal approval by the states."}, {"term": "writ of habeas corpus", "def": "Court order requiring government to justify detention."}, {"term": "ex post facto law", "def": "Retroactively criminalizes an act; prohibited by the Constitution."}, {"term": "bill of attainder", "def": "Legislative declaration of guilt without a trial; prohibited by the Constitution."}, {"term": "Madisonian model", "def": "Uses separation of powers, checks and balances, and federalism to control factions."}, {"term": "republic", "def": "Government in which citizens elect representatives to make policy."}, {"term": "unitary system", "def": "National government holds ultimate authority over local units."}, {"term": "confederation", "def": "States retain sovereignty and delegate limited powers to a central body."}, {"term": "full faith and credit clause", "def": "States must honor other states' public acts, records, and judicial proceedings."}, {"term": "privileges and immunities clause", "def": "States cannot discriminate against citizens of other states."}];
+  function load(){
+    var c=document.getElementById('quizContainer'); c.innerHTML=''; shuffle(data);
+    data.forEach(function(item, idx){
+      var options=data.map(function(x){return x.term;}).filter(function(x){return x!==item.term});
+      shuffle(options); options=options.slice(0,3).concat([item.term]); shuffle(options);
+      var q=document.createElement('div'); q.className='question';
+      q.innerHTML='<p><strong>'+(idx+1)+'. Which term matches the definition?</strong><br>'+item.def+'</p>';
+      var a=document.createElement('div'); a.className='answers';
+      options.forEach(function(ans){
+        var id='q'+idx+'_'+Math.random().toString(36).slice(2,7);
+        var lab=document.createElement('label'); lab.setAttribute('for',id);
+        var input=document.createElement('input'); input.type='radio'; input.name='q'+idx; input.id=id; input.value=ans;
+        lab.appendChild(input); lab.appendChild(document.createTextNode(' '+ans)); a.appendChild(lab);
+      });
+      q.appendChild(a); c.appendChild(q);
+    });
+  }
+  function submit(){
+    var missed=[]; var correct=0;
+    data.forEach(function(item, idx){
+      var sel=document.querySelector('input[name="q'+idx+'"]:checked');
+      if(sel && sel.value===item.term){correct++;} else {missed.push({def:item.def, term:item.term, picked: sel? sel.value : '(blank)'});}
+    });
+    var c=document.getElementById('quizContainer'); c.innerHTML='<h3>Your Score: '+correct+' / '+data.length+'</h3>';
+    if(missed.length){
+      c.innerHTML+='<p class="muted">Review the items you missed:</p>';
+      missed.forEach(function(m,i){
+        var d=document.createElement('div'); d.className='question';
+        d.innerHTML='<p><strong>'+(i+1)+'. Definition:</strong> '+m.def+'<br><span class="correct-answer">Correct term: '+m.term+'</span><br>Your answer: '+m.picked+'</p>';
+        c.appendChild(d);
+      });
+    } else { c.innerHTML+='<p><strong>Perfect score! Great job!</strong></p>'; }
+    document.getElementById('submitBtn').style.display='none';
+  }
+  document.addEventListener('DOMContentLoaded', function(){load(); document.getElementById('submitBtn').addEventListener('click', submit);});
+})();
+  </script>
+</body>
+</html>
