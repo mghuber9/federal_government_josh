@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chapter 1 Vocabulary Quiz (35 Terms)</title>
+  <style>
+    body {{ font-family: Arial, sans-serif; padding: 16px; max-width: 900px; margin: auto; line-height: 1.4; }}
+    h1 {{ font-size: 1.6em; text-align: center; }}
+    .question {{ margin: 14px 0 18px; padding: 10px 12px; border: 1px solid #e0e0e0; border-radius: 8px; }}
+    .choices label {{ display: block; margin: 4px 0; }}
+    .hidden {{ display: none; }}
+    .correct-answer {{ color: #0a7a0a; font-weight: bold; }}
+    .your-answer {{ color: #8a0000; }}
+    .section-title {{ margin-top: 22px; font-weight: bold; }}
+    .btn {{ display: inline-block; margin: 14px 6px 0 0; padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-size: 1em; }}
+    .btn-primary {{ background: #1f6feb; color: white; }}
+    .btn-secondary {{ background: #e0e0e0; }}
+    #result {{ margin-top: 18px; }}
+    .score {{ font-size: 1.2em; font-weight: bold; }}
+    .notice {{ font-size: 0.9em; color: #666; }}
+  </style>
+</head>
+<body>
+  <h1>Chapter 1 Vocabulary Quiz – 35 Terms</h1>
+  <p class="notice">Select the best definition for each term. When you submit, you'll see only the items you missed plus your score.</p>
+
+  <form id="quizForm"></form>
+
+  <button type="button" class="btn btn-primary" onclick="submitQuiz()">Submit</button>
+  <button type="button" class="btn btn-secondary" onclick="resetQuiz()">Reset</button>
+
+  <div id="result" class="hidden"></div>
+
+<script>
+// Data: 35 term-definition pairs
+const QUESTIONS = [{"term": "Politics", "definition": "The process by which society settles conflicts and decides who gets what, when, and how."}, {"term": "Social Contract Theory", "definition": "Idea that government originates from an agreement: Hobbes argued for strong central authority to avoid chaos; Locke emphasized natural rights and consent of the governed."}, {"term": "Natural Rights", "definition": "Fundamental rights inherent to all people (life, liberty, property); championed by John Locke."}, {"term": "Federalists", "definition": "Supporters of the Constitution and strong national government; included Madison, Hamilton, and Jay (authors of the Federalist Papers)."}, {"term": "Anti-Federalists", "definition": "Opposed ratification, favored states\u2019 rights, and demanded Bill of Rights; Patrick Henry was a leading figure."}, {"term": "Declaration of Independence (1776)", "definition": "Asserted independence from Britain; emphasized liberty, equality, and self-government."}, {"term": "Articles of Confederation (1781\u20131789)", "definition": "First U.S. governing framework with weak national powers."}, {"term": "Shays\u2019 Rebellion (1786\u201387)", "definition": "Uprising that revealed weaknesses of the Articles of Confederation."}, {"term": "Constitutional Convention (1787)", "definition": "Philadelphia meeting that created the U.S. Constitution."}, {"term": "Great Compromise", "definition": "Created bicameral legislature: House (population) and Senate (equal representation)."}, {"term": "Three-Fifths Compromise", "definition": "Counted enslaved persons as 3/5 for representation and taxation."}, {"term": "Unitary System", "definition": "Power centralized in the national government."}, {"term": "Confederation", "definition": "Loose alliance of sovereign states with weak central authority."}, {"term": "Federal System", "definition": "Power shared between national and state governments."}, {"term": "Democracy", "definition": "Rule by the people; includes Direct Democracy (citizens vote directly) and Representative Democracy/Republic (citizens elect officials)."}, {"term": "Dictatorship", "definition": "Government controlled by one ruler or small group with absolute power."}, {"term": "Anarchism", "definition": "Belief in abolishing government entirely."}, {"term": "Separation of Powers", "definition": "Division of government into legislative, executive, and judicial branches."}, {"term": "Checks and Balances", "definition": "System where each branch limits the power of the others."}, {"term": "Judicial Review", "definition": "Courts\u2019 power to strike down unconstitutional laws."}, {"term": "Supreme Court", "definition": "The only court established directly by the Constitution."}, {"term": "Amendment Process (Article V)", "definition": "Procedure for changing the Constitution."}, {"term": "Expressed (Enumerated) Powers", "definition": "Powers specifically listed in the Constitution for the national government."}, {"term": "Implied Powers", "definition": "Powers inferred from the Necessary and Proper Clause."}, {"term": "Inherent Powers", "definition": "Powers held by any sovereign nation (e.g., foreign affairs)."}, {"term": "Concurrent Powers", "definition": "Powers shared by state and federal governments (e.g., taxation, courts)."}, {"term": "Reserved Powers", "definition": "Powers not given to the national government, kept by the states (10th Amendment)."}, {"term": "Eminent Domain", "definition": "Government power to take private property for public use with just compensation."}, {"term": "Supremacy Clause", "definition": "Federal law is the supreme law of the land."}, {"term": "Necessary and Proper Clause (Elastic Clause)", "definition": "Gives Congress flexibility to carry out duties; basis of implied powers."}, {"term": "Full Faith and Credit Clause", "definition": "Requires states to honor public acts, records, and judicial rulings of other states."}, {"term": "Privileges and Immunities Clause", "definition": "Prevents states from discriminating against citizens of other states."}, {"term": "Commerce Clause", "definition": "Grants Congress power to regulate trade among states and with foreign nations."}, {"term": "Bill of Rights", "definition": "First ten amendments protecting individual liberties; bans Ex Post Facto Laws (retroactive punishment) and Bills of Attainder (punishment without trial)."}, {"term": "Core Democratic Values & Ideologies", "definition": "Liberty, Equality, Self-Government, Majority Rule, Minority Rights, plus Political Culture, Political Ideology, Liberalism (government action for equality), Conservatism (limited government, tradition), and Pluralism (power spread among groups)."}];
+
+// Utility: shuffle array (Fisher-Yates)
+function shuffle(arr) {{
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {{
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }}
+  return a;
+}}
+
+// Build the quiz with 4 choices each (1 correct + 3 distractors)
+function buildQuiz() {{
+  const form = document.getElementById('quizForm');
+  form.innerHTML = '';
+  const defs = QUESTIONS.map(q => q.definition);
+
+  QUESTIONS.forEach((q, idx) => {{
+    // pick 3 random distractors not equal to correct definition
+    let distractors = shuffle(defs.filter(d => d !== q.definition)).slice(0, 3);
+    const choices = shuffle([q.definition, ...distractors]);
+
+    const qDiv = document.createElement('div');
+    qDiv.className = 'question';
+
+    const prompt = document.createElement('p');
+    prompt.innerHTML = '<strong>Q' + (idx+1) + '. ' + q.term.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</strong>';
+    qDiv.appendChild(prompt);
+
+    const choicesDiv = document.createElement('div');
+    choicesDiv.className = 'choices';
+
+    choices.forEach((choice, cIdx) => {{
+      const id = 'q' + idx + '_opt' + cIdx;
+      const label = document.createElement('label');
+      const input = document.createElement('input');
+      input.type = 'radio';
+      input.name = 'q' + idx;
+      input.value = choice;
+      input.id = id;
+
+      const span = document.createElement('span');
+      span.textContent = ' ' + choice;
+
+      label.appendChild(input);
+      label.appendChild(span);
+      choicesDiv.appendChild(label);
+    }});
+
+    qDiv.appendChild(choicesDiv);
+    form.appendChild(qDiv);
+  }});
+}}
+
+function submitQuiz() {{
+  const form = document.getElementById('quizForm');
+  const resultDiv = document.getElementById('result');
+  let correct = 0;
+  const missed = [];
+
+  QUESTIONS.forEach((q, idx) => {{
+    const selected = form.querySelector('input[name="q' + idx + '"]:checked');
+    const answer = selected ? selected.value : null;
+    if (answer === q.definition) {{
+      correct += 1;
+    }} else {{
+      missed.push({{ index: idx+1, term: q.term, your: answer, correct: q.definition }});
+    }}
+  }});
+
+  // Build feedback: only missed questions
+  let html = '<p class="score">Score: ' + correct + ' / ' + QUESTIONS.length + '</p>';
+  if (missed.length === 0) {{
+    html += '<p>Perfect! 🎉</p>';
+  }} else {{
+    html += '<div class="section-title">Review the ones to study:</div>';
+    missed.forEach(m => {{
+      html += '<div class="question">'
+           +  '<p><strong>Q' + m.index + '. ' + m.term.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</strong></p>'
+           +  '<p class="your-answer">Your answer: ' + (m.your ? m.your : '(no answer)') + '</p>'
+           +  '<p class="correct-answer">Correct: ' + m.correct + '</p>'
+           +  '</div>';
+    }});
+  }}
+
+  resultDiv.innerHTML = html;
+  resultDiv.classList.remove('hidden');
+  window.scrollTo({{ top: resultDiv.offsetTop, behavior: 'smooth' }});
+}}
+
+function resetQuiz() {{
+  // Clear selections
+  document.querySelectorAll('#quizForm input[type=radio]').forEach(el => el.checked = false);
+  document.getElementById('result').classList.add('hidden');
+  document.getElementById('result').innerHTML = '';
+  // rebuild to reshuffle
+  buildQuiz();
+  window.scrollTo({{ top: 0, behavior: 'smooth' }});
+}}
+
+buildQuiz();
+</script>
+</body>
+</html>
