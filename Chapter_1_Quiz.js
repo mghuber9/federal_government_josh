@@ -53,6 +53,37 @@
     {"question":"Reserved powers ensure:","correct":"State sovereignty within the federal system","answers":["State sovereignty within the federal system","Presidential authority","Judicial dominance","Congressional supremacy"]},
     {"question":"Reserved powers provide:","correct":"Flexibility for state-level policies","answers":["Flexibility for state-level policies","Elimination of state governments","Absolute national authority","Unitary control"]},
     {"question":"Reserved powers help balance:","correct":"Power between national and state governments","answers":["Power between national and state governments","The executive and judiciary only","Religion and government","Political parties"]}
+    // --- Electoral College ---
+{"question":"The Electoral College is used to:","correct":"Formally elect the President of the United States","answers":["Choose members of Congress","Formally elect the President of the United States","Appoint Supreme Court justices","Amend the Constitution"]},
+{"question":"One criticism of the Electoral College is that:","correct":"A candidate can win the presidency without winning the popular vote","answers":["It requires unanimous approval from states","It eliminates political parties","A candidate can win the presidency without winning the popular vote","It directly elects Senators"]},
+
+// --- Checks and Balances ---
+{"question":"Checks and balances are designed to:","correct":"Prevent any one branch of government from becoming too powerful","answers":["Increase executive authority only","Prevent any one branch of government from becoming too powerful","Ensure Congress dominates government","Remove judicial oversight"]},
+{"question":"Which is an example of checks and balances?","correct":"The President vetoing a bill passed by Congress","answers":["The Supreme Court declaring war","The President vetoing a bill passed by Congress","Congress enforcing laws","The states ratifying treaties"]},
+
+// --- Political Philosophers & Factions ---
+{"question":"Thomas Hobbes believed that:","correct":"People need a strong central authority to avoid chaos","answers":["Government should be abolished","People need a strong central authority to avoid chaos","Natural rights cannot be taken away","Democracy is the best system"]},
+{"question":"Patrick Henry opposed the Constitution because:","correct":"He feared it gave too much power to the national government","answers":["He wanted a monarchy","He feared it gave too much power to the national government","He opposed the Bill of Rights","He supported strong federal power"]},
+{"question":"The Federalists supported:","correct":"Ratification of the Constitution and a strong central government","answers":["Weak national government","Ratification of the Constitution and a strong central government","Direct democracy","A return to the Articles of Confederation"]},
+{"question":"The Anti-Federalists argued that:","correct":"The Constitution lacked a Bill of Rights","answers":["The Constitution was too weak","The Constitution lacked a Bill of Rights","The Constitution gave too much power to the states","The Constitution needed a monarchy"]},
+
+// --- Clauses & Amendments ---
+{"question":"The Supremacy Clause establishes that:","correct":"Federal law is the supreme law of the land","answers":["State laws override federal laws","Federal law is the supreme law of the land","The President is above the law","The Constitution can be ignored in emergencies"]},
+{"question":"The Necessary and Proper Clause is also known as:","correct":"The Elastic Clause","answers":["The Reserved Powers Clause","The Commerce Clause","The Elastic Clause","The Supremacy Clause"]},
+{"question":"The Full Faith and Credit Clause requires states to:","correct":"Honor the public acts, records, and judicial proceedings of other states","answers":["Create identical laws","Honor the public acts, records, and judicial proceedings of other states","Hold annual conventions","Follow only federal laws"]},
+{"question":"The Tenth Amendment states that:","correct":"Powers not given to the federal government are reserved to the states or the people","answers":["Congress may regulate all commerce","The President has unlimited powers","Powers not given to the federal government are reserved to the states or the people","States cannot make their own laws"]},
+
+// --- Systems of Government ---
+{"question":"In a unitary system,","correct":"Power is centralized in the national government","answers":["Power is shared between states and national government","Power is centralized in the national government","Power rests primarily in state governments","There is no central government"]},
+{"question":"In a confederation,","correct":"Power rests primarily in state governments","answers":["Power is centralized in the national government","Power rests primarily in state governments","There is no government authority","States are abolished"]},
+{"question":"An anarchist believes that:","correct":"All forms of government should be abolished","answers":["Democracy is best","All forms of government should be abolished","Dictatorship is necessary","Only monarchs can rule effectively"]},
+{"question":"The divine right theory holds that:","correct":"Rulers derive authority directly from God","answers":["Rulers derive authority directly from God","People agree to form governments","Government originates from social contracts","Governments are unnecessary"]},
+
+// --- Ideologies ---
+{"question":"Conservatives generally believe in:","correct":"Limited government intervention in the economy and traditional values","answers":["Strong central government and rapid social change","Limited government intervention in the economy and traditional values","Elimination of private property","Direct democracy in all decisions"]},
+{"question":"Liberals generally believe in:","correct":"Government action to promote equality and social welfare","answers":["Government action to promote equality and social welfare","A return to monarchy","Abolition of democracy","Unregulated capitalism only"]}
+
+  
   ];
 
   function shuffle(array) {
