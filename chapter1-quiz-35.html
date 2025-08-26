@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chapter 1 Vocabulary Quiz – 35 Terms</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 16px; max-width: 900px; margin: auto; line-height: 1.4; }
+    h1 { font-size: 1.6em; text-align: center; }
+    .question { margin: 14px 0 18px; padding: 10px 12px; border: 1px solid #e0e0e0; border-radius: 8px; }
+    .choices label { display: block; margin: 4px 0; }
+    .hidden { display: none; }
+    .correct-answer { color: #0a7a0a; font-weight: bold; }
+    .your-answer { color: #8a0000; }
+    .section-title { margin-top: 22px; font-weight: bold; }
+    .btn { display: inline-block; margin: 14px 6px 0 0; padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-size: 1em; }
+    .btn-primary { background: #1f6feb; color: white; }
+    .btn-secondary { background: #e0e0e0; }
+    #result { margin-top: 18px; }
+    .score { font-size: 1.2em; font-weight: bold; }
+    .notice { font-size: 0.9em; color: #666; }
+    noscript { display: block; padding: 12px; background: #fff3cd; border: 1px solid #ffeeba; border-radius: 6px; margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <h1>Chapter 1 Vocabulary Quiz – 35 Terms</h1>
+  <p class="notice">Select the best definition for each term. When you submit, you'll see only the items you missed plus your score.</p>
+  <noscript>This quiz requires JavaScript. If you're seeing this, scripts are blocked by your host. Use GitHub Pages or open the file locally.</noscript>
+
+  <form id="quizForm"></form>
+
+  <button type="button" class="btn btn-primary" id="submitBtn">Submit</button>
+  <button type="button" class="btn btn-secondary" id="resetBtn">Reset</button>
+
+  <div id="result" class="hidden"></div>
+
+  <script src="quiz.js" defer></script>
+</body>
+</html>
