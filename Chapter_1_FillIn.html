@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chapter 1 – Fill‑in‑the‑Blank Quiz (American Political Culture)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 900px; margin: auto; }
+    h2 { margin-top: 0; }
+    .question { margin-bottom: 16px; }
+    .question label { display: block; font-weight: bold; margin-bottom: 6px; }
+    .question input, .question textarea { width: 100%; padding: 8px; font-size: 15px; }
+    #submitBtn { padding: 10px 16px; font-size: 16px; margin-top: 16px; }
+    .result { margin-bottom: 16px; }
+    .result .correct { color: green; font-weight: bold; }
+    .result .user { color: #333; }
+    .muted { color: #666; font-size: 0.95em; }
+    .controls { display: flex; gap: 10px; margin-top: 16px; }
+    .note { background: #f6f8fa; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; margin-bottom: 16px; }
+  </style>
+</head>
+<body>
+  <h2>Chapter 1 – Fill‑in‑the‑Blank Quiz</h2>
+  <p class="muted">Type your answers. On submit, the page will show <em>your answer</em> next to the <em>correct answer</em> so you can self‑grade. Spelling/case don’t matter for submission; exact wording may differ.</p>
+  <div id="quizContainer"></div>
+  <div class="controls">
+    <button id="submitBtn">Submit</button>
+    <button id="printBtn" style="display:none">Print Results</button>
+  </div>
+
+  <script src="Chapter_1_FillIn.js"></script>
+</body>
+</html>
