@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Chapter 1 Quiz – American Political Culture</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: auto; }
+    .question { margin-bottom: 20px; }
+    .answers label { display: block; margin: 5px 0; }
+    #submitBtn { padding: 10px 20px; font-size: 16px; margin-top: 20px; }
+    .correct-answer { color: green; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>Chapter 1 Quiz – American Political Culture</h2>
+  <div id="quizContainer"></div>
+  <button id="submitBtn">Submit</button>
+
+  <script>
+  const quizData = [
+    {"question":"Politics is best described as:","correct":"The process of resolving conflicts over values and resources","answers":["The study of history","The process of resolving conflicts over values and resources","A purely economic system","The enforcement of criminal law"]},
+    {"question":"Harold Lasswell defined politics as:","correct":"Who gets what, when, and how","answers":["The rule of the majority","The art of compromise","Who gets what, when, and how","Government by the people"]},
+    {"question":"Politics often includes:","correct":"The struggle for influence over government decision-making","answers":["Avoiding all disagreements","Purely economic trade agreements","The struggle for influence over government decision-making","A rejection of authority"]},
+    {"question":"Politics usually involves:","correct":"Both compromise and competition","answers":["Elimination of competition","Both compromise and competition","Only military conflict","Scientific research"]},
+    {"question":"Politics is necessary because:","correct":"People have differing priorities and beliefs","answers":["All citizens agree on priorities","People have differing priorities and beliefs","Laws are permanent and unchanging","Religion dictates government decisions"]},
+    {"question":"The Declaration of Independence was primarily written by:","correct":"Thomas Jefferson","answers":["James Madison","Thomas Jefferson","John Adams","Benjamin Franklin"]},
+    {"question":"The Declaration of Independence declared:","correct":"Independence from Britain and justified revolution","answers":["The end of the Civil War","Independence from Britain and justified revolution","The creation of the Articles of Confederation","Religious tolerance"]},
+    {"question":"Which philosopher most influenced the Declaration of Independence?","correct":"John Locke","answers":["Thomas Hobbes","John Locke","Jean-Jacques Rousseau","Montesquieu"]},
+    {"question":"Which core values are emphasized in the Declaration?","correct":"Liberty, equality, and self-government","answers":["Federalism and capitalism","Liberty, equality, and self-government","Judicial review and checks and balances","Socialism and monarchy"]},
+    {"question":"The Declaration of Independence served as:","correct":"The moral and political blueprint for American government","answers":["A military alliance","The moral and political blueprint for American government","A trade agreement with France","The U.S. Constitution"]}
+  ];
+
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+  }
+
+  function loadQuiz() {
+    const container = document.getElementById('quizContainer');
+    container.innerHTML = '';
+    shuffle(quizData);
+
+    quizData.forEach((item, index) => {
+      const answers = [...item.answers];
+      shuffle(answers);
+
+      const qDiv = document.createElement('div');
+      qDiv.className = 'question';
+      qDiv.innerHTML = `<p><strong>${index + 1}. ${item.question}</strong></p>`;
+
+      const answersDiv = document.createElement('div');
+      answersDiv.className = 'answers';
+
+      answers.forEach(answer => {
+        const id = `q${index}_${answer.slice(0,20).replace(/[^a-zA-Z0-9]/g,'')}_${Math.random().toString(36).slice(2,6)}`;
+        answersDiv.innerHTML += `
+          <label for="${id}">
+            <input id="${id}" type="radio" name="q${index}" value="${answer}"> ${answer}
+          </label>
+        `;
+      });
+
+      qDiv.appendChild(answersDiv);
+      container.appendChild(qDiv);
+    });
+  }
+
+  document.getElementById('submitBtn').addEventListener('click', () => {
+    let score = 0;
+    const missed = [];
+
+    quizData.forEach((item, index) => {
+      const selected = document.querySelector(\`input[name="q\${index}"]:checked\`);
+      if (selected && selected.value === item.correct) {
+        score++;
+      } else {
+        missed.push({ question: item.question, correct: item.correct });
+      }
+    });
+
+    const container = document.getElementById('quizContainer');
+    container.innerHTML = `<h2>Your Score: ${score} / ${quizData.length}</h2>`;
+
+    if (missed.length > 0) {
+      container.innerHTML += `<h3>You missed the following questions:</h3>`;
+      missed.forEach((item, i) => {
+        container.innerHTML += `
+          <div class="question">
+            <p><strong>${i + 1}. ${item.question}</strong></p>
+            <p class="correct-answer">Correct answer: ${item.correct}</p>
+          </div>
+        `;
+      });
+    } else {
+      container.innerHTML += `<p><strong>Perfect score! Great job!</strong></p>`;
+    }
+
+    document.getElementById('submitBtn').style.display = 'none';
+  });
+
+  window.onload = loadQuiz;
+  </script>
+</body>
+</html>
