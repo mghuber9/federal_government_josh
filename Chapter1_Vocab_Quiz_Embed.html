@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chapter 1 Vocabulary Quiz</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 10px; max-width: 100%; margin: auto; }
+    h1 { font-size: 1.5em; text-align: center; }
+    .question { margin-bottom: 20px; }
+    .choices { margin-left: 15px; }
+    .hidden { display: none; }
+    .correct-answer { color: green; font-weight: bold; }
+    button { display: block; margin: 20px auto; padding: 10px 20px; font-size: 1em; }
+  </style>
+</head>
+<body>
+  <h1>Chapter 1 Vocabulary Quiz</h1>
+  <form id="quizForm"></form>
+  <button type="button" onclick="submitQuiz()">Submit</button>
+  <div id="result" class="hidden"></div>
+
+  <script>
+    const questions = [
+      { term: "Authority", correct: "Recognized and legitimate power tied to an office or institution." },
+      { term: "Core Values", correct: "Widely held principles in American political culture—especially liberty, equality, and self-government—that guide the nation’s politics." },
+      { term: "Democracy", correct: "A system of government in which citizens rule either directly or through elected representatives." },
+      { term: "Equality", correct: "The idea that all individuals are entitled to equal treatment under the law and equal political rights." },
+      { term: "Legitimacy", correct: "Public acceptance that government actions are lawful, appropriate, and deserving of support." },
+      { term: "Liberty", correct: "The principle that individuals are free to act and think as they choose, as long as they do not infringe on others’ rights." },
+      { term: "Majority Rule", correct: "The principle that the choice supported by more than half of voters or representatives becomes policy." },
+      { term: "Minority Rights", correct: "Protections that ensure individuals or groups who are not part of the majority are not deprived of fundamental rights." },
+      { term: "Pluralism", correct: "The theory that political power in the U.S. is distributed among many competing groups, preventing domination by any single one." },
+      { term: "Political Culture", correct: "The shared beliefs, values, and expectations that shape how citizens think about government and politics." },
+      { term: "Political Ideology", correct: "A consistent set of political beliefs and values about the role of government (e.g., liberalism, conservatism)." },
+      { term: "Political Power", correct: "The ability of a person or group to influence decisions and control the direction of public policy." },
+      { term: "Political System", correct: "The institutions, processes, and rules through which society makes and enforces collective decisions." },
+      { term: "Politics", correct: "The process by which society settles conflicts and decides who gets what, when, and how." },
+      { term: "Republic", correct: "A form of democracy in which elected officials represent the people in making policy decisions." },
+      { term: "Self-Government", correct: "The belief that ultimate political authority rests with the people, who govern themselves through elected representatives." }
+    ];
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    function buildQuiz() {
+      const form = document.getElementById("quizForm");
+      form.innerHTML = "";
+      questions.forEach((q, index) => {
+        const wrongChoices = questions
+          .filter(item => item !== q)
+          .sort(() => 0.5 - Math.random())
+          .slice(0, 3)
+          .map(item => item.term);
+
+        const options = [...wrongChoices, q.term];
+        shuffle(options);
+
+        const qDiv = document.createElement("div");
+        qDiv.className = "question";
+        qDiv.innerHTML = `<strong>${index + 1}. ${q.correct}</strong>`;
+        const choicesDiv = document.createElement("div");
+        choicesDiv.className = "choices";
+        options.forEach((choice, i) => {
+          choicesDiv.innerHTML += `
+            <label>
+              <input type="radio" name="q${index}" value="${choice}" required> ${choice}
+            </label><br>`;
+        });
+        qDiv.appendChild(choicesDiv);
+        form.appendChild(qDiv);
+      });
+    }
+
+    function submitQuiz() {
+      const form = document.getElementById("quizForm");
+      const resultDiv = document.getElementById("result");
+      let score = 0;
+      let output = "<h2>Incorrect Answers</h2>";
+      questions.forEach((q, index) => {
+        const selected = document.querySelector(`input[name="q${index}"]:checked`);
+        if (selected && selected.value === q.term) {
+          score++;
+        } else {
+          output += `<p><strong>${index + 1}. ${q.correct}</strong><br>
+          Correct Answer: <span class="correct-answer">${q.term}</span></p>`;
+        }
+      });
+
+      form.classList.add("hidden");
+      resultDiv.classList.remove("hidden");
+      resultDiv.innerHTML = `<h2>Score: ${score} / ${questions.length}</h2>` + output;
+    }
+
+    buildQuiz();
+  </script>
+</body>
+</html>
