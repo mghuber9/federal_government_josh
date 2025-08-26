@@ -1,0 +1,136 @@
+(function(){
+  var quizData = [
+    {"question":"Politics is best described as:","correct":"The process of resolving conflicts over values and resources","answers":["The study of history","The process of resolving conflicts over values and resources","A purely economic system","The enforcement of criminal law"]},
+    {"question":"Harold Lasswell defined politics as:","correct":"Who gets what, when, and how","answers":["The rule of the majority","The art of compromise","Who gets what, when, and how","Government by the people"]},
+    {"question":"Politics often includes:","correct":"The struggle for influence over government decision-making","answers":["Avoiding all disagreements","Purely economic trade agreements","The struggle for influence over government decision-making","A rejection of authority"]},
+    {"question":"Politics usually involves:","correct":"Both compromise and competition","answers":["Elimination of competition","Both compromise and competition","Only military conflict","Scientific research"]},
+    {"question":"Politics is necessary because:","correct":"People have differing priorities and beliefs","answers":["All citizens agree on priorities","People have differing priorities and beliefs","Laws are permanent and unchanging","Religion dictates government decisions"]},
+
+    {"question":"The Declaration of Independence was primarily written by:","correct":"Thomas Jefferson","answers":["James Madison","Thomas Jefferson","John Adams","Benjamin Franklin"]},
+    {"question":"The Declaration of Independence declared:","correct":"Independence from Britain and justified revolution","answers":["The end of the Civil War","Independence from Britain and justified revolution","The creation of the Articles of Confederation","Religious tolerance"]},
+    {"question":"Which philosopher most influenced the Declaration of Independence?","correct":"John Locke","answers":["Thomas Hobbes","John Locke","Jean-Jacques Rousseau","Montesquieu"]},
+    {"question":"Which core values are emphasized in the Declaration?","correct":"Liberty, equality, and self-government","answers":["Federalism and capitalism","Liberty, equality, and self-government","Judicial review and checks and balances","Socialism and monarchy"]},
+    {"question":"The Declaration of Independence served as:","correct":"The moral and political blueprint for American government","answers":["A military alliance","The moral and political blueprint for American government","A trade agreement with France","The U.S. Constitution"]},
+
+    {"question":"Shays’ Rebellion was led by:","correct":"Daniel Shays","answers":["Thomas Paine","Daniel Shays","Alexander Hamilton","Patrick Henry"]},
+    {"question":"Shays’ Rebellion was triggered by:","correct":"Debt, foreclosures, and high taxes after the Revolution","answers":["Religious persecution","Debt, foreclosures, and high taxes after the Revolution","Expansion of slavery","British troops invading Massachusetts"]},
+    {"question":"Shays’ Rebellion revealed:","correct":"The weaknesses of the Articles of Confederation in maintaining order","answers":["The strength of the Articles of Confederation","The weaknesses of the Articles of Confederation in maintaining order","The success of the Constitution","The need for British protection"]},
+    {"question":"Shays’ Rebellion alarmed leaders because it:","correct":"Showed the need for stronger national government","answers":["Proved the U.S. was too powerful","Showed the need for stronger national government","Caused the colonies to reunite with Britain","Encouraged expansion westward"]},
+    {"question":"A long-term result of Shays’ Rebellion was:","correct":"The push toward the Constitutional Convention","answers":["Ending slavery","The push toward the Constitutional Convention","The creation of the Bill of Rights","War with France"]},
+
+    {"question":"The Articles of Confederation were America’s first:","correct":"Governing document","answers":["Trade agreement","Governing document","Constitution after 1789","Political party system"]},
+    {"question":"The Articles of Confederation created:","correct":"A weak national government with most power in the states","answers":["A strong national government","A weak national government with most power in the states","A monarchy","A confederation with strong executive powers"]},
+    {"question":"Under the Articles, Congress lacked authority to:","correct":"Tax, regulate trade, or enforce laws","answers":["Enforce religion","Tax, regulate trade, or enforce laws","Print money","Hold elections"]},
+    {"question":"Amendments under the Articles required:","correct":"Unanimous consent","answers":["Majority rule","Unanimous consent","Approval from the President","Approval from Britain"]},
+    {"question":"The Articles’ failures highlighted the need for:","correct":"A new Constitution","answers":["A new monarchy","A new Constitution","British intervention","Fewer states"]},
+
+    {"question":"The Constitutional Convention met in:","correct":"Philadelphia in 1787","answers":["Boston in 1789","Philadelphia in 1787","New York in 1783","Richmond in 1790"]},
+    {"question":"Delegates originally met to:","correct":"Revise the Articles of Confederation","answers":["Write the Bill of Rights","Revise the Articles of Confederation","Ratify the Constitution","Elect George Washington"]},
+    {"question":"Major issues addressed included:","correct":"Representation, slavery, executive power, and federal vs. state authority","answers":["Military draft and taxes","Representation, slavery, executive power, and federal vs. state authority","Immigration and foreign policy","Judicial review"]},
+    {"question":"The compromise on representation was called the:","correct":"Great Compromise","answers":["Three-Fifths Compromise","Great Compromise","Missouri Compromise","Compromise of 1850"]},
+    {"question":"The Constitution produced included:","correct":"Separation of powers and checks and balances","answers":["A monarchy","Separation of powers and checks and balances","No executive branch","A weak central government"]},
+
+    {"question":"The Virginia Plan was proposed by:","correct":"James Madison","answers":["Patrick Henry","James Madison","George Mason","Thomas Jefferson"]},
+    {"question":"The Virginia Plan supported:","correct":"A bicameral legislature based on population","answers":["Equal representation for each state","A bicameral legislature based on population","A unicameral legislature","Direct democracy"]},
+    {"question":"The Virginia Plan favored:","correct":"Strong national authority","answers":["Strong national authority","Strong state authority","No executive branch","A monarchy"]},
+    {"question":"The Virginia Plan introduced:","correct":"Separation of powers into three branches","answers":["Political parties","Separation of powers into three branches","Judicial review","Direct taxation by states"]},
+    {"question":"The Virginia Plan became:","correct":"The basis for the final Constitution","answers":["The basis for the final Constitution","A failure with no influence","The Articles of Confederation","The New Jersey Plan"]},
+
+    {"question":"The New Jersey Plan was proposed by:","correct":"William Paterson","answers":["George Washington","William Paterson","Thomas Paine","Benjamin Franklin"]},
+    {"question":"The New Jersey Plan favored:","correct":"Equal representation for each state in Congress","answers":["Large states","Equal representation for each state in Congress","Representation based on population","Direct election of the president"]},
+    {"question":"The New Jersey Plan proposed:","correct":"A unicameral legislature","answers":["A bicameral legislature","A unicameral legislature","A monarchy","A system with no executive branch"]},
+    {"question":"The New Jersey Plan sought to:","correct":"Strengthen but not replace the Articles","answers":["Replace the Articles completely","Strengthen but not replace the Articles","Eliminate state governments","Increase executive powers only"]},
+    {"question":"The New Jersey Plan was:","correct":"Rejected, but influenced the Great Compromise","answers":["Adopted as the Constitution","Rejected, but influenced the Great Compromise","Supported by large states","Used as a model for the Bill of Rights"]},
+
+    {"question":"Concurrent powers are:","correct":"Powers shared by both state and federal governments","answers":["Powers shared by both state and federal governments","Powers only held by Congress","Reserved for the president","Exclusive to the courts"]},
+    {"question":"Which is an example of concurrent powers?","correct":"Taxation, law enforcement, and establishing courts","answers":["Declaring war and coining money","Taxation, law enforcement, and establishing courts","Granting titles of nobility","Regulating immigration"]},
+    {"question":"Concurrent powers allow for:","correct":"Cooperation between levels of government","answers":["Cooperation between levels of government","Complete independence of states","Only federal authority","Military alliances"]},
+    {"question":"Conflicts over concurrent powers are typically:","correct":"Resolved by courts","answers":["Always ignored","Resolved by courts","Settled by foreign treaties","Determined by the president"]},
+    {"question":"Concurrent powers reflect:","correct":"The federal principle of shared sovereignty","answers":["Monarchy","The federal principle of shared sovereignty","Unitary government","Direct democracy"]},
+
+    {"question":"Reserved powers are:","correct":"Powers not granted to the federal government, reserved to the states","answers":["Powers granted to the president","Powers not granted to the federal government, reserved to the states","Exclusive to Congress","Military-only powers"]},
+    {"question":"Which is an example of reserved powers?","correct":"Education, local elections, and intrastate commerce","answers":["Declaring war and coining money","Education, local elections, and intrastate commerce","Regulating foreign trade","Printing currency"]},
+    {"question":"Reserved powers ensure:","correct":"State sovereignty within the federal system","answers":["State sovereignty within the federal system","Presidential authority","Judicial dominance","Congressional supremacy"]},
+    {"question":"Reserved powers provide:","correct":"Flexibility for state-level policies","answers":["Flexibility for state-level policies","Elimination of state governments","Absolute national authority","Unitary control"]},
+    {"question":"Reserved powers help balance:","correct":"Power between national and state governments","answers":["Power between national and state governments","The executive and judiciary only","Religion and government","Political parties"]}
+  ];
+
+  function shuffle(array) {
+    for (var i = array.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = array[i]; array[i] = array[j]; array[j] = t;
+    }
+  }
+
+  function loadQuiz() {
+    var container = document.getElementById('quizContainer');
+    if (!container) return;
+    container.innerHTML = '';
+    shuffle(quizData);
+
+    quizData.forEach(function(item, index) {
+      var answers = item.answers.slice();
+      shuffle(answers);
+
+      var qDiv = document.createElement('div');
+      qDiv.className = 'question';
+      qDiv.innerHTML = '<p><strong>' + (index + 1) + '. ' + item.question + '</strong></p>';
+
+      var answersDiv = document.createElement('div');
+      answersDiv.className = 'answers';
+
+      answers.forEach(function(answer) {
+        var id = 'q' + index + '_' + answer.slice(0,20).replace(/[^a-zA-Z0-9]/g,'') + '_' + Math.random().toString(36).slice(2,6);
+        var label = document.createElement('label');
+        label.setAttribute('for', id);
+
+        var input = document.createElement('input');
+        input.id = id;
+        input.type = 'radio';
+        input.name = 'q' + index;
+        input.value = answer;
+
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(' ' + answer));
+        answersDiv.appendChild(label);
+      });
+
+      qDiv.appendChild(answersDiv);
+      container.appendChild(qDiv);
+    });
+  }
+
+  function onSubmit() {
+    var score = 0;
+    var missed = [];
+    quizData.forEach(function(item, index) {
+      var selected = document.querySelector('input[name="q' + index + '"]:checked');
+      if (selected && selected.value === item.correct) {
+        score++;
+      } else {
+        missed.push({ question: item.question, correct: item.correct });
+      }
+    });
+
+    var container = document.getElementById('quizContainer');
+    container.innerHTML = '<h2>Your Score: ' + score + ' / ' + quizData.length + '</h2>';
+
+    if (missed.length > 0) {
+      container.innerHTML += '<h3>You missed the following questions:</h3>';
+      missed.forEach(function(item, i) {
+        container.innerHTML += '<div class="question"><p><strong>' + (i + 1) + '. ' + item.question + '</strong></p><p class="correct-answer">Correct answer: ' + item.correct + '</p></div>';
+      });
+    } else {
+      container.innerHTML += '<p><strong>Perfect score! Great job!</strong></p>';
+    }
+
+    var btn = document.getElementById('submitBtn');
+    if (btn) btn.style.display = 'none';
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    loadQuiz();
+    var btn = document.getElementById('submitBtn');
+    if (btn) btn.addEventListener('click', onSubmit);
+  });
+})();

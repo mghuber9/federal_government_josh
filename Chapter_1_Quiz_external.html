@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chapter 1 Quiz – American Political Culture</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 900px; margin: auto; }
+    .question { margin-bottom: 20px; }
+    .answers label { display: block; margin: 5px 0; }
+    #submitBtn { padding: 10px 20px; font-size: 16px; margin-top: 20px; }
+    .correct-answer { color: green; font-weight: bold; }
+    .error { color: #b00020; font-weight: bold; margin-top: 20px; display:none; }
+  </style>
+</head>
+<body>
+  <h2>Chapter 1 Quiz – American Political Culture</h2>
+  <div id="quizContainer"></div>
+  <button id="submitBtn">Submit</button>
+  <div id="errorMsg" class="error">There was an error rendering the quiz. Open the browser console for details.</div>
+
+  <script>
+    window.onerror = function(msg, src, line, col, err) {
+      var e = document.getElementById('errorMsg');
+      if (e) { e.style.display = 'block'; e.textContent = 'Error: ' + msg + ' (' + src + ':' + line + ')'; }
+    };
+  </script>
+  <script src="Chapter_1_Quiz.js"></script>
+</body>
+</html>
