@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chapter 1 – Fill-in-the-Blank (from MC, 40 Random)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 900px; margin: auto; }
+    h2 { margin-top: 0; }
+    .question { margin-bottom: 16px; }
+    .question label { display: block; font-weight: bold; margin-bottom: 6px; }
+    .question textarea { width: 100%; padding: 8px; font-size: 15px; }
+    #submitBtn, #retakeBtn { padding: 10px 16px; font-size: 16px; margin-top: 16px; }
+    .result { margin-bottom: 16px; }
+    .result .correct { color: green; font-weight: bold; }
+    .result .user { color: #333; }
+    .muted { color: #666; font-size: 0.95em; }
+    .controls { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+    .note { background: #f6f8fa; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; margin-bottom: 16px; }
+  </style>
+</head>
+<body>
+  <h2>Chapter 1 – Fill-in-the-Blank (40 Random, Built from MC)</h2>
+  <div class="note">
+    This version directly mirrors the Multiple-Choice quiz. Each MC question has been turned into a fill-in prompt with the same wording and correct answer. 
+    Each attempt draws 40 random items from the full set of 63 questions.
+  </div>
+  <p class="muted">Type your answers. On submit, the page will show <em>your answer</em> next to the <em>correct answer</em> so you can self-grade.</p>
+  <div id="quizContainer"></div>
+  <div class="controls">
+    <button id="submitBtn">Submit</button>
+    <button id="printBtn" style="display:none">Print Results</button>
+    <button id="retakeBtn" style="display:none">Retake (New Random 40)</button>
+  </div>
+
+<script>
+(function(){
+  function esc(s){ return String(s).replace(/[&<>"']/g, function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];}); }
+
+  var fullBank = [{"q": "Politics is best described as:", "a": "The process of resolving conflicts over values and resources"}, {"q": "Harold Lasswell defined politics as:", "a": "Who gets what, when, and how"}, {"q": "Politics often includes:", "a": "The struggle for influence over government decision-making"}, {"q": "Politics usually involves:", "a": "Both compromise and competition"}, {"q": "Politics is necessary because:", "a": "People have differing priorities and beliefs"}, {"q": "The Declaration of Independence was primarily written by:", "a": "Thomas Jefferson"}, {"q": "The Declaration of Independence declared:", "a": "Independence from Britain and justified revolution"}, {"q": "Which philosopher most influenced the Declaration of Independence?", "a": "John Locke"}, {"q": "Which core values are emphasized in the Declaration?", "a": "Liberty, equality, and self-government"}, {"q": "The Declaration of Independence served as:", "a": "The moral and political blueprint for American government"}, {"q": "Shays’ Rebellion was led by:", "a": "Daniel Shays"}, {"q": "Shays’ Rebellion was triggered by:", "a": "Debt, foreclosures, and high taxes after the Revolution"}, {"q": "Shays’ Rebellion revealed:", "a": "The weaknesses of the Articles of Confederation in maintaining order"}, {"q": "Shays’ Rebellion alarmed leaders because it:", "a": "Showed the need for stronger national government"}, {"q": "A long-term result of Shays’ Rebellion was:", "a": "The push toward the Constitutional Convention"}, {"q": "The Articles of Confederation were America’s first:", "a": "Governing document"}, {"q": "The Articles of Confederation created:", "a": "A weak national government with most power in the states"}, {"q": "Under the Articles, Congress lacked authority to:", "a": "Tax, regulate trade, or enforce laws"}, {"q": "Amendments under the Articles required:", "a": "Unanimous consent"}, {"q": "The Articles’ failures highlighted the need for:", "a": "A new Constitution"}, {"q": "The Constitutional Convention met in:", "a": "Philadelphia in 1787"}, {"q": "Delegates originally met to:", "a": "Revise the Articles of Confederation"}, {"q": "Major issues addressed included:", "a": "Representation, slavery, executive power, and federal vs. state authority"}, {"q": "The compromise on representation was called the:", "a": "Great Compromise"}, {"q": "The Constitution produced included:", "a": "Separation of powers and checks and balances"}, {"q": "The Virginia Plan was proposed by:", "a": "James Madison"}, {"q": "The Virginia Plan supported:", "a": "A bicameral legislature based on population"}, {"q": "The Virginia Plan favored:", "a": "Strong national authority"}, {"q": "The Virginia Plan introduced:", "a": "Separation of powers into three branches"}, {"q": "The Virginia Plan became:", "a": "The basis for the final Constitution"}, {"q": "The New Jersey Plan was proposed by:", "a": "William Paterson"}, {"q": "The New Jersey Plan favored:", "a": "Equal representation for each state in Congress"}, {"q": "The New Jersey Plan proposed:", "a": "A unicameral legislature"}, {"q": "The New Jersey Plan sought to:", "a": "Strengthen but not replace the Articles"}, {"q": "The New Jersey Plan was:", "a": "Rejected, but influenced the Great Compromise"}, {"q": "Concurrent powers are:", "a": "Powers shared by both state and federal governments"}, {"q": "Which is an example of concurrent powers?", "a": "Taxation, law enforcement, and establishing courts"}, {"q": "Concurrent powers allow for:", "a": "Cooperation between levels of government"}, {"q": "Conflicts over concurrent powers are typically:", "a": "Resolved by courts"}, {"q": "Concurrent powers reflect:", "a": "The federal principle of shared sovereignty"}, {"q": "Reserved powers are:", "a": "Powers not granted to the federal government, reserved to the states"}, {"q": "Which is an example of reserved powers?", "a": "Education, local elections, and intrastate commerce"}, {"q": "Reserved powers ensure:", "a": "State sovereignty within the federal system"}, {"q": "Reserved powers provide:", "a": "Flexibility for state-level policies"}, {"q": "Reserved powers help balance:", "a": "Power between national and state governments"}, {"q": "The Electoral College is used to:", "a": "Formally elect the President of the United States"}, {"q": "One criticism of the Electoral College is that:", "a": "A candidate can win the presidency without winning the popular vote"}, {"q": "Checks and balances are designed to:", "a": "Prevent any one branch of government from becoming too powerful"}, {"q": "Which is an example of checks and balances?", "a": "The President vetoing a bill passed by Congress"}, {"q": "Thomas Hobbes believed that:", "a": "People need a strong central authority to avoid chaos"}, {"q": "Patrick Henry opposed the Constitution because:", "a": "He feared it gave too much power to the national government"}, {"q": "The Federalists supported:", "a": "Ratification of the Constitution and a strong central government"}, {"q": "The Anti-Federalists argued that:", "a": "The Constitution lacked a Bill of Rights"}, {"q": "The Supremacy Clause establishes that:", "a": "Federal law is the supreme law of the land"}, {"q": "The Necessary and Proper Clause is also known as:", "a": "The Elastic Clause"}, {"q": "The Full Faith and Credit Clause requires states to:", "a": "Honor the public acts, records, and judicial proceedings of other states"}, {"q": "The Tenth Amendment states that:", "a": "Powers not given to the federal government are reserved to the states or the people"}, {"q": "In a unitary system,", "a": "Power is centralized in the national government"}, {"q": "In a confederation,", "a": "Power rests primarily in state governments"}, {"q": "An anarchist believes that:", "a": "All forms of government should be abolished"}, {"q": "The divine right theory holds that:", "a": "Rulers derive authority directly from God"}, {"q": "Conservatives generally believe in:", "a": "Limited government intervention in the economy and traditional values"}, {"q": "Liberals generally believe in:", "a": "Government action to promote equality and social welfare"}];
+
+  var MAX_ITEMS = 40;
+  var current = [];
+
+  function shuffle(arr){
+    for (var i = arr.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+    }
+  }
+
+  function drawRandom(){ 
+    var copy = fullBank.slice();
+    shuffle(copy);
+    return copy.slice(0, Math.min(MAX_ITEMS, copy.length));
+  }
+
+  function render(){
+    var container = document.getElementById('quizContainer');
+    container.innerHTML = '';
+    current = drawRandom();
+
+    current.forEach(function(it, idx){
+      var q = document.createElement('div');
+      q.className = 'question';
+      var id = 'q' + idx;
+      q.innerHTML = '<label for="'+id+'">'+esc((idx+1)+'. '+it.q)+'</label>' +
+                    '<textarea id="'+id+'" rows="2" placeholder="Type your answer..."></textarea>';
+      container.appendChild(q);
+    });
+  }
+
+  function onSubmit(){
+    var container = document.getElementById('quizContainer');
+    var results = document.createElement('div');
+    results.innerHTML = '<h3>Results</h3><p class="muted">Compare your answer with the correct answer below. Self-grade as needed.</p>';
+
+    current.forEach(function(it, idx){
+      var val = (document.getElementById('q'+idx).value || '').trim();
+      var r = document.createElement('div');
+      r.className = 'result';
+      r.innerHTML = '<div><strong>'+esc((idx+1)+'. '+it.q)+'</strong></div>' +
+                    '<div class="user">Your answer: ' + (val ? esc(val) : '<em>(blank)</em>') + '</div>' +
+                    '<div class="correct">Correct answer: ' + esc(it.a) + '</div>';
+      results.appendChild(r);
+    });
+    container.innerHTML = '';
+    container.appendChild(results);
+
+    document.getElementById('submitBtn').style.display = 'none';
+    var pb = document.getElementById('printBtn');
+    pb.style.display = 'inline-block';
+    pb.onclick = function(){ window.print(); };
+
+    var rb = document.getElementById('retakeBtn');
+    rb.style.display = 'inline-block';
+    rb.onclick = function(){
+      document.getElementById('submitBtn').style.display = 'inline-block';
+      pb.style.display = 'none';
+      rb.style.display = 'none';
+      render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    render();
+    document.getElementById('submitBtn').addEventListener('click', onSubmit);
+  });
+})();
+</script>
+</body>
+</html>
