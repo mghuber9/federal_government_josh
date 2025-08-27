@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 3 — Vocabulary Quiz (ES5, 35 Random)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body { font-family: Arial, sans-serif; padding: 20px; max-width: 900px; margin: auto; }
+h1 { margin-bottom: 0; } .sub { color:#555; margin: 4px 0 16px; }
+.question { margin: 16px 0; padding: 12px; border: 1px solid #eee; border-radius: 8px; }
+.answers label { display:block; margin:6px 0; cursor:pointer; }
+.controls { display:flex; gap:10px; flex-wrap:wrap; margin-top:16px; } button { padding:10px 16px; }
+.score { font-weight:bold; margin-top:10px; }
+.explain { font-size:.95em; margin-top:6px; display:none; }
+.correct { color:#0a7a0a; } .incorrect { color:#b00020; }
+</style>
+</head>
+<body>
+  <h1>Chapter 3 — Vocabulary Quiz (ES5, 35 Random)</h1>
+  <div class="sub">Self-contained • Works without external JS</div>
+  <div id="quiz"></div>
+  <div class="controls">
+    <button id="submitBtn">Submit</button>
+    <button id="retakeBtn">Retake</button>
+  </div>
+  <div id="score" class="score"></div>
+
+<script>
+(function() {
+  'use strict';
+  var BANK = [{"term": "Federalism", "def": "A system of government in which authority is divided between a national government and regional governments (states)."}, {"term": "Unitary system", "def": "A system in which all or most power resides in the national government; lower levels are administrative only."}, {"term": "Confederation", "def": "A system where states retain sovereignty and the central authority has limited powers."}, {"term": "Enumerated (expressed) powers", "def": "Powers explicitly granted to the national government in the Constitution."}, {"term": "Implied powers", "def": "Powers not expressly stated but inferred from the Necessary and Proper Clause."}, {"term": "Reserved powers", "def": "Powers not delegated to the national government and reserved to the states (Tenth Amendment)."}, {"term": "Concurrent powers", "def": "Powers shared by national and state governments (e.g., taxation)."}, {"term": "Inherent powers", "def": "Powers that naturally belong to any sovereign government, such as foreign affairs."}, {"term": "Police powers", "def": "State authority to regulate health, safety, morals, and welfare."}, {"term": "Necessary and Proper (Elastic) Clause", "def": "Grants Congress flexibility to carry out its enumerated powers."}, {"term": "Supremacy Clause", "def": "Establishes that the Constitution and federal laws are supreme over state laws."}, {"term": "Commerce Clause", "def": "Gives Congress power to regulate interstate and foreign commerce."}, {"term": "Full Faith and Credit Clause", "def": "Requires each state to recognize public acts, records, and judicial proceedings of other states."}, {"term": "Privileges and Immunities Clause", "def": "Prevents states from discriminating against citizens of other states."}, {"term": "Extradition", "def": "The process by which one state surrenders an accused or convicted person to another state."}, {"term": "Interstate compact", "def": "An agreement among states that must receive congressional consent."}, {"term": "Dual federalism", "def": "A doctrine holding that national and state powers are clearly distinct (layer-cake federalism)."}, {"term": "Cooperative federalism", "def": "A system in which national and state governments share responsibilities (marble-cake federalism)."}, {"term": "New Federalism (devolution)", "def": "A movement to shift power back to the states through block grants and deregulation."}, {"term": "Preemption", "def": "Federal law or regulation overriding state or local actions in certain areas."}, {"term": "Unfunded mandate", "def": "A federal requirement that states take certain actions without receiving adequate federal funds."}, {"term": "Categorical grants", "def": "Federal funds for specific purposes with conditions attached."}, {"term": "Block grants", "def": "Federal funds provided for broad policy areas with fewer restrictions."}, {"term": "Revenue sharing", "def": "Federal money distributed to state and local governments with minimal restrictions (mostly discontinued)."}, {"term": "McCulloch v. Maryland (1819)", "def": "Upheld implied powers and federal supremacy; Maryland could not tax the national bank."}, {"term": "Gibbons v. Ogden (1824)", "def": "Broad interpretation of the Commerce Clause; federal power over interstate commerce."}, {"term": "United States v. Lopez (1995)", "def": "Limited Commerce Clause power; gun possession near schools not economic activity."}, {"term": "NFIB v. Sebelius (2012)", "def": "Upheld most of the ACA; limited federal coercion of states via Medicaid expansion."}, {"term": "Printz v. United States (1997)", "def": "Anti-commandeering principle; federal government cannot require state officials to enforce federal law."}, {"term": "Nullification", "def": "The (discredited) theory that states can invalidate federal laws deemed unconstitutional."}, {"term": "Home rule", "def": "Authority of a local government to govern itself with limited state interference."}, {"term": "Dillon’s Rule", "def": "Doctrine that local governments are creatures of the state and possess only powers granted by the state."}];
+  function shuffle(a) {
+    for (var i=a.length-1; i>0; i--) {
+      var j = Math.floor(Math.random()*(i+1));
+      var t = a[i]; a[i]=a[j]; a[j]=t;
+    }
+  }
+  function contains(arr, val) {
+    for (var i=0;i<arr.length;i++) if (arr[i]===val) return true;
+    return false;
+  }
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function(m){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]; });
+  }
+
+  
+  var N = Math.min(35, BANK.length);
+  var current = [];
+  function pick() {
+    var c = BANK.slice(0);
+    shuffle(c);
+    return c.slice(0,N);
+  }
+  function render() {
+    current = pick();
+    var container = document.getElementById('quiz');
+    container.innerHTML = '';
+    for (var idx=0; idx<current.length; idx++) {
+      var item = current[idx];
+      // build choices
+      var choices = [ item.def ];
+      var others = [];
+      for (var i=0;i<BANK.length;i++) if (BANK[i].term !== item.term) others.push(BANK[i].def);
+      shuffle(others);
+      choices = choices.concat(others.slice(0,3));
+      shuffle(choices);
+
+      var q = document.createElement('div');
+      q.className = 'question';
+      q.setAttribute('data-correct', item.def);
+
+      var inner = '<div><strong>'+(idx+1)+'.</strong> Define: <em>'+esc(item.term)+'</em></div>';
+      inner += '<div class=\"answers\">';
+      for (var j=0;j<choices.length;j++) {
+        inner += '<label><input type=\"radio\" name=\"q'+idx+'\" value=\"'+esc(choices[j])+'\"> '+esc(choices[j])+'</label>';
+      }
+      inner += '</div><div id=\"exp-'+idx+'\" class=\"explain\"></div>';
+      q.innerHTML = inner;
+      container.appendChild(q);
+    }
+    document.getElementById('score').textContent = '';
+  }
+  function grade() {
+    var correct = 0;
+    for (var idx=0; idx<current.length; idx++) {
+      var item = current[idx];
+      var sel = document.querySelector('input[name=\"q'+idx+'\"]:checked');
+      var exp = document.getElementById('exp-'+idx);
+      if (!sel) continue;
+      if (sel.value === item.def) { correct++; exp.className='explain correct'; exp.textContent='Correct!'; }
+      else { exp.className='explain incorrect'; exp.innerHTML='Incorrect. Correct definition: <em>'+esc(item.def)+'</em>'; }
+      exp.style.display='block';
+    }
+    document.getElementById('score').textContent = 'Score: '+correct+' / '+current.length;
+  }
+  document.getElementById('submitBtn').addEventListener('click', grade);
+  document.getElementById('retakeBtn').addEventListener('click', render);
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', render); else render();
+
+})();
+</script>
+</body>
+</html>
