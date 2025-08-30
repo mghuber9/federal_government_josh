@@ -15,7 +15,16 @@ const QUESTIONS = [{"term": "Politics", "definition": "The process by which soci
 {"term": "Autocracy", "definition": "Dictatorship controlled by a single individual with absolute power."},
 {"term": "Oligarchy", "definition": "Dictatorship controlled by a small group of elites with concentrated power."},
 {"term": "Totalitarianism", "definition": "A form of dictatorship where government seeks to control nearly every aspect of life, as in Nazi Germany or the Soviet Union."}
-];
+{"term": "Mayflower Compact (1620)", "definition": "Early colonial agreement for self-government by the Plymouth settlers."},
+{"term": "Northwest Ordinance (1787)", "definition": "Plan for admitting new states; banned slavery in the Northwest Territory."},
+{"term": "Annapolis Convention (1786)", "definition": "Interstate meeting on commerce that led to calling the Constitutional Convention."},
+{"term": "Dual Federalism", "definition": "“Layer cake” federalism; state and national governments operate separately with distinct powers."},
+{"term": "Cooperative Federalism", "definition": "“Marble cake” federalism; overlapping powers and shared responsibilities between state and national governments."},
+{"term": "Advantages of Federalism", "definition": "Spreads power, protects democracy, and allows policy experimentation among states."},
+{"term": "Disadvantages of Federalism", "definition": "Can be confusing, produce red tape, and create uneven burdens among states."}
+{"term": "Electoral College", "definition": "System for indirectly electing the U.S. President; states have electors equal to their senators plus representatives."}
+
+                  ];
 ];
 
 // Utility: shuffle array (Fisher-Yates)
