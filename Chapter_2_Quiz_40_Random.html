@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Chapter 2 — Multiple Choice (40 Random)</title>
+  <title>Chapter 2 — Study Guide Quiz</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body { font-family: Arial, sans-serif; padding: 20px; max-width: 900px; margin: auto; }
@@ -19,8 +19,8 @@
   </style>
 </head>
 <body>
-  <h1>Chapter 2 — Multiple Choice</h1>
-  <div class="sub">40 random items per attempt • Self-contained</div>
+  <h1>Chapter 2 — Study Guide Quiz</h1>
+  <div class="sub">30 random items per attempt • Self-contained</div>
   <div id="quiz"></div>
   <div class="controls">
     <button id="submitBtn">Submit</button>
@@ -30,78 +30,54 @@
 
 <script>
 (function() {
-  const BANK = [{"q": "The Constitutional Convention met in which city and year?", "a": "Philadelphia, 1787", "choices": ["Boston, 1789", "Philadelphia, 1787", "New York, 1783", "Richmond, 1790"]}, {"q": "The original purpose of the Constitutional Convention was to:", "a": "Revise the Articles of Confederation", "choices": ["Draft the Bill of Rights", "Revise the Articles of Confederation", "Elect George Washington", "Abolish state governments"]}, {"q": "The Virginia Plan favored:", "a": "Representation based on population and a strong national government", "choices": ["Equal representation for each state", "Representation based on population and a strong national government", "A unicameral legislature", "Direct democracy in all decisions"]}, {"q": "The New Jersey Plan proposed:", "a": "Equal representation for states in a unicameral legislature", "choices": ["Representation by population in a bicameral legislature", "Equal representation for states in a unicameral legislature", "A parliamentary system", "A powerful national executive chosen by popular vote"]}, {"q": "The Great (Connecticut) Compromise created:", "a": "A bicameral Congress with House by population and Senate equally by states", "choices": ["A unicameral Congress selected by state legislatures", "A bicameral Congress with House by population and Senate equally by states", "A Council of Revision to veto state laws", "Direct democracy at the national level"]}, {"q": "The Three-Fifths Compromise dealt with:", "a": "How enslaved persons would be counted for representation and taxation", "choices": ["Ending the slave trade immediately", "How enslaved persons would be counted for representation and taxation", "Direct election of Senators", "Impeachment procedures"]}, {"q": "Which body formally elects the President of the United States?", "a": "The Electoral College", "choices": ["The House of Representatives", "The Supreme Court", "The Electoral College", "State governors"]}, {"q": "Bicameralism refers to:", "a": "A legislature with two chambers", "choices": ["A two-term presidency", "A legislature with two chambers", "Two Supreme Courts", "Two executives sharing power"]}, {"q": "Enumerated (expressed) powers are:", "a": "Powers specifically listed in the Constitution for the national government", "choices": ["Powers only the states possess", "Powers specifically listed in the Constitution for the national government", "Powers implied by custom", "Powers shared by citizens and states"]}, {"q": "Implied powers come from which clause?", "a": "Necessary and Proper (Elastic) Clause", "choices": ["Supremacy Clause", "Full Faith and Credit Clause", "Necessary and Proper (Elastic) Clause", "Privileges and Immunities Clause"]}, {"q": "The Supremacy Clause establishes that:", "a": "Federal law is superior to conflicting state law", "choices": ["States may nullify federal laws", "Federal law is superior to conflicting state law", "The Court can rewrite laws", "The President is above the law"]}, {"q": "The Full Faith and Credit Clause requires states to:", "a": "Honor the public acts, records, and judicial proceedings of other states", "choices": ["Adopt the same laws", "Honor the public acts, records, and judicial proceedings of other states", "Use identical court systems", "Share tax revenue equally"]}, {"q": "The Privileges and Immunities Clause prevents:", "a": "States from discriminating against citizens of other states", "choices": ["Congress from taxing exports", "States from discriminating against citizens of other states", "States from suing the federal government", "Citizens from suing states"]}, {"q": "The Commerce Clause gives Congress power to:", "a": "Regulate interstate and foreign trade", "choices": ["Coin money", "Regulate interstate and foreign trade", "Appoint federal judges", "Declare war without consent"]}, {"q": "Reserved powers are:", "a": "Powers not delegated to the national government and kept by the states", "choices": ["Powers only for the judiciary", "Powers not delegated to the national government and kept by the states", "Powers shared by all levels of government", "Military powers only"]}, {"q": "The Tenth Amendment states that:", "a": "Powers not given to the U.S. are reserved to the states or the people", "choices": ["Only Congress may regulate commerce", "The President can suspend elections", "Powers not given to the U.S. are reserved to the states or the people", "States cannot make laws"]}, {"q": "A bill of attainder is:", "a": "A legislative act that punishes a person without a trial", "choices": ["A tax on imports", "A legislative act that punishes a person without a trial", "A judicial warrant", "A type of treaty"]}, {"q": "An ex post facto law:", "a": "Retroactively criminalizes conduct and is prohibited by the Constitution", "choices": ["Is allowed if Congress approves", "Retroactively criminalizes conduct and is prohibited by the Constitution", "Grants citizenship to nonresidents", "Allows censorship of newspapers"]}, {"q": "A writ of habeas corpus:", "a": "Requires officials to show cause for a person’s detention", "choices": ["Allows police searches without warrants", "Requires officials to show cause for a person’s detention", "Prevents lawsuits against states", "Creates new courts"]}, {"q": "Separation of powers divides authority among:", "a": "Legislative, executive, and judicial branches", "choices": ["Federal, state, and local governments", "Legislative, executive, and judicial branches", "Military, civil, and administrative branches", "President, Cabinet, and Courts only"]}, {"q": "Checks and balances are intended to:", "a": "Prevent any one branch from becoming too powerful", "choices": ["Increase the power of the executive", "Eliminate judicial review", "Prevent any one branch from becoming too powerful", "Increase state authority"]}, {"q": "Judicial review is:", "a": "The power of courts to strike down laws as unconstitutional", "choices": ["Congress’s ability to review treaties", "The power of courts to strike down laws as unconstitutional", "The President’s veto power", "State courts overruling federal courts"]}, {"q": "Which Supreme Court case established judicial review?", "a": "Marbury v. Madison (1803)", "choices": ["McCulloch v. Maryland (1819)", "Marbury v. Madison (1803)", "Gibbons v. Ogden (1824)", "Dred Scott v. Sandford (1857)"]}, {"q": "The Bill of Rights:", "a": "Is the first ten amendments that protect individual liberties", "choices": ["Is part of the Articles of Confederation", "Is the first ten amendments that protect individual liberties", "Was added before ratification of the Constitution", "Applies only to federal officers"]}, {"q": "Article V describes:", "a": "The formal amendment process", "choices": ["Powers of the presidency", "The formal amendment process", "The Court’s jurisdiction", "The supremacy of treaties"]}, {"q": "Republicanism means:", "a": "Government by elected representatives", "choices": ["Rule by hereditary monarchs", "Direct legislation by the people without representatives", "Government by elected representatives", "Government run by military officials"]}, {"q": "Popular sovereignty means:", "a": "Political authority ultimately comes from the people", "choices": ["The Senate holds ultimate power", "Political authority ultimately comes from the people", "States can nullify federal law", "Courts are supreme over legislatures"]}, {"q": "Which statement best reflects Madison’s argument in Federalist No. 10?", "a": "A large republic helps control factions and protect liberty", "choices": ["A small republic is best to keep officials close to the people", "Courts should control legislation", "A large republic helps control factions and protect liberty", "The executive should be chosen directly by the people"]}, {"q": "Federalist No. 51 emphasizes:", "a": "Separation of powers and checks and balances", "choices": ["State sovereignty only", "Judicial supremacy", "Separation of powers and checks and balances", "The need for a parliamentary system"]}, {"q": "Anti-Federalists opposed the Constitution because:", "a": "They feared a too-strong national government and wanted a bill of rights", "choices": ["They preferred monarchy", "They feared a too-strong national government and wanted a bill of rights", "They opposed state governments", "They wanted the Articles strengthened, not replaced"]}, {"q": "The Articles of Confederation were weak chiefly because:", "a": "Congress lacked power to tax, regulate commerce, and enforce laws", "choices": ["States had no power", "Congress lacked power to tax, regulate commerce, and enforce laws", "There was a too-strong executive", "The judiciary dominated politics"]}, {"q": "Natural rights, in the American tradition, are:", "a": "Fundamental rights like life and liberty that governments should protect", "choices": ["Privileges only for citizens", "Powers of Congress", "Fundamental rights like life and liberty that governments should protect", "Rights granted exclusively by state constitutions"]}, {"q": "The social contract theory holds that government:", "a": "Derives its authority from the consent of the governed", "choices": ["Is ordained by divine right", "Derives its authority from the consent of the governed", "Is unnecessary and should be abolished", "Must be ruled by a monarch"]}, {"q": "Under the Madisonian model, liberty is best protected by:", "a": "Separating powers and setting ambition against ambition", "choices": ["Direct democracy nationwide", "Judicial supremacy over all branches", "Separating powers and setting ambition against ambition", "State nullification of federal laws"]}, {"q": "In a unitary system:", "a": "Most power is held by the national government", "choices": ["Most power is held by the national government", "Power is evenly shared", "States are sovereign and the national government is weak", "Citizens vote directly on all policy"]}, {"q": "In a confederation:", "a": "States retain sovereignty and the central government is weak", "choices": ["The national government is supreme", "States retain sovereignty and the central government is weak", "There is no government", "The president dominates the legislature"]}, {"q": "Which document was America’s first national charter?", "a": "The Articles of Confederation", "choices": ["The U.S. Constitution", "The Articles of Confederation", "The Bill of Rights", "The Federalist"]}, {"q": "Which compromise resolved representation disputes between large and small states?", "a": "The Great (Connecticut) Compromise", "choices": ["The Missouri Compromise", "The Great (Connecticut) Compromise", "The Three-Fifths Compromise", "The Compromise of 1850"]}, {"q": "Which clause gives Congress flexibility to carry out enumerated powers?", "a": "Necessary and Proper (Elastic) Clause", "choices": ["Supremacy Clause", "Full Faith and Credit Clause", "Necessary and Proper (Elastic) Clause", "Commerce Clause"]}, {"q": "Which amendment reserves powers to the states and the people?", "a": "Tenth Amendment", "choices": ["First Amendment", "Tenth Amendment", "Fifth Amendment", "Fourteenth Amendment"]}, {"q": "Which essay argues that separation of powers and checks are essential?", "a": "Federalist No. 51", "choices": ["Federalist No. 10", "Federalist No. 51", "Brutus I", "Cato Letter"]}, {"q": "What is the main purpose of the Bill of Rights?", "a": "To protect individual liberties from government intrusion", "choices": ["To organize state governments", "To protect individual liberties from government intrusion", "To create a national bank", "To elect the president"]},
-               // Add to BANK in Chapter_2_Quiz_40_Random
-{"q": "The Extradition Clause requires states to:", 
- "a": "Return fugitives charged with crimes to the state demanding them", 
- "choices": ["Ignore out-of-state arrest warrants", "Return fugitives charged with crimes to the state demanding them", "Grant asylum automatically", "Only honor international extradition"]},
+  const BANK = [
+    {"q":"What is a constitution?","a":"The fundamental law that establishes government structure, powers, and limits","choices":["A collection of state laws","The fundamental law that establishes government structure, powers, and limits","A treaty with Britain","A bill passed by Congress"]},
+    {"q":"What traditions of government existed in the colonies?","a":"Limited and representative government","choices":["Unlimited monarchy","Direct democracy only","Limited and representative government","Military rule"]},
+    {"q":"What grievances against Britain led to revolution?","a":"Taxation without representation and denial of self-rule","choices":["Generous trade policies","Taxation without representation and denial of self-rule","Excessive land grants","Too much colonial freedom"]},
+    {"q":"What was the significance of the Declaration of Independence?","a":"It announced separation and justified it with natural rights and consent of the governed","choices":["It created the U.S. Constitution","It strengthened the Articles of Confederation","It announced separation and justified it with natural rights and consent of the governed","It granted freedom only to northern colonies"]},
+    {"q":"Whose ideas most influenced the Declaration of Independence?","a":"John Locke’s natural rights and consent theory","choices":["Thomas Hobbes","Niccolò Machiavelli","John Locke’s natural rights and consent theory","Karl Marx"]},
+    {"q":"What were the Articles of Confederation?","a":"America’s first charter with a weak central government","choices":["A strong national constitution","America’s first charter with a weak central government","A British colonial policy","The Federalist Papers"]},
+    {"q":"What was the main weakness of the Articles of Confederation?","a":"Congress lacked power to tax or regulate commerce","choices":["The executive branch was too strong","Congress lacked power to tax or regulate commerce","The judiciary dominated politics","States had no powers"]},
+    {"q":"What was Shays’ Rebellion and why significant?","a":"A farmers’ revolt showing the weakness of the Articles","choices":["A protest against taxes in Britain","A farmers’ revolt showing the weakness of the Articles","A rebellion against Washington’s presidency","An uprising that ended slavery"]},
+    {"q":"What was the purpose of the Constitutional Convention?","a":"To revise the Articles but instead produced the Constitution","choices":["To write the Bill of Rights","To revise the Articles but instead produced the Constitution","To elect the first president","To abolish state governments"]},
+    {"q":"What did the Virginia Plan call for?","a":"Representation based on population in a strong national government","choices":["Equal representation of states","Representation based on population in a strong national government","Direct democracy nationwide","A monarchy with limited powers"]},
+    {"q":"What did the New Jersey Plan propose?","a":"Equal representation for states in a unicameral legislature","choices":["Representation by population","Equal representation for states in a unicameral legislature","A national monarchy","Popular election of the president"]},
+    {"q":"What was the Great Compromise?","a":"Bicameral Congress with House by population, Senate equal by states","choices":["Unicameral Congress chosen by legislatures","Bicameral Congress with House by population, Senate equal by states","Direct democracy in all lawmaking","One chamber chosen by the president"]},
+    {"q":"What was the Three-Fifths Compromise?","a":"Counted enslaved persons as three-fifths for representation and taxation","choices":["Freed three-fifths of enslaved people","Counted enslaved persons as three-fifths for representation and taxation","Ended slavery immediately","Ignored enslaved persons entirely"]},
+    {"q":"What was the Federalists’ argument?","a":"A stronger national government was needed","choices":["States should dominate","A stronger national government was needed","The Articles were sufficient","The Bill of Rights was unnecessary"]},
+    {"q":"What was the Anti-Federalists’ argument?","a":"The Constitution gave too much power and needed a bill of rights","choices":["The Constitution gave too much power and needed a bill of rights","They wanted a king","They wanted no government","They wanted to abolish states"]},
+    {"q":"What was the strategy for ratification?","a":"Use state conventions and promise to add a Bill of Rights","choices":["Ignore opponents","Use state conventions and promise to add a Bill of Rights","Seek approval from Britain","Allow Congress to decide alone"]},
+    {"q":"Why was the Bill of Rights added?","a":"To protect individual liberties and gain Anti-Federalist support","choices":["To expand presidential power","To protect individual liberties and gain Anti-Federalist support","To restrict state governments only","To create new taxes"]},
+    {"q":"What are inalienable rights?","a":"Life, liberty, and other rights that cannot be justly taken away","choices":["Privileges granted by kings","Life, liberty, and other rights that cannot be justly taken away","Temporary political privileges","Only property rights"]},
+    {"q":"What were the framers’ primary goals in writing the Constitution?","a":"Strong but limited government to protect liberty and self-rule","choices":["Strong national government without limits","Weak central power","Strong but limited government to protect liberty and self-rule","Unlimited majority rule"]},
+    {"q":"What are grants of power?","a":"Specific authorities given to the national government","choices":["Specific authorities given to the national government","General power over all matters","Unlimited presidential powers","State-only responsibilities"]},
+    {"q":"What are denials of power?","a":"Explicit constitutional prohibitions","choices":["Expansions of state powers","Explicit constitutional prohibitions","New powers created by courts","Privileges for Congress"]},
+    {"q":"What is separation of powers?","a":"Division of government into legislative, executive, and judicial branches","choices":["Division of government into legislative, executive, and judicial branches","Division between states and federal government","Division of Congress only","No separation at all"]},
+    {"q":"What are checks and balances?","a":"Each branch can limit the others to prevent concentration of power","choices":["Each branch can limit the others to prevent concentration of power","One branch dominates all others","The president alone makes law","The courts control all policy"]},
+    {"q":"What is judicial review?","a":"Courts’ power to declare laws or actions unconstitutional","choices":["Congress’s ability to override vetoes","Courts’ power to declare laws or actions unconstitutional","President’s power to reject laws","States’ power to nullify federal law"]},
+    {"q":"Which case established judicial review?","a":"Marbury v. Madison (1803)","choices":["Brown v. Board","McCulloch v. Maryland","Marbury v. Madison (1803)","Gibbons v. Ogden"]},
+    {"q":"How did framers define a republic?","a":"Government by elected representatives, not direct democracy","choices":["Government by elected representatives, not direct democracy","Absolute monarchy","Direct democracy","Rule by elites only"]},
+    {"q":"What is tyranny of the majority?","a":"When majority tramples minority rights","choices":["When courts overrule legislatures","When majority tramples minority rights","When Congress ignores voters","When the president ignores Congress"]},
+    {"q":"How were House members originally selected?","a":"By direct vote of the people","choices":["By direct vote of the people","By state legislatures","By the president","By the Electoral College"]},
+    {"q":"How were Senators originally selected?","a":"By state legislatures","choices":["By direct popular vote","By state legislatures","By the president","By courts"]},
+    {"q":"How was the president originally selected?","a":"Indirectly through the Electoral College","choices":["By direct national vote","By Congress","Indirectly through the Electoral College","By state legislatures"]},
+    {"q":"How were federal judges originally selected?","a":"Nominated by president, confirmed by Senate","choices":["By national vote","By state legislatures","Nominated by president, confirmed by Senate","By House vote only"]},
+    {"q":"Which amendment allowed direct election of Senators?","a":"Seventeenth Amendment","choices":["First Amendment","Seventeenth Amendment","Twelfth Amendment","Twenty-Second Amendment"]},
+    {"q":"What is a primary election?","a":"Voters choose a party’s nominees","choices":["Voters choose a party’s nominees","Party leaders select all candidates","Congress approves nominees","The Supreme Court selects nominees"]},
+    {"q":"What reform is associated with Jeffersonian democracy?","a":"Expanded participation and limited national power","choices":["Expanded participation and limited national power","Weakened state governments","Direct election of senators","Progressive reforms only"]},
+    {"q":"What reform is associated with Jacksonian democracy?","a":"Broadened white male suffrage and mass politics","choices":["Broadened white male suffrage and mass politics","Ended political parties","Strengthened state legislatures","Created the Supreme Court"]},
+    {"q":"What reforms are linked to the Progressives?","a":"Clean government and more direct democracy","choices":["Clean government and more direct democracy","Restoring monarchy","Weakening voters’ role","Abolishing elections"]},
+    {"q":"What is an initiative?","a":"Process letting citizens place laws on the ballot","choices":["Process letting citizens place laws on the ballot","A presidential executive order","A congressional veto","A party caucus"]},
+    {"q":"What is a referendum?","a":"Voters approve or reject laws passed by the legislature","choices":["Courts strike down laws","Voters approve or reject laws passed by the legislature","Congress approves treaties","Presidents veto laws"]},
+    {"q":"What is a recall?","a":"Voters remove an elected official before term ends","choices":["Voters remove an elected official before term ends","Congress removes judges","Courts strike down officials","Presidents fire legislators"]},
+    {"q":"What does 'constitutional democratic republic' mean?","a":"Limited by law, with elections and representative institutions","choices":["Unlimited democracy","Limited by law, with elections and representative institutions","Absolute monarchy","Direct democracy only"]}
+  ];
 
-{"q": "Which of the following is prohibited by the Constitution?", 
- "a": "Granting titles of nobility", 
- "choices": ["Passing revenue bills", "Granting titles of nobility", "Amending the Constitution", "Creating federal courts"]},
-
-{"q": "What are 'resulting powers'?", 
- "a": "Powers that emerge from combining multiple delegated or implied powers", 
- "choices": ["State-only powers under the Tenth Amendment", "Explicitly listed constitutional powers", "Powers that emerge from combining multiple delegated or implied powers", "Judicial interpretations only"]},
-
-{"q": "Which Supreme Court case upheld implied powers and established intergovernmental tax immunity?", 
- "a": "McCulloch v. Maryland (1819)", 
- "choices": ["Marbury v. Madison (1803)", "McCulloch v. Maryland (1819)", "Dred Scott v. Sandford (1857)", "Charles River Bridge v. Warren Bridge (1837)"]},
-
-{"q": "The Contracts Clause prohibits states from:", 
- "a": "Impairing the obligation of contracts", 
- "choices": ["Raising taxes", "Impairing the obligation of contracts", "Issuing marriage licenses", "Establishing state courts"]},
-
-{"q": "Which of the following is an example of a power reserved to the states?", 
- "a": "Conducting elections", 
- "choices": ["Declaring war", "Issuing currency", "Conducting elections", "Making treaties"]},
-
-{"q": "The Takings Clause (Eminent Domain) in the 5th Amendment requires:", 
- "a": "Just compensation when private property is taken for public use", 
- "choices": ["No compensation for seized land", "Just compensation when private property is taken for public use", "Compensation only if Congress approves", "That states cannot take property"]},
-
-{"q": "Which case involved the Takings Clause and allowed property seizure for economic development?", 
- "a": "Kelo v. City of New London (2005)", 
- "choices": ["McCulloch v. Maryland (1819)", "Kelo v. City of New London (2005)", "Gibbons v. Ogden (1824)", "U.S. v. Lopez (1995)"]},
-
-{"q": "Which of the following is an example of constitutional change by custom or tradition?", 
- "a": "George Washington stepping down after two terms", 
- "choices": ["George Washington stepping down after two terms", "The 26th Amendment", "The 10th Amendment", "Creation of the Bill of Rights"]},
-
-{"q": "The Mayflower Compact (1620) is significant because it:", 
- "a": "Introduced the principle of government by consent", 
- "choices": ["Declared independence from Britain", "Introduced the principle of government by consent", "Established the first U.S. national bank", "Created the Articles of Confederation"]},
-{"q":"What do scholars mean by a 'constitutional democratic republic' in the U.S. context?","a":"Limited by law and rights, majority influence via elections, and multiple institutions that check each other","choices":["Unlimited majority rule with no checks","A monarchy with an elected legislature","Limited by law and rights, majority influence via elections, and multiple institutions that check each other","Direct lawmaking by national referendum"]},
-
-{"q":"In the framers’ usage, what distinguishes a democracy from a republic?","a":"A democracy allows unchecked majority power; a republic limits power through a constitution and institutions","choices":["There is no difference","A democracy has a king; a republic has a president","A democracy allows unchecked majority power; a republic limits power through a constitution and institutions","A republic bans political parties"]},
-
-{"q":"Which phrase best captures how U.S. checks and balances actually work?","a":"Separated institutions sharing power","choices":["Complete separation of powers","Judicial supremacy","Parliamentary supremacy","Separated institutions sharing power"]},
-
-{"q":"Which pair best matches the Constitution’s design tool and purpose?","a":"Grants of power — authorize specific national powers; Denials of power — prohibit certain actions","choices":["Grants — prohibit actions; Denials — authorize powers","Grants of power — authorize specific national powers; Denials of power — prohibit certain actions","Both are only state tools","Neither affects national power"]},
-
-{"q":"‘Tyranny of the majority’ describes:","a":"When an impassioned majority tramples minority rights","choices":["When courts overrule legislatures","When the president ignores Congress","When an impassioned majority tramples minority rights","When states override federal law"]},
-
-{"q":"Which statement about electoral votes is correct?","a":"They are the formal votes cast by state electors to choose the president and vice president","choices":["They are the popular votes in swing states","They are the House’s contingent votes","They are the formal votes cast by state electors to choose the president and vice president","They are only used in ties"]},
-
-{"q":"Which reform gave voters—not party bosses—the power to choose party nominees?","a":"The direct primary","choices":["The caucus","The legislative referendum","The direct primary","The spoils system"]},
-
-{"q":"Which amendment made U.S. senators directly elected by the people?","a":"Seventeenth Amendment","choices":["Twelfth Amendment","Seventeenth Amendment","Nineteenth Amendment","Twenty-Second Amendment"]},
-
-{"q":"Which of the following lets citizens place proposed laws on the ballot?","a":"The initiative","choices":["The initiative","Judicial review","The Electoral College","The veto"]},
-
-{"q":"Which of the following lets voters approve or reject a law passed by the legislature?","a":"The popular referendum","choices":["The primary election","The popular referendum","The caucus","The filibuster"]}
-
-               ];
-  const N = 40;
+  const N = 30; // number of random questions per attempt
   let current = [];
 
-  function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} }
-
-  function pick(){
-    const copy = BANK.slice();
-    shuffle(copy);
-    return copy.slice(0, Math.min(N, copy.length));
-  }
+  function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
+  function pick(){const copy=BANK.slice();shuffle(copy);return copy.slice(0, Math.min(N, copy.length));}
 
   function render(){
     current = pick();
@@ -127,17 +103,14 @@
   function grade(){
     let correct=0;
     current.forEach((item, idx)=>{
-      const sel = document.querySelector(`input[name="q${idx}"]:checked`);
-      const exp = document.getElementById(`exp-${idx}`);
+      const sel=document.querySelector(`input[name="q${idx}"]:checked`);
+      const exp=document.getElementById(`exp-${idx}`);
       if (!sel) return;
-      if (sel.value === item.a) {
-        correct++; exp.className="explain correct"; exp.textContent="Correct!";
-      } else {
-        exp.className="explain incorrect"; exp.innerHTML="Incorrect. Correct answer: <em>"+item.a+"</em>";
-      }
+      if (sel.value===item.a){correct++;exp.className="explain correct";exp.textContent="Correct!";}
+      else{exp.className="explain incorrect";exp.innerHTML="Incorrect. Correct answer: <em>"+item.a+"</em>";}
       exp.style.display="block";
     });
-    document.getElementById('score').textContent = `Score: ${correct} / ${current.length}`;
+    document.getElementById('score').textContent=`Score: ${correct} / ${current.length}`;
   }
 
   document.getElementById('submitBtn').addEventListener('click', grade);
