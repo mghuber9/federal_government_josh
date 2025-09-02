@@ -1,99 +1,205 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Chapter 2 Outline — Fill-in-the-Blank Practice</title>
-  <style>
-    body { font-family: Arial, sans-serif; max-width: 900px; margin: auto; padding: 20px; }
-    h1 { text-align: center; }
-    .question { margin: 16px 0; padding: 12px; border: 1px solid #ccc; border-radius: 6px; }
-    .question label { font-weight: bold; display: block; margin-bottom: 6px; }
-    input[type="text"] { width: 100%; padding: 6px; font-size: 1em; }
-    .controls { margin-top: 20px; text-align: center; }
-    button { padding: 10px 18px; margin: 5px; font-size: 1em; }
-    .correct { color: green; font-weight: bold; }
-    .incorrect { color: darkred; font-weight: bold; }
-    .answer { margin-top: 4px; }
-  </style>
+<meta charset="UTF-8" />
+<title>Chapter 2 — Outline (Fill-in Version)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<style>
+  :root { --indent: 22px; }
+  body { font-family: Arial, sans-serif; max-width: 900px; margin: auto; padding: 20px; }
+  h1 { text-align: center; margin-bottom: 12px; }
+  .sub { color:#555; margin: 0 0 18px; text-align:center; }
+  .controls { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin:16px 0; }
+  button { padding:10px 16px; }
+
+  /* Outline styling */
+  ol { margin: 0; padding-left: var(--indent); }
+  ol[type="I"] { list-style-type: upper-roman; }
+  ol[type="a"] { list-style-type: lower-alpha; }
+  ol[type="1"] { list-style-type: decimal; }
+  li { margin: 6px 0; }
+
+  /* Inline blanks */
+  .blank {
+    display: inline-block; min-width: 120px; padding: 2px 6px; border: 1px solid #ccc;
+    border-radius: 4px; margin: 0 4px; font-size: 0.95em;
+  }
+  .result { margin-left: 8px; font-size: 0.95em; }
+  .correct { color: #0a7a0a; font-weight: 600; }
+  .incorrect { color: #b00020; font-weight: 600; }
+  .answer { font-weight: 600; }
+  .section { margin: 12px 0; }
+
+  /* Print tweaks */
+  @media print {
+    .controls { display: none !important; }
+    .result { color: #000 !important; }
+    .blank { border-bottom: 1px solid #000; border: none; min-width: 100px; }
+  }
+</style>
 </head>
 <body>
-  <h1>Chapter 2 Outline — Fill-in-the-Blank Practice</h1>
-  <div id="quiz"></div>
-  <div class="controls">
-    <button id="submitBtn">Submit</button>
-    <button id="retakeBtn">Retake</button>
-  </div>
-  <div id="score" class="score"></div>
+<h1>Chapter 2 — Constitutional Democracy</h1>
+<div class="sub">Outline (Fill-in-the-Blank) — Roman numerals, letters, and numbers</div>
+
+<div id="outline">
+
+  <ol type="I">
+    <li class="section">
+      <span>Before the Constitution: Colonial &amp; Revolutionary Experiences</span>
+      <ol type="a">
+        <li>Colonial grievances and British policies set the stage for <input class="blank" data-ans="independence" placeholder="______">.</li>
+        <li>Declaration of Independence: <input class="blank" data-ans="natural|unalienable|inalienable" placeholder="______"> rights, consent of the <input class="blank" data-ans="governed|people" placeholder="______">, popular sovereignty.</li>
+        <li>Articles of Confederation
+          <ol type="1">
+            <li><input class="blank" data-ans="unicameral" placeholder="______"> legislature; weak executive; no national judiciary.</li>
+            <li>No <input class="blank" data-ans="taxation|tax" placeholder="______"> power; no regulation of interstate commerce.</li>
+          </ol>
+        </li>
+        <li><input class="blank" data-ans="Shays|Shays’|Shays's" placeholder="______"> Rebellion highlights weaknesses of the Articles.</li>
+        <li><input class="blank" data-ans="Mayflower" placeholder="______"> Compact (1620): early example of government by consent.</li>
+      </ol>
+    </li>
+
+    <li class="section">
+      <span>Negotiating Toward a Constitution</span>
+      <ol type="a">
+        <li>Constitutional Convention (<input class="blank" data-ans="Philadelphia" placeholder="______">, 1787): purpose, secrecy rule, key delegates.</li>
+        <li><input class="blank" data-ans="Virginia" placeholder="______"> Plan vs. <input class="blank" data-ans="New Jersey|NJ" placeholder="______"> Plan.</li>
+        <li><input class="blank" data-ans="Great|Connecticut" placeholder="______"> (Connecticut) Compromise: bicameral Congress.</li>
+        <li><input class="blank" data-ans="Three-Fifths|Three Fifths|3/5" placeholder="______"> Compromise; Slave Trade &amp; Commerce Compromise.</li>
+        <li>Design choices
+          <ol type="1">
+            <li><input class="blank" data-ans="Electoral" placeholder="______"> College.</li>
+            <li>Independent <input class="blank" data-ans="judiciary|judicial branch|courts" placeholder="______"> (Supreme Court, life terms).</li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+
+    <li class="section">
+      <span>Protecting Liberty: Limited Government</span>
+      <ol type="a">
+        <li><input class="blank" data-ans="Constitutionalism" placeholder="______"> and the Rule of Law.</li>
+        <li>Separation of <input class="blank" data-ans="powers" placeholder="______"> &amp; Checks and Balances (Madisonian model).</li>
+        <li>Key Clauses and Powers
+          <ol type="1">
+            <li><input class="blank" data-ans="Enumerated|expressed" placeholder="______"> powers — powers specifically listed.</li>
+            <li><input class="blank" data-ans="Implied" placeholder="______"> powers — via Necessary &amp; Proper Clause.</li>
+            <li><input class="blank" data-ans="Inherent" placeholder="______"> powers — powers of a sovereign nation.</li>
+            <li><input class="blank" data-ans="Resulting" placeholder="______"> powers — emerging from combining others (Legal Tender Cases).</li>
+            <li><input class="blank" data-ans="Reserved" placeholder="______"> powers — 10th Amendment; states’ retained authority.</li>
+            <li><input class="blank" data-ans="Concurrent" placeholder="______"> powers — shared powers (tax, spend, borrow, eminent domain).</li>
+            <li><input class="blank" data-ans="Supremacy" placeholder="______"> Clause — federal law supreme.</li>
+            <li><input class="blank" data-ans="Extradition" placeholder="______"> Clause — fugitives returned to demanding state.</li>
+            <li><input class="blank" data-ans="Contracts" placeholder="______"> Clause — prohibits states from impairing contracts.</li>
+            <li><input class="blank" data-ans="Takings|Eminent Domain" placeholder="______"> Clause (5th Amendment) — just compensation required; Kelo v. City of <input class="blank" data-ans="New London" placeholder="______">.</li>
+            <li>No Titles of <input class="blank" data-ans="Nobility" placeholder="______">, no Bills of <input class="blank" data-ans="Attainder" placeholder="______">, no Ex <input class="blank" data-ans="Post Facto|post facto" placeholder="______"> Laws.</li>
+          </ol>
+        </li>
+        <li><input class="blank" data-ans="Judicial" placeholder="______"> Review — established by <input class="blank" data-ans="Marbury" placeholder="______"> v. Madison (1803).</li>
+        <li><input class="blank" data-ans="Bill" placeholder="______"> of Rights — first ten amendments protecting liberties.</li>
+      </ol>
+    </li>
+
+    <li class="section">
+      <span>Providing for Self-Government</span>
+      <ol type="a">
+        <li>Popular sovereignty and <input class="blank" data-ans="republicanism" placeholder="______"> — authority from the people.</li>
+        <li><input class="blank" data-ans="Federalists" placeholder="______"> vs. <input class="blank" data-ans="Anti-Federalists|Antifederalists" placeholder="______">: ratification debate.</li>
+        <li>The Federalist Papers — Nos. 10 &amp; 51 (factions; checks &amp; balances).</li>
+        <li>Article <input class="blank" data-ans="V|5|five" placeholder="______"> amendment process — formal changes to the Constitution.</li>
+        <li>Custom and Tradition
+          <ol type="1">
+            <li>Washington’s <input class="blank" data-ans="two|2" placeholder="______">-term precedent (later 22nd Amendment).</li>
+            <li>Congressional district <input class="blank" data-ans="residency|residence" placeholder="______"> norm.</li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+
+    <li class="section">
+      <span>Constitutional Democracy Today</span>
+      <ol type="a">
+        <li>Ongoing debates over <input class="blank" data-ans="national|federal" placeholder="______"> power and liberty.</li>
+        <li>Constitutional change through amendment and <input class="blank" data-ans="interpretation" placeholder="______">.</li>
+      </ol>
+    </li>
+
+    <li class="section">
+      <span>Key People &amp; Documents</span>
+      <ol type="a">
+        <li><input class="blank" data-ans="James" placeholder="______"> Madison — Virginia Plan, “Father of the Constitution”.</li>
+        <li><input class="blank" data-ans="William" placeholder="______"> Paterson — New Jersey Plan.</li>
+        <li>Alexander Hamilton, <input class="blank" data-ans="James" placeholder="______"> Madison, John Jay — The Federalist.</li>
+        <li>Key cases: <input class="blank" data-ans="Marbury" placeholder="______"> v. Madison (1803), <input class="blank" data-ans="McCulloch" placeholder="______"> v. Maryland (1819), Kelo v. City of New London (2005).</li>
+        <li>Documents: Articles of Confederation, U.S. Constitution, Bill of <input class="blank" data-ans="Rights" placeholder="______">.</li>
+      </ol>
+    </li>
+  </ol>
+
+</div>
+
+<div class="controls">
+  <button id="checkBtn">Check Answers</button>
+  <button id="showBtn">Show All Answers</button>
+  <button id="resetBtn">Reset</button>
+  <span id="score" aria-live="polite"></span>
+</div>
 
 <script>
-(function(){
-  const BANK = [
-    {q: "Colonial grievances and British policies set the stage for __________.", a: "independence"},
-    {q: "Declaration of Independence: __________ rights, consent of the __________.", a: "natural, governed"},
-    {q: "Articles of Confederation: __________ legislature; weak executive.", a: "unicameral"},
-    {q: "No __________ power; no regulation of interstate commerce.", a: "taxation"},
-    {q: "__________’ Rebellion highlighted weaknesses of the Articles.", a: "Shays"},
-    {q: "__________ Compact (1620): early example of government by consent.", a: "Mayflower"},
-    {q: "Constitutional Convention (__________, 1787).", a: "Philadelphia"},
-    {q: "__________ Plan vs. __________ Plan.", a: "Virginia, New Jersey"},
-    {q: "__________ (Connecticut) Compromise: bicameral Congress.", a: "Great"},
-    {q: "The __________ Compromise counted enslaved persons for representation.", a: "Three-Fifths"},
-    {q: "__________ College elects the President.", a: "Electoral"},
-    {q: "Independent __________ established (Supreme Court).", a: "judiciary"},
-    {q: "Separation of __________ & Checks and Balances.", a: "powers"},
-    {q: "Judicial Review established by __________ v. Madison (1803).", a: "Marbury"},
-    {q: "The __________ of Rights: first ten amendments.", a: "Bill"},
-    {q: "Washington’s __________-term precedent.", a: "two"},
-    {q: "Key case: __________ v. Maryland (1819).", a: "McCulloch"},
-    {q: "Key case: Kelo v. City of __________ (2005).", a: "New London"}
-  ];
+  function normalize(s){ return (s||"").trim().toLowerCase().replace(/\s+/g,' '); }
 
-  const N = 10; // number of questions per attempt
-  let current = [];
-
-  function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} }
-
-  function pick(){
-    const copy = BANK.slice();
-    shuffle(copy);
-    return copy.slice(0, Math.min(N, copy.length));
+  function getAcceptableAnswers(input){
+    const raw = input.dataset.ans || "";
+    return raw.split("|").map(a => normalize(a)).filter(Boolean);
   }
 
-  function render(){
-    current = pick();
-    const container = document.getElementById('quiz');
-    container.innerHTML = "";
-    current.forEach((item, idx)=>{
-      const q = document.createElement('div');
-      q.className = "question";
-      q.innerHTML = `<label for="q${idx}">${idx+1}. ${item.q}</label>
-                     <input type="text" id="q${idx}" /> 
-                     <div id="ans${idx}" class="answer"></div>`;
-      container.appendChild(q);
+  function gradeOne(input){
+    const val = normalize(input.value);
+    const alts = getAcceptableAnswers(input);
+    const res = input.nextElementSibling && input.nextElementSibling.classList.contains('result')
+      ? input.nextElementSibling
+      : (()=>{ const span=document.createElement('span'); span.className='result'; input.after(span); return span; })();
+    if (!val){ res.textContent = ""; return false; }
+    if (alts.includes(val)) { res.innerHTML = '<span class="correct">✓</span>'; return true; }
+    res.innerHTML = '<span class="incorrect">✗</span>';
+    return false;
+  }
+
+  function showAnswer(input){
+    const ans = (input.dataset.ans||"").split("|")[0] || "";
+    const res = input.nextElementSibling && input.nextElementSibling.classList.contains('result')
+      ? input.nextElementSibling
+      : (()=>{ const span=document.createElement('span'); span.className='result'; input.after(span); return span; })();
+    res.innerHTML = `<span class="answer">${ans}</span>`;
+  }
+
+  function clearOne(input){
+    input.value = "";
+    const res = input.nextElementSibling;
+    if (res && res.classList.contains('result')) res.textContent = "";
+  }
+
+  document.getElementById('checkBtn').addEventListener('click', ()=>{
+    const inputs = Array.from(document.querySelectorAll('.blank'));
+    let correct = 0, answered = 0;
+    inputs.forEach(inp=>{
+      const ok = gradeOne(inp);
+      if (normalize(inp.value)) answered++;
+      if (ok) correct++;
     });
-    document.getElementById('score').textContent="";
-  }
+    document.getElementById('score').textContent = `Score: ${correct} correct out of ${answered} filled`;
+  });
 
-  function grade(){
-    let correct = 0;
-    current.forEach((item, idx)=>{
-      const val = document.getElementById(`q${idx}`).value.trim();
-      const ansDiv = document.getElementById(`ans${idx}`);
-      if (val.toLowerCase() === item.a.toLowerCase()) {
-        correct++;
-        ansDiv.innerHTML = `<span class="correct">Correct!</span>`;
-      } else {
-        ansDiv.innerHTML = `<span class="incorrect">Incorrect.</span> Correct answer: <b>${item.a}</b>`;
-      }
-    });
-    document.getElementById('score').textContent = `Score: ${correct} / ${current.length}`;
-  }
+  document.getElementById('showBtn').addEventListener('click', ()=>{
+    document.querySelectorAll('.blank').forEach(showAnswer);
+  });
 
-  document.getElementById('submitBtn').addEventListener('click', grade);
-  document.getElementById('retakeBtn').addEventListener('click', render);
-
-  render();
-})();
+  document.getElementById('resetBtn').addEventListener('click', ()=>{
+    document.querySelectorAll('.blank').forEach(clearOne);
+    document.getElementById('score').textContent = "";
+  });
 </script>
 </body>
 </html>
