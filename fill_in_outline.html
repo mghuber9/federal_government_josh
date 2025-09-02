@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chapter 2 Outline — Fill-in-the-Blank Practice</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 900px; margin: auto; padding: 20px; }
+    h1 { text-align: center; }
+    .question { margin: 16px 0; padding: 12px; border: 1px solid #ccc; border-radius: 6px; }
+    .question label { font-weight: bold; display: block; margin-bottom: 6px; }
+    input[type="text"] { width: 100%; padding: 6px; font-size: 1em; }
+    .controls { margin-top: 20px; text-align: center; }
+    button { padding: 10px 18px; margin: 5px; font-size: 1em; }
+    .correct { color: green; font-weight: bold; }
+    .incorrect { color: darkred; font-weight: bold; }
+    .answer { margin-top: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Chapter 2 Outline — Fill-in-the-Blank Practice</h1>
+  <div id="quiz"></div>
+  <div class="controls">
+    <button id="submitBtn">Submit</button>
+    <button id="retakeBtn">Retake</button>
+  </div>
+  <div id="score" class="score"></div>
+
+<script>
+(function(){
+  const BANK = [
+    {q: "Colonial grievances and British policies set the stage for __________.", a: "independence"},
+    {q: "Declaration of Independence: __________ rights, consent of the __________.", a: "natural, governed"},
+    {q: "Articles of Confederation: __________ legislature; weak executive.", a: "unicameral"},
+    {q: "No __________ power; no regulation of interstate commerce.", a: "taxation"},
+    {q: "__________’ Rebellion highlighted weaknesses of the Articles.", a: "Shays"},
+    {q: "__________ Compact (1620): early example of government by consent.", a: "Mayflower"},
+    {q: "Constitutional Convention (__________, 1787).", a: "Philadelphia"},
+    {q: "__________ Plan vs. __________ Plan.", a: "Virginia, New Jersey"},
+    {q: "__________ (Connecticut) Compromise: bicameral Congress.", a: "Great"},
+    {q: "The __________ Compromise counted enslaved persons for representation.", a: "Three-Fifths"},
+    {q: "__________ College elects the President.", a: "Electoral"},
+    {q: "Independent __________ established (Supreme Court).", a: "judiciary"},
+    {q: "Separation of __________ & Checks and Balances.", a: "powers"},
+    {q: "Judicial Review established by __________ v. Madison (1803).", a: "Marbury"},
+    {q: "The __________ of Rights: first ten amendments.", a: "Bill"},
+    {q: "Washington’s __________-term precedent.", a: "two"},
+    {q: "Key case: __________ v. Maryland (1819).", a: "McCulloch"},
+    {q: "Key case: Kelo v. City of __________ (2005).", a: "New London"}
+  ];
+
+  const N = 10; // number of questions per attempt
+  let current = [];
+
+  function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} }
+
+  function pick(){
+    const copy = BANK.slice();
+    shuffle(copy);
+    return copy.slice(0, Math.min(N, copy.length));
+  }
+
+  function render(){
+    current = pick();
+    const container = document.getElementById('quiz');
+    container.innerHTML = "";
+    current.forEach((item, idx)=>{
+      const q = document.createElement('div');
+      q.className = "question";
+      q.innerHTML = `<label for="q${idx}">${idx+1}. ${item.q}</label>
+                     <input type="text" id="q${idx}" /> 
+                     <div id="ans${idx}" class="answer"></div>`;
+      container.appendChild(q);
+    });
+    document.getElementById('score').textContent="";
+  }
+
+  function grade(){
+    let correct = 0;
+    current.forEach((item, idx)=>{
+      const val = document.getElementById(`q${idx}`).value.trim();
+      const ansDiv = document.getElementById(`ans${idx}`);
+      if (val.toLowerCase() === item.a.toLowerCase()) {
+        correct++;
+        ansDiv.innerHTML = `<span class="correct">Correct!</span>`;
+      } else {
+        ansDiv.innerHTML = `<span class="incorrect">Incorrect.</span> Correct answer: <b>${item.a}</b>`;
+      }
+    });
+    document.getElementById('score').textContent = `Score: ${correct} / ${current.length}`;
+  }
+
+  document.getElementById('submitBtn').addEventListener('click', grade);
+  document.getElementById('retakeBtn').addEventListener('click', render);
+
+  render();
+})();
+</script>
+</body>
+</html>
