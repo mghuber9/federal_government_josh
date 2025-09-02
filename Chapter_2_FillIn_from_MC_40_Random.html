@@ -17,7 +17,7 @@
 </head>
 <body>
   <h1>Chapter 2 — Study Guide Fill-in Quiz</h1>
-  <div class="sub">30 random items per attempt • Mirrors trimmed study-guide MC set</div>
+  <div class="sub">30 random items per attempt • Mirrors study-guide MC set</div>
   <div id="quiz"></div>
   <div class="controls">
     <button id="submitBtn">Submit</button>
@@ -29,7 +29,6 @@
 (function(){
   function esc(s){ return String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
-  // Trimmed, study-guide-aligned BANK (42 items)
   const BANK = [
     {q:"What is a constitution?", a:"The fundamental law that establishes government structure, powers, and limits"},
     {q:"What traditions of government existed in the colonies?", a:"Limited and representative government"},
@@ -70,56 +69,4 @@
     {q:"What is an initiative?", a:"Process letting citizens place laws on the ballot"},
     {q:"What is a referendum?", a:"Voters approve or reject laws passed by the legislature"},
     {q:"What is a recall?", a:"Voters remove an elected official before term ends"},
-    {q:"What does 'constitutional democratic republic' mean?", a:"Limited by law, with elections and representative institutions"},
-    {q:"What is bicameralism?", a:"A legislature with two chambers"},
-    {q:"Which body formally elects the President of the United States?", a:"The Electoral College"},
-    {q:"What does the Necessary and Proper Clause do?", a:"Gives Congress flexibility to carry out enumerated powers"}
-  ];
-
-  const N = 30; // number of random items per attempt
-  let current = [];
-
-  function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } }
-  function pick(){ const c = BANK.slice(); shuffle(c); return c.slice(0, Math.min(N, c.length)); }
-
-  function render(){
-    current = pick();
-    const container = document.getElementById('quiz');
-    container.innerHTML = "";
-    current.forEach((it, idx)=>{
-      const id='q'+idx;
-      const div = document.createElement('div');
-      div.className='question';
-      div.innerHTML = `<label for="${id}"><strong>${idx+1}.</strong> ${esc(it.q)}</label>`+
-                      `<textarea id="${id}" rows="2" placeholder="Type your answer..."></textarea>`;
-      container.appendChild(div);
-    });
-    document.getElementById('printBtn').style.display='none';
-  }
-
-  function grade(){
-    const container = document.getElementById('quiz');
-    const results = document.createElement('div');
-    results.innerHTML = '<h3>Results</h3>';
-    current.forEach((it, idx)=>{
-      const val = (document.getElementById('q'+idx).value||'').trim();
-      const block = document.createElement('div');
-      block.innerHTML = `<div><strong>${idx+1}.</strong> ${esc(it.q)}</div>`+
-                        `<div>Your answer: ${val?esc(val):'<em>(blank)</em>'}</div>`+
-                        `<div><strong>Correct:</strong> ${esc(it.a)}</div>`;
-      block.style.margin = '10px 0';
-      results.appendChild(block);
-    });
-    container.innerHTML='';
-    container.appendChild(results);
-    document.getElementById('printBtn').style.display='inline-block';
-    document.getElementById('printBtn').onclick = ()=>window.print();
-  }
-
-  document.getElementById('submitBtn').addEventListener('click', grade);
-  document.getElementById('retakeBtn').addEventListener('click', render);
-  render();
-})();
-</script>
-</body>
-</html>
+    {q:"What does 'constitutional democratic republic' mean?", a:"Limited by law, with elections and representative institutions"}
