@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Chapter 2 Vocabulary Quiz — 35 Random</title>
+  <title>Chapter 2 — Study Guide Vocabulary Quiz</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body { font-family: Arial, sans-serif; padding: 20px; max-width: 900px; margin: auto; }
@@ -19,8 +19,8 @@
   </style>
 </head>
 <body>
-  <h1>Chapter 2 — Vocabulary Quiz</h1>
-  <div class="sub">35 random items per attempt • Self-contained</div>
+  <h1>Chapter 2 — Study Guide Vocabulary Quiz</h1>
+  <div class="sub">30 random items per attempt • Self-contained</div>
   <div id="quiz"></div>
   <div class="controls">
     <button id="submitBtn">Submit</button>
@@ -30,35 +30,74 @@
 
 <script>
 (function() {
-  const BANK = [{"term": "Constitutionalism", "def": "The idea that government power is limited by a written, higher law that officials must obey."}, {"term": "Limited government", "def": "A system in which the powers of rulers are restricted by law to protect individual rights."}, {"term": "Rule of law", "def": "The principle that everyone, including government officials, is subject to the law."}, {"term": "Popular sovereignty", "def": "The doctrine that political authority ultimately comes from the people."}, {"term": "Republicanism", "def": "Government by elected representatives rather than direct vote on every law."}, {"term": "Separation of powers", "def": "The division of government authority among legislative, executive, and judicial branches."}, {"term": "Checks and balances", "def": "Each branch can limit the others to prevent concentration of power."}, {"term": "Constitutional Convention", "def": "The 1787 Philadelphia meeting originally called to revise the Articles but produced the U.S. Constitution."}, {"term": "Virginia Plan", "def": "Proposal favoring large states with representation based on population and a strong national government."}, {"term": "New Jersey Plan", "def": "Proposal favoring small states with equal representation for each state in a unicameral legislature."}, {"term": "Great (Connecticut) Compromise", "def": "Agreement creating a bicameral Congress: House by population and Senate with equal state representation."}, {"term": "Three-Fifths Compromise", "def": "Agreement to count three-fifths of enslaved persons for representation and taxation."}, {"term": "Bicameralism", "def": "A legislature divided into two chambers."}, {"term": "Electoral College", "def": "The body that formally elects the U.S. president and vice president."}, {"term": "Articles of Confederation", "def": "America’s first national charter with a weak central government."}, {"term": "Ratification", "def": "Formal approval of a constitution or amendment."}, {"term": "Federalists", "def": "Supporters of ratifying the Constitution and a stronger national government."}, {"term": "Anti-Federalists", "def": "Opponents of the Constitution who demanded a bill of rights."}, {"term": "Federalist No. 10", "def": "Madison’s essay arguing that a large republic helps control factions."}, {"term": "Federalist No. 51", "def": "Madison’s essay explaining separation of powers and checks and balances."}, {"term": "Bill of Rights", "def": "The first ten amendments protecting individual liberties."}, {"term": "Enumerated (expressed) powers", "def": "Powers specifically listed in the Constitution and granted to the national government."}, {"term": "Implied powers", "def": "Powers not stated but reasonably inferred from the Necessary and Proper Clause."}, {"term": "Inherent powers", "def": "Powers of a sovereign nation (e.g., foreign affairs) that are not dependent on the Constitution."}, {"term": "Reserved powers", "def": "Powers not delegated to the national government and reserved to the states (Tenth Amendment)."}, {"term": "Tenth Amendment", "def": "Reserves powers not given to the United States to the states or the people."}, {"term": "Necessary and Proper (Elastic) Clause", "def": "Gives Congress flexibility to carry out its enumerated powers."}, {"term": "Supremacy Clause", "def": "Makes the U.S. Constitution and federal laws the supreme law of the land."}, {"term": "Full Faith and Credit Clause", "def": "Requires states to honor the public acts, records, and judicial proceedings of other states."}, {"term": "Privileges and Immunities Clause", "def": "Prevents states from discriminating against citizens of other states."}, {"term": "Commerce Clause", "def": "Gives Congress power to regulate interstate and foreign trade."}, {"term": "Article V (amendment process)", "def": "Provides the formal procedures to propose and ratify constitutional amendments."}, {"term": "Amendment", "def": "A formal change or addition to the Constitution."}, {"term": "Judicial review", "def": "The power of courts to declare laws or executive actions unconstitutional."}, {"term": "Marbury v. Madison", "def": "The 1803 case that established judicial review."}, {"term": "Natural rights", "def": "Fundamental rights (e.g., life, liberty) believed to belong to all people by nature."}, {"term": "Social contract", "def": "The theory that people consent to form governments to protect their rights."}, {"term": "Consent of the governed", "def": "The idea that a government’s legitimacy comes from the people’s approval."}, {"term": "Madisonian model", "def": "A structure of government designed to control factions through separation of powers and checks and balances."}, {"term": "Republic", "def": "A system where citizens elect representatives to govern on their behalf."}, {"term": "Unitary system", "def": "A system in which most power is centralized in the national government."}, {"term": "Confederation", "def": "A system where constituent states retain sovereignty and the central authority is weak."}, {"term": "Writ of habeas corpus", "def": "A court order requiring officials to show legal cause for a person’s detention."}, {"term": "Ex post facto law", "def": "A law that retroactively criminalizes conduct; prohibited by the Constitution."}, {"term": "Bill of attainder", "def": "A legislative act that punishes an individual without a trial; prohibited by the Constitution."},
-               // Add to BANK in Chapter_2_Vocab_Quiz
-{"term": "Extradition Clause", "def": "Requires states to return fugitives charged with crimes to the state demanding them."},
-{"term": "Resulting powers", "def": "Powers that emerge from combining delegated and implied powers (e.g., printing paper money)."},
-{"term": "Contracts Clause", "def": "Prohibits states from impairing the obligation of contracts."},
-{"term": "Takings Clause", "def": "5th Amendment rule that private property cannot be taken for public use without just compensation."},
-{"term": "Mayflower Compact", "def": "1620 agreement by Pilgrims to obey self-chosen leaders, introducing government by consent."},
-                {"term":"Constitution","def":"The fundamental law that outlines how a government is structured, selects leaders, makes policy, and exercises lawful powers."},
-{"term":"Constitutional democratic republic","def":"A system that is constitutional (limited by law and rights), democratic (majority influence through elections), and a republic (multiple institutions checking each other)."},
-{"term":"Democracy (framers’ definition)","def":"A system where the majority has essentially unlimited power, even if it infringes on minority rights."},
-{"term":"Representative government","def":"A system where the people govern indirectly by choosing officials who make policy on their behalf."},
-{"term":"Liberty","def":"The principle that people are free to think and act as they choose so long as they do not unreasonably infringe on others."},
-{"term":"Grants of power","def":"Specific powers the Constitution gives the national government (e.g., to tax, declare war, regulate commerce)."},
-{"term":"Denials of power","def":"Constitutional prohibitions that limit government (e.g., no ex post facto laws; habeas corpus protections)."},
-{"term":"Separated institutions sharing power","def":"The U.S. arrangement where legislative, executive, and judicial powers overlap and can check and balance one another."},
-{"term":"Tyranny of the majority","def":"When an impassioned majority tramples the rights and interests of the minority."},
-{"term":"Electoral votes","def":"The votes cast by state-appointed electors that formally choose the president and vice president."},
-{"term":"Primary election (direct primary)","def":"An election in which voters, not party leaders, choose a party’s nominees for office."},
-{"term":"Initiative","def":"A process that lets citizens place proposed laws on the ballot by petition for voters to approve or reject."},
-{"term":"Popular referendum","def":"A process allowing voters to approve or reject a law passed by the legislature."},
-{"term":"Seventeenth Amendment","def":"1913 amendment providing for the direct popular election of U.S. senators."}
+  const BANK = [
+    {"term":"Limited government","def":"Government whose powers are restricted by law and institutional checks to protect liberty."},
+    {"term":"Representative government","def":"People govern indirectly by electing officials who make and enforce laws."},
+    {"term":"Social contract","def":"Theory that people consent to form government to secure their rights, and can alter it if it fails."},
+    {"term":"Inalienable (natural) rights","def":"Rights such as life and liberty that people possess by nature and cannot justly be taken away."},
+    {"term":"Articles of Confederation","def":"America’s first national charter creating a weak central government dependent on the states."},
+    {"term":"Weaknesses of the Articles","def":"No power to tax or regulate commerce, no executive/judiciary, supermajority rules, hard to amend."},
+    {"term":"Shays’ Rebellion","def":"1786–87 uprising by Massachusetts farmers that revealed national weakness and spurred calls to revise the Articles."},
+    {"term":"Constitutional Convention (1787)","def":"Philadelphia meeting called to revise the Articles but produced an entirely new Constitution."},
+    {"term":"Virginia Plan","def":"Large-state proposal for representation based on population and a stronger national government."},
+    {"term":"New Jersey Plan","def":"Small-state proposal for equal state representation in a unicameral legislature."},
+    {"term":"Great (Connecticut) Compromise","def":"Bicameral Congress: House by population; Senate with equal state representation."},
+    {"term":"Three-Fifths Compromise","def":"Counted three-fifths of enslaved persons for representation and taxation."},
+    {"term":"Declaration of Independence (significance)","def":"Announced separation and grounded legitimacy in natural rights and consent of the governed."},
+    {"term":"Framers’ primary goals","def":"Create a government strong enough to govern but limited enough to protect liberty and self-rule."},
+    {"term":"Grants of power","def":"Specific authorities given to the national government (e.g., to tax, regulate commerce, declare war)."},
+    {"term":"Denials of power","def":"Constitutional prohibitions (e.g., no bills of attainder or ex post facto laws; habeas corpus protected)."},
+    {"term":"Separation of powers","def":"Division of legislative, executive, and judicial powers into separate branches."},
+    {"term":"Checks and balances (separated institutions sharing power)","def":"Each branch can restrain the others, preventing concentration of power."},
+    {"term":"Judicial review","def":"Courts’ power to declare laws or executive actions unconstitutional."},
+    {"term":"Marbury v. Madison (1803)","def":"Supreme Court decision that established judicial review."},
+    {"term":"Republic (framers’ definition)","def":"System where the people elect representatives; not direct democracy."},
+    {"term":"Tyranny of the majority","def":"When a passionate majority tramples the rights/interests of the minority."},
+    {"term":"Bill of Rights","def":"First ten amendments added to safeguard individual liberties against national power."},
+    {"term":"Federalists","def":"Supported ratification and a stronger national government to solve collective problems."},
+    {"term":"Anti-Federalists","def":"Opposed the Constitution’s central power; demanded a bill of rights."},
+    {"term":"Ratification strategy","def":"State conventions, Federalist Papers advocacy, and a promise to add a bill of rights."},
+    {"term":"Federalist No. 10","def":"Madison’s argument that a large republic controls factions better than small republics."},
+    {"term":"Federalist No. 51","def":"Explains how separation of powers and checks and balances protect liberty."},
+    {"term":"Electoral College","def":"Body that formally elects the president and vice president."},
+    {"term":"Electoral votes","def":"Votes cast by state-appointed electors to choose the president and vice president."},
+    {"term":"Original selection—House","def":"Members elected directly by the people of each state."},
+    {"term":"Original selection—Senate","def":"Chosen by state legislatures before the Seventeenth Amendment."},
+    {"term":"Original selection—President","def":"Chosen indirectly through the Electoral College."},
+    {"term":"Original selection—Judges","def":"Nominated by the president and confirmed by the Senate."},
+    {"term":"Seventeenth Amendment","def":"1913 reform establishing direct popular election of U.S. senators."},
+    {"term":"Primary election (direct primary)","def":"Voters, not party leaders, choose a party’s nominees."},
+    {"term":"Jeffersonian democracy","def":"Expanded participation and emphasized agrarian republicanism and limited national power."},
+    {"term":"Jacksonian democracy","def":"Broadened white male suffrage and strengthened party/mass politics."},
+    {"term":"Progressive reforms","def":"Sought clean government and more direct democracy (primaries, initiative, referendum, recall)."},
+    {"term":"Initiative","def":"Process allowing citizens to place proposed laws on the ballot by petition."},
+    {"term":"Referendum","def":"Voters approve or reject laws passed by the legislature."},
+    {"term":"Recall","def":"Voters can remove an elected official before the end of the term."},
+    {"term":"Constitutional democratic republic","def":"Constitutional (limited by law/rights), democratic (elections), and republican (checks and representation)."},
+    {"term":"Rule of law","def":"Everyone—including officials—is subject to law applied fairly and consistently."},
+    {"term":"Consent of the governed","def":"Government derives its legitimacy from the people’s approval."},
+    {"term":"Bicameralism","def":"Legislature divided into two chambers (House and Senate)."},
+    {"term":"Enumerated (expressed) powers","def":"Powers specifically listed in the Constitution for the national government."},
+    {"term":"Implied powers","def":"Powers not stated but inferred through the Necessary and Proper Clause."},
+    {"term":"Necessary and Proper (Elastic) Clause","def":"Gives Congress flexibility to carry out enumerated powers."},
+    {"term":"Supremacy Clause","def":"Constitution and federal laws are the supreme law of the land."},
+    {"term":"Full Faith and Credit Clause","def":"States must recognize other states’ public acts, records, and judicial proceedings."},
+    {"term":"Privileges and Immunities Clause","def":"States cannot discriminate against citizens of other states in fundamental matters."},
+    {"term":"Commerce Clause","def":"Empowers Congress to regulate interstate and foreign trade."},
+    {"term":"Writ of habeas corpus","def":"Court order requiring officials to justify a person’s detention."},
+    {"term":"Bill of attainder","def":"Legislative punishment of a person or group without a trial; prohibited."},
+    {"term":"Ex post facto law","def":"Law that retroactively criminalizes conduct; prohibited."},
+    {"term":"Mayflower Compact","def":"1620 agreement to obey self-chosen leaders—an early example of consent and self-rule."}
+  ];
 
-
-               ];
-  const N = 35;
+  const N = 30; // number of random terms per attempt
   let current = [];
 
   function shuffle(a) {
-    for (let i=a.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+    for (let i=a.length-1;i>0;i--) { 
+      const j=Math.floor(Math.random()*(i+1)); 
+      [a[i],a[j]]=[a[j],a[i]]; 
+    }
   }
 
   function pick() {
@@ -73,10 +112,8 @@
     const container = document.getElementById('quiz');
     container.innerHTML = "";
     current.forEach((item, idx) => {
-      // make distractors from other definitions
       let choices = defs.slice();
       shuffle(choices);
-      // Ensure correct def present once
       choices = [item.def, ...BANK.filter(x=>x.term!==item.term).map(x=>x.def)];
       shuffle(choices);
       choices = Array.from(new Set(choices)).slice(0,4);
@@ -85,12 +122,10 @@
 
       const q = document.createElement('div');
       q.className = "question";
-      q.innerHTML = `<div><strong>${idx+1}.</strong> ${
-        'Define: <em>'+item.term+'</em>'
-      }</div>` + 
-      `<div class="answers">`+
-      choices.map((c,i)=>`<label><input type="radio" name="q${idx}" value="${i}"> ${c}</label>`).join("")+
-      `</div><div id="exp-${idx}" class="explain"></div>`;
+      q.innerHTML = `<div><strong>${idx+1}.</strong> Define: <em>${item.term}</em></div>` + 
+        `<div class="answers">`+
+        choices.map((c,i)=>`<label><input type="radio" name="q${idx}" value="${i}"> ${c}</label>`).join("")+
+        `</div><div id="exp-${idx}" class="explain"></div>`;
       q.dataset.correct = item.def;
       container.appendChild(q);
     });
@@ -104,7 +139,7 @@
       const exp = document.getElementById(`exp-${idx}`);
       if (!sel) return;
       const qDiv = exp.parentElement;
-      const selectedText = qDiv.querySelectorAll('label')[sel.value]?.textContent.trim().replace(/^\d+\)\s*/,'') || "";
+      const selectedText = qDiv.querySelectorAll('label')[sel.value]?.textContent.trim() || "";
       if (selectedText === item.def) {
         correct++;
         exp.className = "explain correct";
