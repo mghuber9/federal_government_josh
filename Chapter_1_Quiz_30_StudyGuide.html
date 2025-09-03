@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chapter 1 Quiz – 30 Questions (Study Guide Focus)</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 900px; margin: auto; line-height: 1.5; }
+    h1 { margin-bottom: 0; }
+    .sub { color: #555; margin-top: 4px; }
+    .question { margin: 16px 0; padding: 12px; border: 1px solid #eee; border-radius: 8px; }
+    .answers label { display: block; margin: 6px 0; cursor: pointer; }
+    .controls { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+    button { padding: 10px 16px; font-size: 15px; cursor: pointer; }
+    .correct-answer { color: green; font-weight: bold; }
+    .muted { color: #666; font-size: 0.95em; }
+  </style>
+</head>
+<body>
+  <h1>Chapter 1 Quiz – 30 Questions</h1>
+  <div class="sub">Aligned to the Chapter 1 Study Guide + vocabulary terms. Single-file (no external .js).</div>
+
+  <div id="quizContainer"></div>
+  <div class="controls">
+    <button id="submitBtn">Submit</button>
+    <button id="retryBtn" style="display:none;">Retry</button>
+  </div>
+
+<script>
+(function(){
+  // 30-question bank focused on study guide + key terms
+  var quizData = [
+    // Politics, Lasswell, Power vs Authority, Political Science
+    {"question":"Politics is best described as:","correct":"The process of resolving conflicts over values and resources","answers":["The enforcement of criminal law","The process of resolving conflicts over values and resources","A purely economic system","The study of history"]},
+    {"question":"Harold Lasswell famously defined politics as:","correct":"Who gets what, when, and how","answers":["The art of compromise","Who gets what, when, and how","Government by the people","A marketplace of ideas only"]},
+    {"question":"Which statement best distinguishes power from authority?","correct":"Power is influence; authority is the recognized right to exercise power","answers":["Power is legal; authority is illegal","Power is elections; authority is courts","Power is influence; authority is the recognized right to exercise power","They are identical in political science"]},
+    {"question":"Political science primarily aims to:","correct":"Systematically describe and analyze how politics and government work","answers":["Promote a single ideology","Systematically describe and analyze how politics and government work","Eliminate disagreements in society","Write laws for Congress"]},
+
+    // Critical thinking, obstacles
+    {"question":"Critical thinking in politics refers to:","correct":"Evaluating information and arguments to reach reasoned conclusions","answers":["Accepting the opinion of the majority","Evaluating information and arguments to reach reasoned conclusions","Memorizing facts without context","Only trusting news that agrees with your view"]},
+    {"question":"Which is an obstacle to critical thinking?","correct":"Confirmation bias","answers":["Peer review","Confirmation bias","Considering opposing viewpoints","Fact-checking claims"]},
+    {"question":"An “echo chamber” describes a setting where:","correct":"People mostly encounter views that reinforce what they already believe","answers":["People are forced to debate opponents","Media bans opinions","People mostly encounter views that reinforce what they already believe","Everyone must read peer‑reviewed research"]},
+    {"question":"Party (partisan) polarization is best described as:","correct":"Deepening conflict and division between major political parties","answers":["An increase in nonpartisan cooperation","Deepening conflict and division between major political parties","A rule requiring two parties to agree","A ban on third parties"]},
+
+    // Political culture + core ideals and limits
+    {"question":"Political culture refers to:","correct":"Widely shared, deep‑seated beliefs about politics and government","answers":["Election laws in a state","Widely shared, deep‑seated beliefs about politics and government","Daily news coverage","Court precedents only"]},
+    {"question":"Which set lists America’s core political ideals emphasized in Chapter 1?","correct":"Liberty, individualism, equality, self‑government","answers":["Federalism, capitalism, socialism","Liberty, individualism, equality, self‑government","Judicial review, separation of powers, bicameralism","Isolationism, nationalism, neutrality"]},
+    {"question":"Which statement about equality in American history is most accurate?","correct":"It is a core ideal, but its meaning and realization have been contested over time","answers":["It is a core ideal, fully achieved since 1776","It is not an American value","It only applies to economic outcomes","It is a core ideal, but its meaning and realization have been contested over time"]},
+
+    // Democracy, oligarchy, authoritarian/autocracy
+    {"question":"Democracy is a system in which:","correct":"The people govern, typically through elected representatives","answers":["Courts govern without elections","The people govern, typically through elected representatives","Only elites may vote","The military appoints leaders"]},
+    {"question":"Oligarchy is:","correct":"Control of government by a small group of elites","answers":["Control of government by a small group of elites","Rule by a single hereditary monarch","Majority rule through elections","Total absence of government"]},
+    {"question":"An authoritarian government is characterized by:","correct":"Repression of opponents, limits on freedoms, and constrained elections","answers":["Unlimited free speech and fair elections","Repression of opponents, limits on freedoms, and constrained elections","Direct lawmaking by all citizens","A weak executive and strong legislature"]},
+
+    // “Rules of the game”: democracy, constitutionalism, free market
+    {"question":"In Chapter 1, the phrase “rules of the game” refers to:","correct":"Democracy, constitutionalism, and a free‑market system","answers":["Democracy only","Democracy, constitutionalism, and a free‑market system","Federalism and judicial review","Military and police power"]},
+    {"question":"Constitutionalism means that:","correct":"Government power is limited by law and must respect individual rights","answers":["Elections are optional","Courts write the Constitution","Government power is unlimited in emergencies","Government power is limited by law and must respect individual rights"]},
+    {"question":"Legal action in U.S. politics refers to:","correct":"Using the courts to claim rights and seek remedies","answers":["Using the courts to claim rights and seek remedies","Campaigning for office","Lobbying legislators only","Conducting public-opinion polls"]},
+
+    // Distribution of power theories
+    {"question":"Majoritarianism holds that policy mostly reflects:","correct":"The preferences of the majority","answers":["The preferences of the majority","Only court decisions","Administrative agencies","Foreign governments"]},
+    {"question":"Pluralism suggests that policy outcomes are shaped chiefly by:","correct":"Competition among organized interest groups","answers":["Competition among organized interest groups","Random chance","A single national referendum","Presidential decrees only"]},
+    {"question":"Elitism emphasizes the power of:","correct":"A small number of well‑positioned, highly influential individuals","answers":["All citizens equally","The judiciary alone","State governments exclusively","A small number of well‑positioned, highly influential individuals"]},
+    {"question":"Corporate power refers to:","correct":"The influence of business firms on public policy","answers":["Any nonprofit activity","The influence of business firms on public policy","Only corporate philanthropy","The power of unions alone"]},
+
+    // Economy systems comparison
+    {"question":"A free‑market system is one in which:","correct":"Most economic transactions occur between private parties with limited government intervention","answers":["Government owns all major industries","Prices are set only by courts","Most economic transactions occur between private parties with limited government intervention","Only barter is allowed"]},
+    {"question":"Socialism (as contrasted in Chapter 1) generally involves:","correct":"Government ownership/control of key industries and a guaranteed basic standard of living","answers":["No regulation of industry","Government ownership/control of key industries and a guaranteed basic standard of living","Abolition of elections","Private ownership of all firms with zero taxes"]},
+    {"question":"Communism (as used in Chapter 1 examples) is:","correct":"Government ownership of nearly all major industries with centralized planning","answers":["A complete absence of government","Government ownership of nearly all major industries with centralized planning","Only progressive taxation","A synonym for pluralism"]},
+
+    // Public policies
+    {"question":"Public policies are:","correct":"The decisions and actions of government to address issues","answers":["Campaign promises","Media stories about politics","The decisions and actions of government to address issues","Court buildings and public parks"]},
+
+    // Obstacles and comparisons expansions
+    {"question":"Which example best illustrates confirmation bias?","correct":"Seeking out news that supports your view and dismissing opposing evidence","answers":["Actively comparing multiple sources","Seeking out news that supports your view and dismissing opposing evidence","Taking a university course","Reading original data and methods"]},
+    {"question":"Which scenario exemplifies legal action?","correct":"A citizen files a lawsuit alleging a violation of free speech rights","answers":["A citizen files a lawsuit alleging a violation of free speech rights","A party runs a TV ad","A mayor gives a speech","A pollster calls voters"]},
+    {"question":"In pluralism, which group tends to have the most influence on farm subsidies?","correct":"Organized agricultural interests","answers":["The general public equally","Organized agricultural interests","Foreign governments","The Supreme Court alone"]},
+    {"question":"Which statement about party polarization is accurate?","correct":"It has intensified in recent decades across many policy areas","answers":["It has disappeared since the 1950s","It has intensified in recent decades across many policy areas","It only exists in local politics","It means parties are merging into one"]},
+    {"question":"Which best captures the chapter’s point about the limits of core ideals?","correct":"Ideals guide the nation but have often been imperfectly realized in practice","answers":["Ideals are irrelevant to policy","Ideals guide the nation but have often been imperfectly realized in practice","Ideals eliminate political conflict","Ideals always produce identical outcomes in every state"]},
+    {"question":"Which is the clearest example of authority (not just power)?","correct":"A judge issuing a sentence according to law","answers":["A judge issuing a sentence according to law","A celebrity endorsing a candidate","A lobbyist funding an ad campaign","A protest drawing a crowd"]}
+  ];
+
+  var currentQuiz = quizData.slice(); // all 30, fixed
+
+  function shuffle(array) {
+    for (var i = array.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = array[i]; array[i] = array[j]; array[j] = t;
+    }
+  }
+
+  function loadQuiz() {
+    var container = document.getElementById('quizContainer');
+    if (!container) return;
+    container.innerHTML = '';
+
+    // (Optional) randomize answer order per question, but keep all 30 questions
+    currentQuiz.forEach(function(item, index) {
+      var answers = item.answers.slice();
+      shuffle(answers);
+
+      var qDiv = document.createElement('div');
+      qDiv.className = 'question';
+      qDiv.innerHTML = '<p><strong>' + (index + 1) + '. ' + item.question + '</strong></p>';
+
+      var answersDiv = document.createElement('div');
+      answersDiv.className = 'answers';
+
+      answers.forEach(function(answer) {
+        var id = 'q' + index + '_' + Math.random().toString(36).slice(2,7);
+        var label = document.createElement('label');
+        label.setAttribute('for', id);
+
+        var input = document.createElement('input');
+        input.id = id;
+        input.type = 'radio';
+        input.name = 'q' + index;
+        input.value = answer;
+
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(' ' + answer));
+        answersDiv.appendChild(label);
+      });
+
+      qDiv.appendChild(answersDiv);
+      container.appendChild(qDiv);
+    });
+  }
+
+  function onSubmit() {
+    var score = 0;
+    var missed = [];
+    currentQuiz.forEach(function(item, index) {
+      var selected = document.querySelector('input[name="q' + index + '"]:checked');
+      if (selected && selected.value === item.correct) {
+        score++;
+      } else {
+        missed.push({ question: item.question, correct: item.correct });
+      }
+    });
+
+    var container = document.getElementById('quizContainer');
+    container.innerHTML = '<h2>Your Score: ' + score + ' / ' + currentQuiz.length + '</h2>';
+
+    if (missed.length > 0) {
+      container.innerHTML += '<h3>You missed the following questions:</h3>';
+      missed.forEach(function(item, i) {
+        container.innerHTML += '<div class="question"><p><strong>' + (i + 1) + '. ' + item.question + '</strong></p><p class="correct-answer">Correct answer: ' + item.correct + '</p></div>';
+      });
+      container.innerHTML += '<p class="muted">Tip: Review the Chapter 1 vocabulary and the study guide explanations.</p>';
+    } else {
+      container.innerHTML += '<p><strong>Perfect score! Great job!</strong></p>';
+    }
+
+    document.getElementById('submitBtn').style.display = 'none';
+    document.getElementById('retryBtn').style.display = 'inline-block';
+  }
+
+  function onRetry() {
+    document.getElementById('submitBtn').style.display = 'inline-block';
+    document.getElementById('retryBtn').style.display = 'none';
+    loadQuiz();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    loadQuiz();
+    document.getElementById('submitBtn').addEventListener('click', onSubmit);
+    document.getElementById('retryBtn').addEventListener('click', onRetry);
+  });
+})();
+</script>
+</body>
+</html>
