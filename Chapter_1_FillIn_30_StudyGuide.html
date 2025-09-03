@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chapter 1 – Fill-in-the-Blank (30, from Study Guide MC)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 900px; margin: auto; line-height: 1.5; }
+    h1 { margin: 0 0 4px 0; }
+    .sub { color: #555; margin: 0 0 16px 0; }
+    .note { background: #f6f8fa; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; margin-bottom: 16px; }
+    .question { margin-bottom: 16px; }
+    .question label { display: block; font-weight: bold; margin-bottom: 6px; }
+    .question textarea { width: 100%; padding: 8px; font-size: 15px; }
+    .controls { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+    button { padding: 10px 16px; font-size: 16px; }
+    .result { margin-bottom: 16px; }
+    .result .correct { color: green; font-weight: bold; }
+    .result .user { color: #333; }
+    .muted { color: #666; font-size: 0.95em; }
+  </style>
+</head>
+<body>
+  <h1>Chapter 1 – Fill-in-the-Blank (30 Questions)</h1>
+  <div class="sub">Aligned 1:1 with the Study Guide multiple-choice quiz bank.</div>
+  <div class="note">Type your answers. On submit, your answer will be shown next to the correct answer for self‑grading.</div>
+
+  <div id="quizContainer"></div>
+  <div class="controls">
+    <button id="submitBtn">Submit</button>
+    <button id="printBtn" style="display:none">Print Results</button>
+    <button id="retakeBtn" style="display:none">Retake</button>
+  </div>
+
+<script>
+(function(){
+  function esc(s){ return String(s).replace(/[&<>"']/g, function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];}); }
+
+  // Derived from the Study Guide-focused 30 MC questions
+  var bank = [
+    {"q":"Politics is best described as:","a":"The process of resolving conflicts over values and resources"},
+    {"q":"Harold Lasswell famously defined politics as:","a":"Who gets what, when, and how"},
+    {"q":"Which statement best distinguishes power from authority?","a":"Power is influence; authority is the recognized right to exercise power"},
+    {"q":"Political science primarily aims to:","a":"Systematically describe and analyze how politics and government work"},
+
+    {"q":"Critical thinking in politics refers to:","a":"Evaluating information and arguments to reach reasoned conclusions"},
+    {"q":"Which is an obstacle to critical thinking?","a":"Confirmation bias"},
+    {"q":"An “echo chamber” describes a setting where:","a":"People mostly encounter views that reinforce what they already believe"},
+    {"q":"Party (partisan) polarization is best described as:","a":"Deepening conflict and division between major political parties"},
+
+    {"q":"Political culture refers to:","a":"Widely shared, deep‑seated beliefs about politics and government"},
+    {"q":"Which set lists America’s core political ideals emphasized in Chapter 1?","a":"Liberty, individualism, equality, self‑government"},
+    {"q":"Which statement about equality in American history is most accurate?","a":"It is a core ideal, but its meaning and realization have been contested over time"},
+
+    {"q":"Democracy is a system in which:","a":"The people govern, typically through elected representatives"},
+    {"q":"Oligarchy is:","a":"Control of government by a small group of elites"},
+    {"q":"An authoritarian government is characterized by:","a":"Repression of opponents, limits on freedoms, and constrained elections"},
+
+    {"q":"In Chapter 1, the phrase “rules of the game” refers to:","a":"Democracy, constitutionalism, and a free‑market system"},
+    {"q":"Constitutionalism means that:","a":"Government power is limited by law and must respect individual rights"},
+    {"q":"Legal action in U.S. politics refers to:","a":"Using the courts to claim rights and seek remedies"},
+
+    {"q":"Majoritarianism holds that policy mostly reflects:","a":"The preferences of the majority"},
+    {"q":"Pluralism suggests that policy outcomes are shaped chiefly by:","a":"Competition among organized interest groups"},
+    {"q":"Elitism emphasizes the power of:","a":"A small number of well‑positioned, highly influential individuals"},
+    {"q":"Corporate power refers to:","a":"The influence of business firms on public policy"},
+
+    {"q":"A free‑market system is one in which:","a":"Most economic transactions occur between private parties with limited government intervention"},
+    {"q":"Socialism (as contrasted in Chapter 1) generally involves:","a":"Government ownership/control of key industries and a guaranteed basic standard of living"},
+    {"q":"Communism (as used in Chapter 1 examples) is:","a":"Government ownership of nearly all major industries with centralized planning"},
+
+    {"q":"Public policies are:","a":"The decisions and actions of government to address issues"},
+
+    {"q":"Which example best illustrates confirmation bias?","a":"Seeking out news that supports your view and dismissing opposing evidence"},
+    {"q":"Which scenario exemplifies legal action?","a":"A citizen files a lawsuit alleging a violation of free speech rights"},
+    {"q":"In pluralism, which group tends to have the most influence on farm subsidies?","a":"Organized agricultural interests"},
+    {"q":"Which statement about party polarization is accurate?","a":"It has intensified in recent decades across many policy areas"},
+    {"q":"Which best captures the chapter’s point about the limits of core ideals?","a":"Ideals guide the nation but have often been imperfectly realized in practice"},
+    {"q":"Which is the clearest example of authority (not just power)?","a":"A judge issuing a sentence according to law"}
+  ];
+
+  function render(){
+    var container = document.getElementById('quizContainer');
+    container.innerHTML = '';
+    bank.forEach(function(it, idx){
+      var q = document.createElement('div');
+      q.className = 'question';
+      var id = 'q' + idx;
+      q.innerHTML = '<label for="'+id+'">'+esc((idx+1)+'. '+it.q)+'</label>' +
+                    '<textarea id="'+id+'" rows="2" placeholder="Type your answer..."></textarea>';
+      container.appendChild(q);
+    });
+  }
+
+  function onSubmit(){
+    var container = document.getElementById('quizContainer');
+    var results = document.createElement('div');
+    results.innerHTML = '<h3>Results</h3><p class="muted">Compare your answer with the correct answer below. Self‑grade as needed.</p>';
+
+    bank.forEach(function(it, idx){
+      var val = (document.getElementById('q'+idx).value || '').trim();
+      var r = document.createElement('div');
+      r.className = 'result';
+      r.innerHTML = '<div><strong>'+esc((idx+1)+'. '+it.q)+'</strong></div>' +
+                    '<div class="user">Your answer: ' + (val ? esc(val) : '<em>(blank)</em>') + '</div>' +
+                    '<div class="correct">Correct answer: ' + esc(it.a) + '</div>';
+      results.appendChild(r);
+    });
+    container.innerHTML = '';
+    container.appendChild(results);
+
+    document.getElementById('submitBtn').style.display = 'none';
+    var pb = document.getElementById('printBtn');
+    pb.style.display = 'inline-block';
+    pb.onclick = function(){ window.print(); };
+
+    var rb = document.getElementById('retakeBtn');
+    rb.style.display = 'inline-block';
+    rb.onclick = function(){
+      document.getElementById('submitBtn').style.display = 'inline-block';
+      pb.style.display = 'none';
+      rb.style.display = 'none';
+      render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    render();
+    document.getElementById('submitBtn').addEventListener('click', onSubmit);
+  });
+})();
+</script>
+</body>
+</html>
