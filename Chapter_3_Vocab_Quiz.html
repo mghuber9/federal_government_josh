@@ -20,7 +20,7 @@
 </head>
 <body>
   <h1>Chapter 3 — Vocabulary Quiz</h1>
-  <div class="sub">Study Guide aligned • Up to 30 random items per attempt</div>
+  <div class="sub">27 study-guide aligned terms • All items shown each attempt</div>
 
   <div id="quiz"></div>
   <div class="controls">
@@ -31,7 +31,6 @@
 
   <script>
   (function(){
-    // === Study Guide–Aligned BANK ===
     const BANK = [
       { term: "Federalism", def: "System where authority is divided between a national government and state governments." },
       { term: "Unitary system", def: "System in which most or all power resides in the national government; local units mainly administer." },
@@ -62,8 +61,7 @@
       { term: "Judicial review (role in federalism)", def: "Courts interpret federalism boundaries (e.g., McCulloch, Gibbons, Dred Scott)." }
     ];
 
-    // Show up to 30 per attempt (or all if fewer than 30)
-    const N = Math.min(30, BANK.length);
+    const N = BANK.length; // show all 27 terms
 
     let current = [];
 
