@@ -1,38 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chapter 3 — Vocabulary Quiz (Study Guide Aligned)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 900px; margin: auto; }
+    h1 { margin-bottom: 0; }
+    .sub { color:#555; margin: 4px 0 16px; }
+    .question { margin: 16px 0; padding: 12px; border: 1px solid #eee; border-radius: 8px; }
+    .answers label { display: block; margin: 6px 0; cursor: pointer; }
+    .controls { display:flex; gap:10px; flex-wrap:wrap; margin-top: 16px; }
+    button { padding:10px 16px; }
+    .score { font-weight: bold; margin-top: 10px; }
+    .explain { font-size:.95em; margin-top:6px; display:none; }
+    .correct { color: #0a7a0a; }
+    .incorrect { color: #b00020; }
+  </style>
+</head>
+<body>
+  <h1>Chapter 3 — Vocabulary Quiz</h1>
+  <div class="sub">Study Guide aligned • Up to 30 random items per attempt</div>
 
-<!DOCTYPE html><html lang="en"><head>
-<meta charset="UTF-8"><title>Chapter 3 Vocabulary Quiz — 35 Random</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-body { font-family: Arial, sans-serif; padding: 20px; max-width: 900px; margin: auto; }
-h1 { margin-bottom: 0; } .sub { color:#555; margin: 4px 0 16px; }
-.question { margin: 16px 0; padding: 12px; border: 1px solid #eee; border-radius: 8px; }
-.answers label { display: block; margin: 6px 0; cursor: pointer; }
-.controls { display:flex; gap:10px; flex-wrap:wrap; margin-top: 16px; } button { padding:10px 16px; }
-.score { font-weight: bold; margin-top: 10px; } .explain { font-size:.95em; margin-top:6px; display:none; }
-.correct { color: #0a7a0a; } .incorrect { color: #b00020; }
-</style></head><body>
-<h1>Chapter 3 — Vocabulary Quiz</h1><div class="sub">35 random items per attempt • Self-contained</div>
-<div id="quiz"></div><div class="controls"><button id="submitBtn">Submit</button><button id="retakeBtn">Retake</button></div>
-<div id="score" class="score"></div>
-<script>(function(){
-const BANK = [{"term": "Federalism", "def": "A system of government in which authority is divided between a national government and regional governments (states)."}, {"term": "Unitary system", "def": "A system in which all or most power resides in the national government; lower levels are administrative only."}, {"term": "Confederation", "def": "A system where states retain sovereignty and the central authority has limited powers."}, {"term": "Enumerated (expressed) powers", "def": "Powers explicitly granted to the national government in the Constitution."}, {"term": "Implied powers", "def": "Powers not expressly stated but inferred from the Necessary and Proper Clause."}, {"term": "Reserved powers", "def": "Powers not delegated to the national government and reserved to the states (Tenth Amendment)."}, {"term": "Concurrent powers", "def": "Powers shared by national and state governments (e.g., taxation)."}, {"term": "Inherent powers", "def": "Powers that naturally belong to any sovereign government, such as foreign affairs."}, {"term": "Police powers", "def": "State authority to regulate health, safety, morals, and welfare."}, {"term": "Necessary and Proper (Elastic) Clause", "def": "Grants Congress flexibility to carry out its enumerated powers."}, {"term": "Supremacy Clause", "def": "Establishes that the Constitution and federal laws are supreme over state laws."}, {"term": "Commerce Clause", "def": "Gives Congress power to regulate interstate and foreign commerce."}, {"term": "Full Faith and Credit Clause", "def": "Requires each state to recognize public acts, records, and judicial proceedings of other states."}, {"term": "Privileges and Immunities Clause", "def": "Prevents states from discriminating against citizens of other states."}, {"term": "Extradition", "def": "The process by which one state surrenders an accused or convicted person to another state."}, {"term": "Interstate compact", "def": "An agreement among states that must receive congressional consent."}, {"term": "Dual federalism", "def": "A doctrine holding that national and state powers are clearly distinct (layer-cake federalism)."}, {"term": "Cooperative federalism", "def": "A system in which national and state governments share responsibilities (marble-cake federalism)."}, {"term": "New Federalism (devolution)", "def": "A movement to shift power back to the states through block grants and deregulation."}, {"term": "Devolution", "def": "Transferring responsibilities from the national government to states and localities."}, {"term": "Preemption", "def": "Federal law or regulation overriding state or local actions in certain areas."}, {"term": "Unfunded mandate", "def": "A federal requirement that states take certain actions without receiving adequate federal funds."}, {"term": "Grants-in-aid", "def": "General term for federal funds provided to states and localities."}, {"term": "Categorical grants", "def": "Federal funds for specific purposes with conditions attached."}, {"term": "Block grants", "def": "Federal funds provided for broad policy areas with fewer restrictions."}, {"term": "Revenue sharing", "def": "Federal money distributed to state and local governments with minimal restrictions (mostly discontinued)."}, {"term": "Conditions of aid", "def": "Requirements attached to federal grants that states must meet to receive the funds."}, {"term": "Fiscal federalism", "def": "The use of grants, spending, and taxation to influence state policy."}, {"term": "McCulloch v. Maryland (1819)", "def": "Upheld implied powers and federal supremacy; Maryland could not tax the national bank."}, {"term": "Gibbons v. Ogden (1824)", "def": "Broad interpretation of the Commerce Clause; federal power over interstate commerce."}, {"term": "United States v. Lopez (1995)", "def": "Limited Commerce Clause power; gun possession near schools not economic activity."}, {"term": "NFIB v. Sebelius (2012)", "def": "Upheld most of the ACA; limited federal coercion of states via Medicaid expansion."}, {"term": "Printz v. United States (1997)", "def": "Anti-commandeering principle; federal government cannot require state officials to enforce federal law."}, {"term": "Nullification", "def": "The (discredited) theory that states can invalidate federal laws deemed unconstitutional."}, {"term": "Home rule", "def": "Authority of a local government to govern itself with limited state interference."}, {"term": "Dillon’s Rule", "def": "Doctrine that local governments are creatures of the state and possess only powers granted by the state."}];
-const N = 35; let current = [];
-function shuffle(a){ for (let i=a.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } }
-function pick(){ const c=BANK.slice(); shuffle(c); return c.slice(0, Math.min(N, c.length)); }
-function render(){ current = pick(); const container = document.getElementById('quiz'); container.innerHTML='';
-current.forEach((item, idx)=>{ let choices=[item.def]; const others=BANK.filter(x=>x.term!==item.term).map(x=>x.def);
-shuffle(others); choices = choices.concat(others.slice(0,3)); shuffle(choices);
-const q=document.createElement('div'); q.className='question';
-q.innerHTML = `<div><strong>${idx+1}.</strong> Define: <em>${item.term}</em></div>`+
-              `<div class="answers">`+choices.map((c,i)=>`<label><input type="radio" name="q${idx}" value="${c}"> ${c}</label>`).join('')+`</div>`+
-              `<div id="exp-${idx}" class="explain"></div>`;
-q.dataset.correct=item.def; container.appendChild(q); }); document.getElementById('score').textContent=''; }
-function grade(){ let correct=0; current.forEach((item, idx)=>{ const sel=document.querySelector(\`input[name="q${idx}"]:checked\`);
-const exp=document.getElementById(\`exp-${idx}\`); if(!sel) return;
-if (sel.value===item.def) { correct++; exp.className='explain correct'; exp.textContent='Correct!'; }
-else { exp.className='explain incorrect'; exp.innerHTML='Incorrect. Correct definition: <em>'+item.def+'</em>'; } exp.style.display='block'; });
-document.getElementById('score').textContent = `Score: ${correct} / ${current.length}`; }
-document.getElementById('submitBtn').addEventListener('click', grade);
-document.getElementById('retakeBtn').addEventListener('click', render);
-render();
-})();</script></body></html>
+  <div id="quiz"></div>
+  <div class="controls">
+    <button id="submitBtn">Submit</button>
+    <button id="retakeBtn">Retake</button>
+  </div>
+  <div id="score" class="score"></div>
+
+  <script>
+  (function(){
+    // === Study Guide–Aligned BANK ===
+    const BANK = [
+      { term: "Federalism", def: "System where authority is divided between a national government and state governments." },
+      { term: "Unitary system", def: "System in which most or all power resides in the national government; local units mainly administer." },
+      { term: "Confederacy (Confederation)", def: "Loose union of sovereign states with a weak central authority." },
+      { term: "Sovereignty", def: "Ultimate governing authority; in the U.S. shared between national and state governments." },
+      { term: "Enumerated (expressed) powers", def: "Powers explicitly granted to the national government by the Constitution." },
+      { term: "Implied powers / Necessary and Proper (Elastic) Clause", def: "Powers inferred as necessary to carry out enumerated powers." },
+      { term: "Reserved powers (Tenth Amendment)", def: "Powers not delegated to the national government, reserved to the states or people." },
+      { term: "Supremacy Clause", def: "Constitution and federal laws are supreme over conflicting state laws." },
+      { term: "Concurrent powers", def: "Powers shared by national and state governments (e.g., taxation, courts)." },
+      { term: "Commerce Clause", def: "Grants Congress authority to regulate interstate and foreign commerce." },
+      { term: "Federalists (arguments)", def: "Supported stronger national authority to solve collective problems and prevent factionalism." },
+      { term: "Anti-Federalists (arguments)", def: "Warned centralized power threatened liberty; favored stronger states and safeguards." },
+      { term: "Federalist No. 10", def: "Madison’s defense of a large republic to control factions via pluralism and representation." },
+      { term: "McCulloch v. Maryland (1819)", def: "Affirmed implied powers and federal supremacy; states cannot tax federal instruments." },
+      { term: "Gibbons v. Ogden (1824)", def: "Broad reading of the Commerce Clause; federal authority over interstate commerce." },
+      { term: "Dred Scott v. Sandford (1857)", def: "Limited national authority; denied citizenship to enslaved people; intensified sectional conflict." },
+      { term: "Dual federalism (layer cake)", def: "Clear separation of national and state powers; narrow federal role (19th–early 20th c.)." },
+      { term: "Cooperative federalism (marble cake)", def: "Intermingled responsibilities; grants and joint programs (New Deal onward)." },
+      { term: "Great Depression & New Deal", def: "Crisis and programs that expanded federal role in the economy and welfare." },
+      { term: "Great Society (LBJ)", def: "1960s programs expanding federal involvement in civil rights, poverty, health, education." },
+      { term: "Devolution", def: "Shift of responsibilities from national to state/local governments." },
+      { term: "Fiscal federalism", def: "Use of taxing/spending and grants to influence state policy." },
+      { term: "Grants-in-aid", def: "Federal funds given to states/localities for policy goals." },
+      { term: "Categorical grants", def: "Federal funds for specific purposes with conditions attached." },
+      { term: "Block grants", def: "Federal funds for broad policy areas with fewer restrictions." },
+      { term: "Nationalization", def: "Trend of national policy responsibilities expanding over time." },
+      { term: "Judicial review (role in federalism)", def: "Courts interpret federalism boundaries (e.g., McCulloch, Gibbons, Dred Scott)." }
+    ];
+
+    // Show up to 30 per attempt (or all if fewer than 30)
+    const N = Math.min(30, BANK.length);
+
+    let current = [];
+
+    function shuffle(a){
+      for (let i=a.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [a[i],a[j]]=[a[j],a[i]];
+      }
+    }
+
+    function pick(){
+      const c = BANK.slice();
+      shuffle(c);
+      return c.slice(0, N);
+    }
+
+    function render(){
+      current = pick();
+      const container = document.getElementById('quiz');
+      container.innerHTML = '';
+      current.forEach((item, idx) => {
+        let choices = [item.def];
+        const others = BANK.filter(x => x.term !== item.term).map(x => x.def);
+        shuffle(others);
+        choices = choices.concat(others.slice(0,3));
+        shuffle(choices);
+
+        const q = document.createElement('div');
+        q.className = 'question';
+        q.innerHTML =
+          `<div><strong>${idx+1}.</strong> Define: <em>${item.term}</em></div>` +
+          `<div class="answers">` +
+            choices.map((c,i)=>`<label><input type="radio" name="q${idx}" value="${c}"> ${c}</label>`).join('') +
+          `</div>` +
+          `<div id="exp-${idx}" class="explain"></div>`;
+        q.dataset.correct = item.def;
+        container.appendChild(q);
+      });
+      document.getElementById('score').textContent = '';
+    }
+
+    function grade(){
+      let correct = 0;
+      current.forEach((item, idx) => {
+        const sel = document.querySelector(`input[name="q${idx}"]:checked`);
+        const exp = document.getElementById(`exp-${idx}`);
+        if (!sel) return;
+        if (sel.value === item.def) {
+          correct++;
+          exp.className = 'explain correct';
+          exp.textContent = 'Correct!';
+        } else {
+          exp.className = 'explain incorrect';
+          exp.innerHTML = 'Incorrect. Correct definition: <em>' + item.def + '</em>';
+        }
+        exp.style.display = 'block';
+      });
+      document.getElementById('score').textContent = `Score: ${correct} / ${current.length}`;
+    }
+
+    document.getElementById('submitBtn').addEventListener('click', grade);
+    document.getElementById('retakeBtn').addEventListener('click', render);
+    render();
+  })();
+  </script>
+</body>
+</html>
