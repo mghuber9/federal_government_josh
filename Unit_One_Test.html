@@ -215,7 +215,11 @@
       else{exp.className='explain incorrect';exp.innerHTML='Incorrect. Correct answer: <em>'+q.dataset.correct+'</em>';}
       exp.style.display='block';
     });
-    document.getElementById('score').textContent=`Score: ${correct} / 50`;
+    
+    const percent = ((correct / 50) * 100).toFixed(1);
+document.getElementById('score').textContent =
+  `Score: ${correct} / 50  (${percent}%)`;
+
   }
 
   document.getElementById('submitBtn').addEventListener('click', grade);
