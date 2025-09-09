@@ -32,42 +32,42 @@
 (function(){
   'use strict';
 
-  // ---- Chapter 1 (converted to {q,a,choices}) ----
+  // -------- Chapter 1 (30) --------
   const CH1 = [
-    {q:"Politics is best described as:",a:"The process of resolving conflicts over values and resources",choices:["The enforcement of criminal law","The process of resolving conflicts over values and resources","A purely economic system","The study of history"]},
-    {q:"Harold Lasswell famously defined politics as:",a:"Who gets what, when, and how",choices:["The art of compromise","Who gets what, when, and how","Government by the people","A marketplace of ideas only"]},
-    {q:"Which statement best distinguishes power from authority?",a:"Power is influence; authority is the recognized right to exercise power",choices:["Power is legal; authority is illegal","Power is elections; authority is courts","Power is influence; authority is the recognized right to exercise power","They are identical in political science"]},
-    {q:"Political science primarily aims to:",a:"Systematically describe and analyze how politics and government work",choices:["Promote a single ideology","Systematically describe and analyze how politics and government work","Eliminate disagreements in society","Write laws for Congress"]},
-    {q:"Critical thinking in politics refers to:",a:"Evaluating information and arguments to reach reasoned conclusions",choices:["Accepting the opinion of the majority","Evaluating information and arguments to reach reasoned conclusions","Memorizing facts without context","Only trusting news that agrees with your view"]},
-    {q:"Which is an obstacle to critical thinking?",a:"Confirmation bias",choices:["Peer review","Confirmation bias","Considering opposing viewpoints","Fact-checking claims"]},
-    {q:"An “echo chamber” describes a setting where:",a:"People mostly encounter views that reinforce what they already believe",choices:["People are forced to debate opponents","Media bans opinions","People mostly encounter views that reinforce what they already believe","Everyone must read peer-reviewed research"]},
-    {q:"Party (partisan) polarization is best described as:",a:"Deepening conflict and division between major political parties",choices:["An increase in nonpartisan cooperation","Deepening conflict and division between major political parties","A rule requiring two parties to agree","A ban on third parties"]},
-    {q:"Political culture refers to:",a:"Widely shared, deep-seated beliefs about politics and government",choices:["Election laws in a state","Widely shared, deep-seated beliefs about politics and government","Daily news coverage","Court precedents only"]},
-    {q:"Which set lists America’s core political ideals emphasized in Chapter 1?",a:"Liberty, individualism, equality, self-government",choices:["Federalism, capitalism, socialism","Liberty, individualism, equality, self-government","Judicial review, separation of powers, bicameralism","Isolationism, nationalism, neutrality"]},
-    {q:"Which statement about equality in American history is most accurate?",a:"It is a core ideal, but its meaning and realization have been contested over time",choices:["It is a core ideal, fully achieved since 1776","It is not an American value","It only applies to economic outcomes","It is a core ideal, but its meaning and realization have been contested over time"]},
-    {q:"Democracy is a system in which:",a:"The people govern, typically through elected representatives",choices:["Courts govern without elections","The people govern, typically through elected representatives","Only elites may vote","The military appoints leaders"]},
-    {q:"Oligarchy is:",a:"Control of government by a small group of elites",choices:["Control of government by a small group of elites","Rule by a single hereditary monarch","Majority rule through elections","Total absence of government"]},
-    {q:"An authoritarian government is characterized by:",a:"Repression of opponents, limits on freedoms, and constrained elections",choices:["Unlimited free speech and fair elections","Repression of opponents, limits on freedoms, and constrained elections","Direct lawmaking by all citizens","A weak executive and strong legislature"]},
-    {q:"In Chapter 1, the phrase “rules of the game” refers to:",a:"Democracy, constitutionalism, and a free-market system",choices:["Democracy only","Democracy, constitutionalism, and a free-market system","Federalism and judicial review","Military and police power"]},
-    {q:"Constitutionalism means that:",a:"Government power is limited by law and must respect individual rights",choices:["Elections are optional","Courts write the Constitution","Government power is unlimited in emergencies","Government power is limited by law and must respect individual rights"]},
-    {q:"Legal action in U.S. politics refers to:",a:"Using the courts to claim rights and seek remedies",choices:["Using the courts to claim rights and seek remedies","Campaigning for office","Lobbying legislators only","Conducting public-opinion polls"]},
-    {q:"Majoritarianism holds that policy mostly reflects:",a:"The preferences of the majority",choices:["The preferences of the majority","Only court decisions","Administrative agencies","Foreign governments"]},
-    {q:"Pluralism suggests that policy outcomes are shaped chiefly by:",a:"Competition among organized interest groups",choices:["Competition among organized interest groups","Random chance","A single national referendum","Presidential decrees only"]},
-    {q:"Elitism emphasizes the power of:",a:"A small number of well-positioned, highly influential individuals",choices:["All citizens equally","The judiciary alone","State governments exclusively","A small number of well-positioned, highly influential individuals"]},
-    {q:"Corporate power refers to:",a:"The influence of business firms on public policy",choices:["Any nonprofit activity","The influence of business firms on public policy","Only corporate philanthropy","The power of unions alone"]},
-    {q:"A free-market system is one in which:",a:"Most economic transactions occur between private parties with limited government intervention",choices:["Government owns all major industries","Prices are set only by courts","Most economic transactions occur between private parties with limited government intervention","Only barter is allowed"]},
-    {q:"Socialism (as contrasted in Chapter 1) generally involves:",a:"Government ownership/control of key industries and a guaranteed basic standard of living",choices:["No regulation of industry","Government ownership/control of key industries and a guaranteed basic standard of living","Abolition of elections","Private ownership of all firms with zero taxes"]},
-    {q:"Communism (as used in Chapter 1 examples) is:",a:"Government ownership of nearly all major industries with centralized planning",choices:["A complete absence of government","Government ownership of nearly all major industries with centralized planning","Only progressive taxation","A synonym for pluralism"]},
-    {q:"Public policies are:",a:"The decisions and actions of government to address issues",choices:["Campaign promises","Media stories about politics","The decisions and actions of government to address issues","Court buildings and public parks"]},
-    {q:"Which example best illustrates confirmation bias?",a:"Seeking out news that supports your view and dismissing opposing evidence",choices:["Actively comparing multiple sources","Seeking out news that supports your view and dismissing opposing evidence","Taking a university course","Reading original data and methods"]},
-    {q:"Which scenario exemplifies legal action?",a:"A citizen files a lawsuit alleging a violation of free speech rights",choices:["A citizen files a lawsuit alleging a violation of free speech rights","A party runs a TV ad","A mayor gives a speech","A pollster calls voters"]},
-    {q:"In pluralism, which group tends to have the most influence on farm subsidies?",a:"Organized agricultural interests",choices:["The general public equally","Organized agricultural interests","Foreign governments","The Supreme Court alone"]},
-    {q:"Which statement about party polarization is accurate?",a:"It has intensified in recent decades across many policy areas",choices:["It has disappeared since the 1950s","It has intensified in recent decades across many policy areas","It only exists in local politics","It means parties are merging into one"]},
-    {q:"Which best captures the chapter’s point about the limits of core ideals?",a:"Ideals guide the nation but have often been imperfectly realized in practice",choices:["Ideals are irrelevant to policy","Ideals guide the nation but have often been imperfectly realized in practice","Ideals eliminate political conflict","Ideals always produce identical outcomes in every state"]},
-    {q:"Which is the clearest example of authority (not just power)?",a:"A judge issuing a sentence according to law",choices:["A judge issuing a sentence according to law","A celebrity endorsing a candidate","A lobbyist funding an ad campaign","A protest drawing a crowd"]}
+    {"q":"Politics is best described as:","a":"The process of resolving conflicts over values and resources","choices":["The enforcement of criminal law","The process of resolving conflicts over values and resources","A purely economic system","The study of history"]},
+    {"q":"Harold Lasswell famously defined politics as:","a":"Who gets what, when, and how","choices":["The art of compromise","Who gets what, when, and how","Government by the people","A marketplace of ideas only"]},
+    {"q":"Which statement best distinguishes power from authority?","a":"Power is influence; authority is the recognized right to exercise power","choices":["Power is legal; authority is illegal","Power is elections; authority is courts","Power is influence; authority is the recognized right to exercise power","They are identical in political science"]},
+    {"q":"Political science primarily aims to:","a":"Systematically describe and analyze how politics and government work","choices":["Promote a single ideology","Systematically describe and analyze how politics and government work","Eliminate disagreements in society","Write laws for Congress"]},
+    {"q":"Critical thinking in politics refers to:","a":"Evaluating information and arguments to reach reasoned conclusions","choices":["Accepting the opinion of the majority","Evaluating information and arguments to reach reasoned conclusions","Memorizing facts without context","Only trusting news that agrees with your view"]},
+    {"q":"Which is an obstacle to critical thinking?","a":"Confirmation bias","choices":["Peer review","Confirmation bias","Considering opposing viewpoints","Fact-checking claims"]},
+    {"q":"An “echo chamber” describes a setting where:","a":"People mostly encounter views that reinforce what they already believe","choices":["People are forced to debate opponents","Media bans opinions","People mostly encounter views that reinforce what they already believe","Everyone must read peer-reviewed research"]},
+    {"q":"Party (partisan) polarization is best described as:","a":"Deepening conflict and division between major political parties","choices":["An increase in nonpartisan cooperation","Deepening conflict and division between major political parties","A rule requiring two parties to agree","A ban on third parties"]},
+    {"q":"Political culture refers to:","a":"Widely shared, deep-seated beliefs about politics and government","choices":["Election laws in a state","Widely shared, deep-seated beliefs about politics and government","Daily news coverage","Court precedents only"]},
+    {"q":"Which set lists America’s core political ideals emphasized in Chapter 1?","a":"Liberty, individualism, equality, self-government","choices":["Federalism, capitalism, socialism","Liberty, individualism, equality, self-government","Judicial review, separation of powers, bicameralism","Isolationism, nationalism, neutrality"]},
+    {"q":"Which statement about equality in American history is most accurate?","a":"It is a core ideal, but its meaning and realization have been contested over time","choices":["It is a core ideal, fully achieved since 1776","It is not an American value","It only applies to economic outcomes","It is a core ideal, but its meaning and realization have been contested over time"]},
+    {"q":"Democracy is a system in which:","a":"The people govern, typically through elected representatives","choices":["Courts govern without elections","The people govern, typically through elected representatives","Only elites may vote","The military appoints leaders"]},
+    {"q":"Oligarchy is:","a":"Control of government by a small group of elites","choices":["Control of government by a small group of elites","Rule by a single hereditary monarch","Majority rule through elections","Total absence of government"]},
+    {"q":"An authoritarian government is characterized by:","a":"Repression of opponents, limits on freedoms, and constrained elections","choices":["Unlimited free speech and fair elections","Repression of opponents, limits on freedoms, and constrained elections","Direct lawmaking by all citizens","A weak executive and strong legislature"]},
+    {"q":"In Chapter 1, the phrase “rules of the game” refers to:","a":"Democracy, constitutionalism, and a free-market system","choices":["Democracy only","Democracy, constitutionalism, and a free-market system","Federalism and judicial review","Military and police power"]},
+    {"q":"Constitutionalism means that:","a":"Government power is limited by law and must respect individual rights","choices":["Elections are optional","Courts write the Constitution","Government power is unlimited in emergencies","Government power is limited by law and must respect individual rights"]},
+    {"q":"Legal action in U.S. politics refers to:","a":"Using the courts to claim rights and seek remedies","choices":["Using the courts to claim rights and seek remedies","Campaigning for office","Lobbying legislators only","Conducting public-opinion polls"]},
+    {"q":"Majoritarianism holds that policy mostly reflects:","a":"The preferences of the majority","choices":["The preferences of the majority","Only court decisions","Administrative agencies","Foreign governments"]},
+    {"q":"Pluralism suggests that policy outcomes are shaped chiefly by:","a":"Competition among organized interest groups","choices":["Competition among organized interest groups","Random chance","A single national referendum","Presidential decrees only"]},
+    {"q":"Elitism emphasizes the power of:","a":"A small number of well-positioned, highly influential individuals","choices":["All citizens equally","The judiciary alone","State governments exclusively","A small number of well-positioned, highly influential individuals"]},
+    {"q":"Corporate power refers to:","a":"The influence of business firms on public policy","choices":["Any nonprofit activity","The influence of business firms on public policy","Only corporate philanthropy","The power of unions alone"]},
+    {"q":"A free-market system is one in which:","a":"Most economic transactions occur between private parties with limited government intervention","choices":["Government owns all major industries","Prices are set only by courts","Most economic transactions occur between private parties with limited government intervention","Only barter is allowed"]},
+    {"q":"Socialism (as contrasted in Chapter 1) generally involves:","a":"Government ownership/control of key industries and a guaranteed basic standard of living","choices":["No regulation of industry","Government ownership/control of key industries and a guaranteed basic standard of living","Abolition of elections","Private ownership of all firms with zero taxes"]},
+    {"q":"Communism (as used in Chapter 1 examples) is:","a":"Government ownership of nearly all major industries with centralized planning","choices":["A complete absence of government","Government ownership of nearly all major industries with centralized planning","Only progressive taxation","A synonym for pluralism"]},
+    {"q":"Public policies are:","a":"The decisions and actions of government to address issues","choices":["Campaign promises","Media stories about politics","The decisions and actions of government to address issues","Court buildings and public parks"]},
+    {"q":"Which example best illustrates confirmation bias?","a":"Seeking out news that supports your view and dismissing opposing evidence","choices":["Actively comparing multiple sources","Seeking out news that supports your view and dismissing opposing evidence","Taking a university course","Reading original data and methods"]},
+    {"q":"Which scenario exemplifies legal action?","a":"A citizen files a lawsuit alleging a violation of free speech rights","choices":["A citizen files a lawsuit alleging a violation of free speech rights","A party runs a TV ad","A mayor gives a speech","A pollster calls voters"]},
+    {"q":"In pluralism, which group tends to have the most influence on farm subsidies?","a":"Organized agricultural interests","choices":["The general public equally","Organized agricultural interests","Foreign governments","The Supreme Court alone"]},
+    {"q":"Which statement about party polarization is accurate?","a":"It has intensified in recent decades across many policy areas","choices":["It has disappeared since the 1950s","It has intensified in recent decades across many policy areas","It only exists in local politics","It means parties are merging into one"]},
+    {"q":"Which best captures the chapter’s point about the limits of core ideals?","a":"Ideals guide the nation but have often been imperfectly realized in practice","choices":["Ideals are irrelevant to policy","Ideals guide the nation but have often been imperfectly realized in practice","Ideals eliminate political conflict","Ideals always produce identical outcomes in every state"]},
+    {"q":"Which is the clearest example of authority (not just power)?","a":"A judge issuing a sentence according to law","choices":["A judge issuing a sentence according to law","A celebrity endorsing a candidate","A lobbyist funding an ad campaign","A protest drawing a crowd"]}
   ];
 
-  // ---- Chapter 2 (40) from your file ----
+  // -------- Chapter 2 (40) --------
   const CH2 = [
     {"q":"What is a constitution?","a":"The fundamental law that establishes government structure, powers, and limits","choices":["A collection of state laws","The fundamental law that establishes government structure, powers, and limits","A treaty with Britain","A bill passed by Congress"]},
     {"q":"What traditions of government existed in the colonies?","a":"Limited and representative government","choices":["Unlimited monarchy","Direct democracy only","Limited and representative government","Military rule"]},
@@ -111,56 +111,56 @@
     {"q":"What does 'constitutional democratic republic' mean?","a":"Limited by law, with elections and representative institutions","choices":["Unlimited democracy","Limited by law, with elections and representative institutions","Absolute monarchy","Direct democracy only"]}
   ];
 
-  // ---- Chapter 3 (24) from your file ----
+  // -------- Chapter 3 (24) --------
   const CH3 = [
-    { q: "What is federalism?", a: "A system where power is shared between national and state governments",
-      choices: ["A system where power is shared between national and state governments","A system where all power is held by the national government","A system where states hold nearly all sovereignty","A doctrine that only local governments may govern"] },
-    { q: "How is federalism different from a unitary system?", a: "Federalism shares power between national and state governments; unitary places power in the central government",
-      choices: ["Federalism shares power between national and state governments; unitary places power in the central government","Federalism centralizes power, unitary divides it","Federalism only works in small countries","Federalism allows only judicial authority"] },
-    { q: "What is sovereignty?", a: "The ultimate governing authority, divided in the U.S. between national and state governments",
-      choices: ["Authority held only by state governments","Authority held only by the people","The ultimate governing authority, divided in the U.S. between national and state governments","The right to judicial review"] },
-    { q: "Which are enumerated (expressed) powers?", a: "Powers listed explicitly in the Constitution",
-      choices: ["Powers listed explicitly in the Constitution","Powers assumed by state constitutions","Powers created by Supreme Court precedent","Powers enforced only by treaties"] },
-    { q: "Implied powers come from which clause?", a: "Necessary and Proper (Elastic) Clause",
-      choices: ["Necessary and Proper (Elastic) Clause","Supremacy Clause","Commerce Clause","Privileges and Immunities Clause"] },
-    { q: "Reserved powers are grounded in which amendment?", a: "Tenth Amendment",
-      choices: ["First Amendment","Fifth Amendment","Tenth Amendment","Fourteenth Amendment"] },
-    { q: "What does the Supremacy Clause establish?", a: "Federal law is supreme over state law",
-      choices: ["States may nullify federal laws","Federal law is supreme over state law","The Constitution is equal to state constitutions","Only the judiciary can declare supreme law"] },
-    { q: "Which is an example of concurrent powers?", a: "Taxation",
-      choices: ["Declaring war","Printing money","Taxation","Regulating interstate commerce"] },
-    { q: "Which argument did Federalists make for federalism?", a: "A large republic prevents domination by factions",
-      choices: ["Strong states protect liberty better than a strong union","A large republic prevents domination by factions","A confederacy is stronger than federalism","Federalism undermined national authority"] },
-    { q: "What concern did Anti-Federalists have?", a: "A strong central government would threaten liberty",
-      choices: ["A strong central government would threaten liberty","A strong state government would cause chaos","A confederacy was too strong","The Supreme Court would not be powerful enough"] },
-    { q: "In Federalist No. 10, Madison argued that:", a: "A large republic best controls factions",
-      choices: ["Small republics best control factions","A large republic best controls factions","States should control foreign trade","The judiciary is the strongest branch"] },
-    { q: "What did McCulloch v. Maryland (1819) decide?", a: "Congress had implied powers; states could not interfere with federal institutions",
-      choices: ["States could tax the federal government","Congress had implied powers; states could not interfere with federal institutions","States could override federal banks","Judicial review was unconstitutional"] },
-    { q: "What was the importance of Gibbons v. Ogden (1824)?", a: "It expanded federal authority through a broad reading of the Commerce Clause",
-      choices: ["It limited federal authority over commerce","It expanded federal authority through a broad reading of the Commerce Clause","It supported nullification","It affirmed judicial supremacy over Congress"] },
-    { q: "Why was the Dred Scott decision significant?", a: "It denied national authority and inflamed sectional conflict",
-      choices: ["It expanded federal power to limit slavery","It gave enslaved people citizenship","It denied national authority and inflamed sectional conflict","It ended dual federalism"] },
-    { q: "Dual federalism is often called:", a: "Layer-cake federalism",
-      choices: ["Marble-cake federalism","Layer-cake federalism","Federal supremacy","Cooperative federalism"] },
-    { q: "Cooperative federalism is also known as:", a: "Marble-cake federalism",
-      choices: ["Marble-cake federalism","Layer-cake federalism","Dual sovereignty","New Federalism"] },
-    { q: "How did the Great Depression and New Deal affect federalism?", a: "They greatly expanded federal involvement in the economy",
-      choices: ["They strengthened state independence","They reduced federal authority","They greatly expanded federal involvement in the economy","They ended the Supreme Court’s role in federalism"] },
-    { q: "How did the Great Society expand federal authority?", a: "By expanding civil rights and social programs",
-      choices: ["By reducing federal grants","By expanding civil rights and social programs","By overturning the Tenth Amendment","By shifting power back to the states"] },
-    { q: "What is devolution?", a: "Shifting responsibilities from national to state governments",
-      choices: ["Expanding national sovereignty","Shifting responsibilities from national to state governments","Establishing concurrent powers","Expanding judicial review"] },
-    { q: "What is fiscal federalism?", a: "The use of grants, spending, and taxation to influence state policy",
-      choices: ["The power of states to coin money","The use of grants, spending, and taxation to influence state policy","Limiting Congress’s commerce powers","State-only power over economic policy"] },
-    { q: "What is a categorical grant?", a: "Federal funds for specific purposes with conditions",
-      choices: ["Federal funds for broad purposes","Federal funds with minimal restrictions","Federal funds for specific purposes with conditions","Federal funds for state constitutions"] },
-    { q: "What is a block grant?", a: "Federal funds for broad areas with few restrictions",
-      choices: ["Federal funds tied to specific programs","Federal funds for broad areas with few restrictions","Grants to local businesses","Grants for judicial salaries"] },
-    { q: "How can the public influence the federal–state balance?", a: "By demanding federal or state solutions to issues",
-      choices: ["By demanding federal or state solutions to issues","By removing the Supremacy Clause","By nullifying federal laws","By ignoring congressional authority"] },
-    { q: "Why has national power grown stronger over time?", a: "National crises, civil rights, economic changes, and public demand expanded federal authority",
-      choices: ["States gave up their sovereignty voluntarily","National crises, civil rights, economic changes, and public demand expanded federal authority","The Supreme Court eliminated state governments","The Constitution was rewritten to eliminate states"] }
+    { "q": "What is federalism?", "a": "A system where power is shared between national and state governments",
+      "choices": ["A system where power is shared between national and state governments","A system where all power is held by the national government","A system where states hold nearly all sovereignty","A doctrine that only local governments may govern"] },
+    { "q": "How is federalism different from a unitary system?", "a": "Federalism shares power between national and state governments; unitary places power in the central government",
+      "choices": ["Federalism shares power between national and state governments; unitary places power in the central government","Federalism centralizes power, unitary divides it","Federalism only works in small countries","Federalism allows only judicial authority"] },
+    { "q": "What is sovereignty?", "a": "The ultimate governing authority, divided in the U.S. between national and state governments",
+      "choices": ["Authority held only by state governments","Authority held only by the people","The ultimate governing authority, divided in the U.S. between national and state governments","The right to judicial review"] },
+    { "q": "Which are enumerated (expressed) powers?", "a": "Powers listed explicitly in the Constitution",
+      "choices": ["Powers listed explicitly in the Constitution","Powers assumed by state constitutions","Powers created by Supreme Court precedent","Powers enforced only by treaties"] },
+    { "q": "Implied powers come from which clause?", "a": "Necessary and Proper (Elastic) Clause",
+      "choices": ["Necessary and Proper (Elastic) Clause","Supremacy Clause","Commerce Clause","Privileges and Immunities Clause"] },
+    { "q": "Reserved powers are grounded in which amendment?", "a": "Tenth Amendment",
+      "choices": ["First Amendment","Fifth Amendment","Tenth Amendment","Fourteenth Amendment"] },
+    { "q": "What does the Supremacy Clause establish?", "a": "Federal law is supreme over state law",
+      "choices": ["States may nullify federal laws","Federal law is supreme over state law","The Constitution is equal to state constitutions","Only the judiciary can declare supreme law"] },
+    { "q": "Which is an example of concurrent powers?", "a": "Taxation",
+      "choices": ["Declaring war","Printing money","Taxation","Regulating interstate commerce"] },
+    { "q": "Which argument did Federalists make for federalism?", "a": "A large republic prevents domination by factions",
+      "choices": ["Strong states protect liberty better than a strong union","A large republic prevents domination by factions","A confederacy is stronger than federalism","Federalism undermined national authority"] },
+    { "q": "What concern did Anti-Federalists have?", "a": "A strong central government would threaten liberty",
+      "choices": ["A strong central government would threaten liberty","A strong state government would cause chaos","A confederacy was too strong","The Supreme Court would not be powerful enough"] },
+    { "q": "In Federalist No. 10, Madison argued that:", "a": "A large republic best controls factions",
+      "choices": ["Small republics best control factions","A large republic best controls factions","States should control foreign trade","The judiciary is the strongest branch"] },
+    { "q": "What did McCulloch v. Maryland (1819) decide?", "a": "Congress had implied powers; states could not interfere with federal institutions",
+      "choices": ["States could tax the federal government","Congress had implied powers; states could not interfere with federal institutions","States could override federal banks","Judicial review was unconstitutional"] },
+    { "q": "What was the importance of Gibbons v. Ogden (1824)?", "a": "It expanded federal authority through a broad reading of the Commerce Clause",
+      "choices": ["It limited federal authority over commerce","It expanded federal authority through a broad reading of the Commerce Clause","It supported nullification","It affirmed judicial supremacy over Congress"] },
+    { "q": "Why was the Dred Scott decision significant?", "a": "It denied national authority and inflamed sectional conflict",
+      "choices": ["It expanded federal power to limit slavery","It gave enslaved people citizenship","It denied national authority and inflamed sectional conflict","It ended dual federalism"] },
+    { "q": "Dual federalism is often called:", "a": "Layer-cake federalism",
+      "choices": ["Marble-cake federalism","Layer-cake federalism","Federal supremacy","Cooperative federalism"] },
+    { "q": "Cooperative federalism is also known as:", "a": "Marble-cake federalism",
+      "choices": ["Marble-cake federalism","Layer-cake federalism","Dual sovereignty","New Federalism"] },
+    { "q": "How did the Great Depression and New Deal affect federalism?", "a": "They greatly expanded federal involvement in the economy",
+      "choices": ["They strengthened state independence","They reduced federal authority","They greatly expanded federal involvement in the economy","They ended the Supreme Court’s role in federalism"] },
+    { "q": "How did the Great Society expand federal authority?", "a": "By expanding civil rights and social programs",
+      "choices": ["By reducing federal grants","By expanding civil rights and social programs","By overturning the Tenth Amendment","By shifting power back to the states"] },
+    { "q": "What is devolution?", "a": "Shifting responsibilities from national to state governments",
+      "choices": ["Expanding national sovereignty","Shifting responsibilities from national to state governments","Establishing concurrent powers","Expanding judicial review"] },
+    { "q": "What is fiscal federalism?", "a": "The use of grants, spending, and taxation to influence state policy",
+      "choices": ["The power of states to coin money","The use of grants, spending, and taxation to influence state policy","Limiting Congress’s commerce powers","State-only power over economic policy"] },
+    { "q": "What is a categorical grant?", "a": "Federal funds for specific purposes with conditions",
+      "choices": ["Federal funds for broad purposes","Federal funds with minimal restrictions","Federal funds for specific purposes with conditions","Federal funds for state constitutions"] },
+    { "q": "What is a block grant?", "a": "Federal funds for broad areas with few restrictions",
+      "choices": ["Federal funds tied to specific programs","Federal funds for broad areas with few restrictions","Grants to local businesses","Grants for judicial salaries"] },
+    { "q": "How can the public influence the federal–state balance?", "a": "By demanding federal or state solutions to issues",
+      "choices": ["By demanding federal or state solutions to issues","By removing the Supremacy Clause","By nullifying federal laws","By ignoring congressional authority"] },
+    { "q": "Why has national power grown stronger over time?", "a": "National crises, civil rights, economic changes, and public demand expanded federal authority",
+      "choices": ["States gave up their sovereignty voluntarily","National crises, civil rights, economic changes, and public demand expanded federal authority","The Supreme Court eliminated state governments","The Constitution was rewritten to eliminate states"] }
   ];
 
   const N1 = 16, N2 = 21, N3 = 13;
@@ -169,6 +169,12 @@
   function pickRandom(arr, n){ const c=arr.slice(); shuffle(c); return c.slice(0, Math.min(n,c.length)); }
 
   function render(){
+    // quick guard to surface array mistakes
+    if (!Array.isArray(CH1) || !Array.isArray(CH2) || !Array.isArray(CH3)) {
+      document.getElementById('quiz').textContent = 'Error: one of the chapter banks is not an array.';
+      return;
+    }
+
     let questions = [
       ...pickRandom(CH1, N1),
       ...pickRandom(CH2, N2),
@@ -180,12 +186,18 @@
     container.innerHTML='';
 
     questions.forEach((item, idx)=>{
-      let answers=item.choices.slice(); shuffle(answers);
-      if(!answers.includes(item.a)) { answers.unshift(item.a); shuffle(answers); }
-      const q=document.createElement('div'); q.className='question';
-      q.innerHTML='<div><strong>'+(idx+1)+'.</strong> '+item.q+'</div>'+
-        '<div class="answers">'+answers.map(c=>`<label><input type="radio" name="q${idx}" value="${c}"> ${c}</label>`).join('')+'</div>'+
-        `<div id="exp-${idx}" class="explain"></div>`;
+      const answers = item.choices.slice();
+      shuffle(answers);
+      if (!answers.includes(item.a)) { answers.unshift(item.a); shuffle(answers); }
+
+      const q=document.createElement('div');
+      q.className='question';
+      q.innerHTML =
+        '<div><strong>'+(idx+1)+'.</strong> '+item.q+'</div>'+
+        '<div class="answers">'+
+          answers.map(c=>'<label><input type="radio" name="q'+idx+'" value="'+c.replace(/"/g,'&quot;')+'"> '+c+'</label>').join('')+
+        '</div>'+
+        '<div id="exp-'+idx+'" class="explain"></div>';
       q.dataset.correct=item.a;
       container.appendChild(q);
     });
@@ -196,8 +208,8 @@
   function grade(){
     let correct=0;
     document.querySelectorAll('.question').forEach((q,idx)=>{
-      const sel=document.querySelector(`input[name="q${idx}"]:checked`);
-      const exp=document.getElementById(`exp-${idx}`);
+      const sel=document.querySelector('input[name="q'+idx+'"]:checked');
+      const exp=document.getElementById('exp-'+idx);
       if(!sel) return;
       if(sel.value===q.dataset.correct){correct++;exp.className='explain correct';exp.textContent='Correct!';}
       else{exp.className='explain incorrect';exp.innerHTML='Incorrect. Correct answer: <em>'+q.dataset.correct+'</em>';}
