@@ -16,6 +16,7 @@
     .explain { font-size:.95em; margin-top:6px; display:none; }
     .correct { color:#0a7a0a; }
     .incorrect { color:#b00020; }
+    .muted { color:#666; font-size:0.95em; } /* added for chapter tag */
   </style>
 </head>
 <body>
@@ -168,17 +169,25 @@
   function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } }
   function pickRandom(arr, n){ const c=arr.slice(); shuffle(c); return c.slice(0, Math.min(n,c.length)); }
 
-  function render(){
-    // quick guard to surface array mistakes
-    if (!Array.isArray(CH1) || !Array.isArray(CH2) || !Array.isArray(CH3)) {
-      document.getElementById('quiz').textContent = 'Error: one of the chapter banks is not an array.';
-      return;
-    }
+  // Added helper: clarify "chapter" and tag each item with its source chapter number
+  function tagAndClarify(arr, src){
+    return arr.map(it => {
+      const item = { ...it, src };
+      if (/\bchapter\b/i.test(item.q) && !/\bChapter\s*[1-3]\b/.test(item.q)) {
+        item.q = item.q
+          .replace(/\bthis chapter\b/gi, `Chapter ${src}`)
+          .replace(/\bthe chapter\b/gi, `Chapter ${src}`)
+          .replace(/\bchapter\b/gi, `Chapter ${src}`);
+      }
+      return item;
+    });
+  }
 
+  function render(){
     let questions = [
-      ...pickRandom(CH1, N1),
-      ...pickRandom(CH2, N2),
-      ...pickRandom(CH3, N3)
+      ...tagAndClarify(pickRandom(CH1, N1), 1),
+      ...tagAndClarify(pickRandom(CH2, N2), 2),
+      ...tagAndClarify(pickRandom(CH3, N3), 3)
     ];
     shuffle(questions);
 
@@ -193,7 +202,8 @@
       const q=document.createElement('div');
       q.className='question';
       q.innerHTML =
-        '<div><strong>'+(idx+1)+'.</strong> '+item.q+'</div>'+
+        '<div><strong>'+(idx+1)+'.</strong> '+item.q+
+        ' <span class="muted">(Chapter '+item.src+')</span></div>'+
         '<div class="answers">'+
           answers.map(c=>'<label><input type="radio" name="q'+idx+'" value="'+c.replace(/"/g,'&quot;')+'"> '+c+'</label>').join('')+
         '</div>'+
@@ -215,11 +225,9 @@
       else{exp.className='explain incorrect';exp.innerHTML='Incorrect. Correct answer: <em>'+q.dataset.correct+'</em>';}
       exp.style.display='block';
     });
-    
-    const percent = ((correct / 50) * 100).toFixed(1);
-document.getElementById('score').textContent =
-  `Score: ${correct} / 50  (${percent}%)`;
-
+    const total = document.querySelectorAll('.question').length;
+    const percent = ((correct / total) * 100).toFixed(1);
+    document.getElementById('score').textContent = `Score: ${correct} / ${total}  (${percent}%)`;
   }
 
   document.getElementById('submitBtn').addEventListener('click', grade);
