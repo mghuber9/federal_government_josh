@@ -16,6 +16,12 @@
     .left, .right { padding: 10px; background: #f9f9f9; border-radius: 8px; }
   </style>
 </head>
+<script>
+  document.querySelectorAll('.right a').forEach(a => {
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+  });
+</script>  
 <body>
   <h1>Government 2305 — Study Materials & Quizzes</h1>
   <!-- Unit 1 Practice Test -->
@@ -101,9 +107,4 @@
 
 </body>
 </html>
-<script>
-  document.querySelectorAll('.right a').forEach(a => {
-    a.target = '_blank';
-    a.rel = 'noopener noreferrer';
-  });
-</script>
+
