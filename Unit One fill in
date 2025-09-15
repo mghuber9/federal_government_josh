@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Unit 1 — Fill-in-the-Blank Practice (Ch. 1–3)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 900px; margin: auto; }
+    h1 { margin-bottom: 0; }
+    .sub { color:#555; margin: 4px 0 16px; }
+    .question { margin: 16px 0; padding: 12px; border: 1px solid #eee; border-radius: 8px; }
+    .muted { color:#666; font-size:0.95em; }
+    .controls { display:flex; gap:10px; flex-wrap:wrap; margin-top:16px; }
+    button { padding:10px 16px; }
+    .score { font-weight:bold; margin-top:10px; }
+    .result { margin-top:8px; padding-top:8px; border-top:1px dashed #ddd; }
+    .correct { color:#0a7a0a; }
+    .incorrect { color:#b00020; }
+    .small { font-size:0.95em; }
+    input[type="text"] { width:100%; max-width: 780px; padding:8px; margin-top:8px; }
+    .legend { margin-top: 18px; color:#444; font-size:0.95em; }
+  </style>
+</head>
+<body>
+  <h1>Unit 1 — Fill-in-the-Blank Practice</h1>
+  <div class="sub">Randomized items • Chapters 1–3 Study Guide banks</div>
+
+  <div class="legend">
+    Tip: Answers are auto-graded with forgiving matching (ignores case, extra spaces, and basic punctuation). Always show your full phrase (e.g., <em>“Who gets what, when, and how”</em>).
+  </div>
+
+  <div id="quiz"></div>
+
+  <div class="controls">
+    <button id="submitBtn">Submit</button>
+    <button id="retakeBtn">Retake</button>
+  </div>
+  <div id="score" class="score"></div>
+
+<script>
+(function(){
+  'use strict';
+
+  // ====== Question Banks (from your original file; using the same answers as ground truth) ======
+  // — Chapter 1 —
+  const CH1 = [
+    {"q":"Politics is best described as:","a":"The process of resolving conflicts over values and resources"},
+    {"q":"Harold Lasswell famously defined politics as:","a":"Who gets what, when, and how"},
+    {"q":"Which statement best distinguishes power from authority?","a":"Power is influence; authority is the recognized right to exercise power"},
+    {"q":"Political science primarily aims to:","a":"Systematically describe and analyze how politics and government work"},
+    {"q":"Critical thinking in politics refers to:","a":"Evaluating information and arguments to reach reasoned conclusions"},
+    {"q":"Which is an obstacle to critical thinking?","a":"Confirmation bias"},
+    {"q":"An “echo chamber” describes a setting where:","a":"People mostly encounter views that reinforce what they already believe"},
+    {"q":"Party (partisan) polarization is best described as:","a":"Deepening conflict and division between major political parties"},
+    {"q":"Political culture refers to:","a":"Widely shared, deep-seated beliefs about politics and government"},
+    {"q":"Which set lists America’s core political ideals emphasized in Chapter 1?","a":"Liberty, individualism, equality, self-government"},
+    {"q":"Which statement about equality in American history is most accurate?","a":"It is a core ideal, but its meaning and realization have been contested over time"},
+    {"q":"Democracy is a system in which:","a":"The people govern, typically through elected representatives"},
+    {"q":"Oligarchy is:","a":"Control of government by a small group of elites"},
+    {"q":"An authoritarian government is characterized by:","a":"Repression of opponents, limits on freedoms, and constrained elections"},
+    {"q":"In Chapter 1, the phrase “rules of the game” refers to:","a":"Democracy, constitutionalism, and a free-market system"},
+    {"q":"Constitutionalism means that:","a":"Government power is limited by law and must respect individual rights"},
+    {"q":"Legal action in U.S. politics refers to:","a":"Using the courts to claim rights and seek remedies"},
+    {"q":"Majoritarianism holds that policy mostly reflects:","a":"The preferences of the majority"},
+    {"q":"Pluralism suggests that policy outcomes are shaped chiefly by:","a":"Competition among organized interest groups"},
+    {"q":"Elitism emphasizes the power of:","a":"A small number of well-positioned, highly influential individuals"},
+    {"q":"Corporate power refers to:","a":"The influence of business firms on public policy"},
+    {"q":"A free-market system is one in which:","a":"Most economic transactions occur between private parties with limited government intervention"},
+    {"q":"Socialism (as contrasted in Chapter 1) generally involves:","a":"Government ownership/control of key industries and a guaranteed basic standard of living"},
+    {"q":"Communism (as used in Chapter 1 examples) is:","a":"Government ownership of nearly all major industries with centralized planning"},
+    {"q":"Public policies are:","a":"The decisions and actions of government to address issues"},
+    {"q":"Which example best illustrates confirmation bias?","a":"Seeking out news that supports your view and dismissing opposing evidence"},
+    {"q":"Which scenario exemplifies legal action?","a":"A citizen files a lawsuit alleging a violation of free speech rights"},
+    {"q":"In pluralism, which group tends to have the most influence on farm subsidies?","a":"Organized agricultural interests"},
+    {"q":"Which statement about party polarization is accurate?","a":"It has intensified in recent decades across many policy areas"},
+    {"q":"Which best captures the chapter’s point about the limits of core ideals?","a":"Ideals guide the nation but have often been imperfectly realized in practice"},
+    {"q":"Which is the clearest example of authority (not just power)?","a":"A judge issuing a sentence according to law"}
+  ];
+
+  // — Chapter 2 —
+  const CH2 = [
+    {"q":"What is a constitution?","a":"The fundamental law that establishes government structure, powers, and limits"},
+    {"q":"What traditions of government existed in the colonies?","a":"Limited and representative government"},
+    {"q":"What grievances against Britain led to revolution?","a":"Taxation without representation and denial of self-rule"},
+    {"q":"What was the significance of the Declaration of Independence?","a":"It announced separation and justified it with natural rights and consent of the governed"},
+    {"q":"Whose ideas most influenced the Declaration of Independence?","a":"John Locke’s natural rights and consent theory"},
+    {"q":"What were the Articles of Confederation?","a":"America’s first charter with a weak central government"},
+    {"q":"What was the main weakness of the Articles of Confederation?","a":"Congress lacked power to tax or regulate commerce"},
+    {"q":"What was Shays’ Rebellion and why significant?","a":"A farmers’ revolt showing the weakness of the Articles"},
+    {"q":"What was the purpose of the Constitutional Convention?","a":"To revise the Articles but instead produced the Constitution"},
+    {"q":"What did the Virginia Plan call for?","a":"Representation based on population in a strong national government"},
+    {"q":"What did the New Jersey Plan propose?","a":"Equal representation for states in a unicameral legislature"},
+    {"q":"What was the Great Compromise?","a":"Bicameral Congress with House by population, Senate equal by states"},
+    {"q":"What was the Three-Fifths Compromise?","a":"Counted enslaved persons as three-fifths for representation and taxation"},
+    {"q":"What was the Federalists’ argument?","a":"A stronger national government was needed"},
+    {"q":"What was the Anti-Federalists’ argument?","a":"The Constitution gave too much power and needed a bill of rights"},
+    {"q":"What was the strategy for ratification?","a":"Use state conventions and promise to add a Bill of Rights"},
+    {"q":"Why was the Bill of Rights added?","a":"To protect individual liberties and gain Anti-Federalist support"},
+    {"q":"What are inalienable rights?","a":"Life, liberty, and other rights that cannot be justly taken away"},
+    {"q":"What were the framers’ primary goals in writing the Constitution?","a":"Strong but limited government to protect liberty and self-rule"},
+    {"q":"What are grants of power?","a":"Specific authorities given to the national government"},
+    {"q":"What are denials of power?","a":"Explicit constitutional prohibitions"},
+    {"q":"What is separation of powers?","a":"Division of government into legislative, executive, and judicial branches"},
+    {"q":"What are checks and balances?","a":"Each branch can limit the others to prevent concentration of power"},
+    {"q":"What is judicial review?","a":"Courts’ power to declare laws or actions unconstitutional"},
+    {"q":"Which case established judicial review?","a":"Marbury v. Madison (1803)"},
+    {"q":"How did framers define a republic?","a":"Government by elected representatives, not direct democracy"},
+    {"q":"What is tyranny of the majority?","a":"When majority tramples minority rights"},
+    {"q":"How were House members originally selected?","a":"By direct vote of the people"},
+    {"q":"How were Senators originally selected?","a":"By state legislatures"},
+    {"q":"How was the president originally selected?","a":"Indirectly through the Electoral College"},
+    {"q":"How were federal judges originally selected?","a":"Nominated by president, confirmed by Senate"},
+    {"q":"Which amendment allowed direct election of Senators?","a":"Seventeenth Amendment"},
+    {"q":"What is a primary election?","a":"Voters choose a party’s nominees"},
+    {"q":"What reform is associated with Jeffersonian democracy?","a":"Expanded participation and limited national power"},
+    {"q":"What reform is associated with Jacksonian democracy?","a":"Broadened white male suffrage and mass politics"},
+    {"q":"What reforms are linked to the Progressives?","a":"Clean government and more direct democracy"},
+    {"q":"What is an initiative?","a":"Process letting citizens place laws on the ballot"},
+    {"q":"What is a referendum?","a":"Voters approve or reject laws passed by the legislature"},
+    {"q":"What is a recall?","a":"Voters remove an elected official before term ends"},
+    {"q":"What does 'constitutional democratic republic' mean?","a":"Limited by law, with elections and representative institutions"}
+  ];
+
+  // — Chapter 3 —
+  const CH3 = [
+    {"q":"What is federalism?","a":"A system where power is shared between national and state governments"},
+    {"q":"How is federalism different from a unitary system?","a":"Federalism shares power between national and state governments; unitary places power in the central government"},
+    {"q":"What is sovereignty?","a":"The ultimate governing authority, divided in the U.S. between national and state governments"},
+    {"q":"Which are enumerated (expressed) powers?","a":"Powers listed explicitly in the Constitution"},
+    {"q":"Implied powers come from which clause?","a":"Necessary and Proper (Elastic) Clause"},
+    {"q":"Reserved powers are grounded in which amendment?","a":"Tenth Amendment"},
+    {"q":"What does the Supremacy Clause establish?","a":"Federal law is supreme over state law"},
+    {"q":"Which is an example of concurrent powers?","a":"Taxation"},
+    {"q":"Which argument did Federalists make for federalism?","a":"A large republic prevents domination by factions"},
+    {"q":"What concern did Anti-Federalists have?","a":"A strong central government would threaten liberty"},
+    {"q":"In Federalist No. 10, Madison argued that:","a":"A large republic best controls factions"},
+    {"q":"What did McCulloch v. Maryland (1819) decide?","a":"Congress had implied powers; states could not interfere with federal institutions"},
+    {"q":"What was the importance of Gibbons v. Ogden (1824)?","a":"It expanded federal authority through a broad reading of the Commerce Clause"},
+    {"q":"Why was the Dred Scott decision significant?","a":"It denied national authority and inflamed sectional conflict"},
+    {"q":"Dual federalism is often called:","a":"Layer-cake federalism"},
+    {"q":"Cooperative federalism is also known as:","a":"Marble-cake federalism"},
+    {"q":"How did the Great Depression and New Deal affect federalism?","a":"They greatly expanded federal involvement in the economy"},
+    {"q":"How did the Great Society expand federal authority?","a":"By expanding civil rights and social programs"},
+    {"q":"What is devolution?","a":"Shifting responsibilities from national to state governments"},
+    {"q":"What is fiscal federalism?","a":"The use of grants, spending, and taxation to influence state policy"},
+    {"q":"What is a categorical grant?","a":"Federal funds for specific purposes with conditions"},
+    {"q":"What is a block grant?","a":"Federal funds for broad areas with few restrictions"},
+    {"q":"How can the public influence the federal–state balance?","a":"By demanding federal or state solutions to issues"},
+    {"q":"Why has national power grown stronger over time?","a":"National crises, civil rights, economic changes, and public demand expanded federal authority"}
+  ];
+
+  // Counts per your original setup
+  const N1 = 16, N2 = 21, N3 = 13;
+
+  // ====== Helpers ======
+  function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } }
+  function pickRandom(arr, n){ const c=arr.slice(); shuffle(c); return c.slice(0, Math.min(n,c.length)); }
+
+  // Clarify “chapter” references in question text and tag each with its chapter source
+  function tagAndClarify(arr, src){
+    return arr.map(it => {
+      const item = { ...it, src };
+      if (/\bchapter\b/i.test(item.q) && !/\bChapter\s*[1-3]\b/.test(item.q)) {
+        item.q = item.q
+          .replace(/\bthis chapter\b/gi, `Chapter ${src}`)
+          .replace(/\bthe chapter\b/gi, `Chapter ${src}`)
+          .replace(/\bchapter\b/gi, `Chapter ${src}`);
+      }
+      return item;
+    });
+  }
+
+  // Normalize strings for forgiving comparison
+  function norm(s){
+    return (s || '')
+      .toLowerCase()
+      .replace(/[“”"']/g,'')        // quotes
+      .replace(/[.,;:!?()\-–—]/g,' ')// punctuation -> space
+      .replace(/\s+/g,' ')           // collapse spaces
+      .trim();
+  }
+
+  // Simple similarity check: exact normalized match OR very close length & startswith
+  function isMatch(user, correct){
+    const u = norm(user), c = norm(correct);
+    if (!u) return false;
+    if (u === c) return true;
+    // allow minor truncations when student nails the key phrase beginning
+    if (c.startsWith(u) && u.length >= Math.min(8, Math.floor(c.length*0.6))) return true;
+    return false;
+  }
+
+  // ====== Render ======
+  function render(){
+    const questions = [
+      ...tagAndClarify(pickRandom(CH1, N1), 1),
+      ...tagAndClarify(pickRandom(CH2, N2), 2),
+      ...tagAndClarify(pickRandom(CH3, N3), 3)
+    ];
+    shuffle(questions);
+
+    const container = document.getElementById('quiz');
+    container.innerHTML = '';
+
+    questions.forEach((item, idx) => {
+      const block = document.createElement('div');
+      block.className = 'question';
+      block.dataset.correct = item.a;
+      block.innerHTML = `
+        <div><strong>${idx+1}.</strong> ${item.q} <span class="muted">(Chapter ${item.src})</span></div>
+        <input type="text" name="q${idx}" placeholder="Type your answer here…" autocomplete="off" />
+        <div class="result small" id="res-${idx}" style="display:none"></div>
+      `;
+      container.appendChild(block);
+    });
+
+    document.getElementById('score').textContent = '';
+  }
+
+  // ====== Grade ======
+  function grade(){
+    let correctCount = 0;
+    const blocks = document.querySelectorAll('.question');
+
+    blocks.forEach((block, idx) => {
+      const input = block.querySelector('input[type="text"]');
+      const result = document.getElementById(`res-${idx}`);
+      const student = input.value || '';
+      const answer = block.dataset.correct;
+
+      const ok = isMatch(student, answer);
+      if (ok) correctCount++;
+
+      result.style.display = 'block';
+      result.innerHTML = `
+        <div class="${ok ? 'correct' : 'incorrect'}"><strong>${ok ? 'Correct' : 'Incorrect'}</strong></div>
+        <div><strong>Your answer:</strong> <em>${student ? student : '(blank)'}</em></div>
+        <div><strong>Correct answer:</strong> <em>${answer}</em></div>
+      `;
+    });
+
+    const total = blocks.length;
+    const percent = ((correctCount / total) * 100).toFixed(1);
+    document.getElementById('score').textContent = `Score: ${correctCount} / ${total}  (${percent}%)`;
+  }
+
+  // ====== Wire up ======
+  document.getElementById('submitBtn').addEventListener('click', grade);
+  document.getElementById('retakeBtn').addEventListener('click', render);
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', render);
+  } else {
+    render();
+  }
+})();
+</script>
+</body>
+</html>
