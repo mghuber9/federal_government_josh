@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Unit 2 MC Quiz — Chapters 6–11</title>
+<style>
+  :root{
+    --bg:#0b1220; --panel:#101a2c; --accent:#4fd1c5; --ok:#22c55e; --bad:#ef4444; --muted:#9fb0c6; --text:#e6edf3;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial; color:var(--text); background:radial-gradient(1100px 700px at 20% -10%, #13233d 0%, var(--bg) 60%);} 
+  .wrap{max-width:900px; margin:0 auto; padding:24px}
+  h1{margin:0 0 8px; font-size:clamp(22px,3vw,32px)}
+  p, label{color:var(--muted)}
+  .card{background:var(--panel); border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:18px; box-shadow:0 6px 18px rgba(0,0,0,.25);}
+  .grid{display:grid; gap:12px}
+  .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  select, button{appearance:none; border:1px solid rgba(255,255,255,.12); background:#0f2034; color:var(--text); padding:10px 12px; border-radius:12px; font-size:16px}
+  button{cursor:pointer; background:linear-gradient(135deg, #1f3a5b, #17314f); border:1px solid rgba(79,209,197,.45)}
+  button:hover{filter:brightness(1.08)}
+  .hidden{display:none}
+  .qnum{font-weight:600; color:#b6c6dc}
+  .choice{border:1px solid rgba(255,255,255,.12); padding:10px 12px; border-radius:12px; background:#0f2034; cursor:pointer}
+  .choice input{margin-right:8px}
+  .footer{display:flex; gap:10px; justify-content:space-between; align-items:center; margin-top:12px}
+  .pill{display:inline-block; padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.12); background:#10243a; color:#a7c6ff; font-size:12px}
+  .ok{color:#d1fae5; background:#083a2a; border-color:#0c5;}
+  .bad{color:#fee2e2; background:#421515; border-color:#f66}
+  .tag{font-size:12px; opacity:.9}
+  .review h3{margin:8px 0 6px}
+  .note{font-size:13px; color:#a9bbcf}
+  .sep{height:1px; background:rgba(255,255,255,.08); margin:12px 0}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Unit 2 Multiple‑Choice Quiz — Chapters 6–11</h1>
+    <p class="note">Pick a set to practice. At the end, you'll see only the questions you missed — with the correct answers.</p>
+
+    <!-- START SCREEN -->
+    <section id="start" class="card grid">
+      <div class="grid grid-2">
+        <div>
+          <label for="mode">Choose a quiz set</label>
+          <select id="mode">
+            <option value="ch67">Ch. 6–7 (29 questions)</option>
+            <option value="ch89">Ch. 8–9 (34 questions)</option>
+            <option value="ch1011">Ch. 10–11 (31 questions)</option>
+            <option value="unit2">Unit 2 Mix (random 50 of all 94)</option>
+          </select>
+        </div>
+        <div>
+          <label for="shuffle">Order</label>
+          <select id="shuffle">
+            <option value="shuf">Shuffle</option>
+            <option value="seq">In order</option>
+          </select>
+        </div>
+      </div>
+      <button id="begin">Start Quiz</button>
+    </section>
+
+    <!-- QUIZ SCREEN -->
+    <section id="quiz" class="card hidden">
+      <div id="hud" class="footer">
+        <span id="progress" class="pill">Q 1 / N</span>
+        <span id="chapterTag" class="pill">Chapter</span>
+      </div>
+      <div class="sep"></div>
+      <div id="qtext" style="font-size:18px; font-weight:600; line-height:1.35"></div>
+      <div id="choices" class="grid" style="margin-top:12px"></div>
+      <div class="footer">
+        <button id="prev">◀ Prev</button>
+        <div style="display:flex; gap:8px">
+          <button id="clear">Clear</button>
+          <button id="next">Next ▶</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULT / REVIEW SCREEN -->
+    <section id="result" class="card hidden">
+      <h2 style="margin:0 0 8px">Results</h2>
+      <div id="scoreline" class="pill"></div>
+      <div class="sep"></div>
+      <div id="review" class="review"></div>
+      <div class="footer">
+        <button id="retry">Try Another Set</button>
+        <button id="restart">Restart</button>
+      </div>
+    </section>
+  </div>
+
+<script>
+/********************
+  QUESTION BANK
+  Each item: { id, chapter, set: 'ch6'..'ch11', q, choices:[a,b,c,d], answer: index0..3 }
+********************/ 
+const BANK = [
+  // ---- Chapter 6 (Public Opinion) ----
+  {id:1, chapter:6, set:'ch6', q:'Define public opinion.', choices:[
+    'The sum of individual attitudes about government and politics',
+    'The media narrative set by elites',
+    'A formal vote in Congress',
+    'A court’s interpretation of the law'], answer:0},
+  {id:2, chapter:6, set:'ch6', q:'What is political socialization?', choices:[
+    'The process by which people acquire political beliefs and values',
+    'A vote to remove an official from office',
+    'The organization of political parties',
+    'A method of counting votes'], answer:0},
+  {id:3, chapter:6, set:'ch6', q:'What is party identification?', choices:[
+    'An individual’s psychological attachment to a political party',
+    'A voter registration requirement',
+    'The official party platform',
+    'A method of apportionment'], answer:0},
+  {id:4, chapter:6, set:'ch6', q:'What is selective perception?', choices:[
+    'Interpreting information in ways that reinforce preexisting beliefs',
+    'Choosing candidates by lottery',
+    'The scientific selection of poll samples',
+    'The court’s selection of cases'], answer:0},
+  {id:5, chapter:6, set:'ch6', q:'What is an ideology?', choices:[
+    'A coherent set of beliefs about the role of government',
+    'A single-issue interest group',
+    'A media ownership rule',
+    'A constitutional amendment'], answer:0},
+  {id:6, chapter:6, set:'ch6', q:'How is public opinion commonly measured?', choices:[
+    'Scientific surveys using probability sampling',
+    'Town halls only',
+    'Election returns only',
+    'Court rulings'], answer:0},
+  {id:7, chapter:6, set:'ch6', q:'What is sampling error?', choices:[
+    'The margin of error arising from drawing a sample instead of a census',
+    'Intentional bias by pollsters',
+    'Counting ballots incorrectly',
+    'The deviation caused by gerrymandering'], answer:0},
+  {id:8, chapter:6, set:'ch6', q:'What is a populist?', choices:[
+    'A person who champions the interests of ordinary people against elites',
+    'A strict libertarian',
+    'A nonvoter',
+    'A Supreme Court justice'], answer:0},
+  {id:9, chapter:6, set:'ch6', q:'Pollsters evaluate public opinion primarily by…', choices:[
+    'Constructing representative samples and asking standardized questions',
+    'Reading newspaper editorials',
+    'Consulting party platforms',
+    'Tracking vetoes'], answer:0},
+  {id:10, chapter:6, set:'ch6', q:'Which factor most shapes political opinions early in life?', choices:[
+    'Family and early social environment', 'Supreme Court decisions', 'State budgets', 'Weather'], answer:0},
+
+  // ---- Chapter 7 (Participation & Elections) ----
+  {id:11, chapter:7, set:'ch7', q:'Define political participation.', choices:[
+    'Activities by citizens intended to influence government and politics',
+    'Any governmental action', 'Court filings by lawyers', 'Media ownership'], answer:0},
+  {id:12, chapter:7, set:'ch7', q:'What is suffrage?', choices:[
+    'The right to vote', 'A tax on imports', 'Civil service reform', 'Court jurisdiction'], answer:0},
+  {id:13, chapter:7, set:'ch7', q:'Who was Susan B. Anthony?', choices:[
+    'A leader of the women’s suffrage movement', 'First female Speaker of the House', 'A Supreme Court justice', 'Author of the Federalist Papers'], answer:0},
+  {id:14, chapter:7, set:'ch7', q:'What did the 15th Amendment do?', choices:[
+    'Prohibited denying the vote on the basis of race', 'Granted women the vote', 'Lowered the voting age to 18', 'Ended poll taxes'], answer:0},
+  {id:15, chapter:7, set:'ch7', q:'U.S. voter turnout is typically…', choices:[
+    'Lower than in many other established democracies', 'Higher than every other democracy', 'Identical to Canada', 'Unchanged since 1800'], answer:0},
+  {id:16, chapter:7, set:'ch7', q:'Motor Voter Act (1993) primarily…', choices:[
+    'Facilitated voter registration at DMVs', 'Mandated compulsory voting', 'Banned absentee ballots', 'Created same-day registration nationwide'], answer:0},
+  {id:17, chapter:7, set:'ch7', q:'“Likely voters” are typically identified by…', choices:[
+    'Past voting history and expressed intent', 'Party donations only', 'Jury service', 'Tax bracket'], answer:0},
+  {id:18, chapter:7, set:'ch7', q:'Virtual participation includes…', choices:[
+    'Online activities like petitions and political posts', 'Only in-person rallies', 'Voting by mail', 'Caucus attendance'], answer:0},
+  {id:19, chapter:7, set:'ch7', q:'Social capital refers to…', choices:[
+    'Networks and norms that enable collective action', 'Personal income', 'Government revenue', 'Campaign funds'], answer:0},
+  {id:20, chapter:7, set:'ch7', q:'A social movement is…', choices:[
+    'Sustained, organized collective action to bring change', 'A military deployment', 'A party convention', 'A court injunction'], answer:0},
+  {id:21, chapter:7, set:'ch7', q:'Which was a historical barrier to voting?', choices:[
+    'Literacy tests and poll taxes', 'Compulsory voting', 'Same-day registration', 'Early voting'], answer:0},
+  {id:22, chapter:7, set:'ch7', q:'Which amendment granted women the right to vote?', choices:[
+    '19th Amendment', '24th Amendment', '26th Amendment', '17th Amendment'], answer:0},
+  {id:23, chapter:7, set:'ch7', q:'Which factor often increases turnout?', choices:[
+    'Competitive elections', 'Weekday voting only', 'Longer lines', 'Strictly fewer polling places'], answer:0},
+  {id:24, chapter:7, set:'ch7', q:'A reform aimed at improving turnout is…', choices:[
+    'Automatic voter registration', 'Shortening polling hours', 'Eliminating absentee voting', 'Raising voting age'], answer:0},
+  {id:25, chapter:7, set:'ch7', q:'Historically, how were nominees chosen?', choices:[
+    'Party caucuses and conventions dominated the process', 'Only by national primaries', 'By courts', 'By the Electoral College'], answer:0},
+  {id:26, chapter:7, set:'ch7', q:'Today, nominees are mainly chosen through…', choices:[
+    'State primaries and caucuses', 'Congressional votes', 'Supreme Court rulings', 'Random selection'], answer:0},
+  {id:27, chapter:7, set:'ch7', q:'Which is a type of election?', choices:[
+    'Primary, general, and runoff', 'Judicial review', 'Census sampling', 'Appropriations'], answer:0},
+  {id:28, chapter:7, set:'ch7', q:'Election law reform often addresses…', choices:[
+    'Campaign finance and voting access', 'Treaty ratification', 'Court appointments', 'War powers'], answer:0},
+  {id:29, chapter:7, set:'ch7', q:'A common campaign strategy is…', choices:[
+    'Targeted messaging to persuadable voters', 'Banning debates', 'Ignoring fundraising', 'Avoiding media'], answer:0},
+
+  // ---- Chapter 8 (Political Parties) ----
+  {id:30, chapter:8, set:'ch8', q:'What is a political party?', choices:[
+    'An organization that seeks to win office to influence policy', 'A PAC that cannot endorse candidates', 'A social club', 'A branch of government'], answer:0},
+  {id:31, chapter:8, set:'ch8', q:'Which best describes U.S. party history?', choices:[
+    'Periodic realignments and evolving coalitions', 'Unbroken one‑party rule', 'No third parties ever', 'Parties banned by the Constitution'], answer:0},
+  {id:32, chapter:8, set:'ch8', q:'Realignment is…', choices:[
+    'A durable shift in party coalitions and issue bases', 'Switching a single vote', 'Redrawing district lines', 'Changing committee chairs'], answer:0},
+  {id:33, chapter:8, set:'ch8', q:'Dealignment is…', choices:[
+    'A trend toward weaker party attachments/independence', 'A court realigning powers', 'A budget cut', 'A foreign policy pivot'], answer:0},
+  {id:34, chapter:8, set:'ch8', q:'What united many in the Whig Party?', choices:[
+    'Opposition to Jacksonian Democrats', 'Support for direct democracy only', 'Promotion of monarchy', 'Isolationism'], answer:0},
+  {id:35, chapter:8, set:'ch8', q:'Ticket splitting means…', choices:[
+    'Voting for candidates of different parties on the same ballot', 'Casting multiple ballots', 'Spoiling ballots intentionally', 'Only voting in primaries'], answer:0},
+  {id:36, chapter:8, set:'ch8', q:'Why a two‑party system in the U.S.?', choices:[
+    'Single‑member districts with plurality (winner‑take‑all) rules', 'Mandatory coalition governments', 'Proportional representation nationwide', 'Constitutional ban on third parties'], answer:0},
+  {id:37, chapter:8, set:'ch8', q:'Proportional representation allocates seats by…', choices:[
+    'Party vote share', 'Geographic land area', 'Population density', 'Court seniority'], answer:0},
+  {id:38, chapter:8, set:'ch8', q:'The “gender gap” refers to…', choices:[
+    'Differences in political attitudes or voting between men and women', 'A wage law', 'A House rule', 'Military ranks'], answer:0},
+  {id:39, chapter:8, set:'ch8', q:'Third parties in the U.S. often…', choices:[
+    'Influence major parties and highlight neglected issues', 'Win most federal offices', 'Are unconstitutional', 'Run primaries for both parties'], answer:0},
+  {id:40, chapter:8, set:'ch8', q:'Party organization typically includes…', choices:[
+    'National, state, and local committees', 'Only a national committee', 'Only state committees', 'Only local precincts'], answer:0},
+  {id:41, chapter:8, set:'ch8', q:'Hard money is…', choices:[
+    'Campaign funds given directly to candidates with legal limits', 'Unreported cash', 'Public financing only', 'Independent expenditures only'], answer:0},
+  {id:42, chapter:8, set:'ch8', q:'European vs. American parties differ because…', choices:[
+    'European parties are often more centralized and ideological', 'U.S. parties are more centralized', 'Europe bans party discipline', 'Both are constitutionally identical'], answer:0},
+  {id:43, chapter:8, set:'ch8', q:'Democratic vs. Republican philosophies typically differ most on…', choices:[
+    'Scope of government and regulation levels', 'The number of states', 'The size of the Senate', 'Judicial salaries'], answer:0},
+  {id:44, chapter:8, set:'ch8', q:'Party decline is associated with…', choices:[
+    'Candidate‑centered campaigns and media changes', 'Stronger party machines', 'More patronage', 'Closed conventions only'], answer:0},
+  {id:45, chapter:8, set:'ch8', q:'Third‑party political impact includes…', choices:[
+    'Spoiler effects and agenda setting for major parties', 'Control of all committees', 'Writing the Constitution', 'Running courts'], answer:0},
+  {id:46, chapter:8, set:'ch8', q:'A core party function is…', choices:[
+    'Recruiting candidates and organizing elections', 'Passing statutes directly', 'Conducting judicial review', 'Census counting'], answer:0},
+  {id:47, chapter:8, set:'ch8', q:'A characteristic of U.S. parties is…', choices:[
+    'Decentralization across federalism levels', 'Strict national discipline', 'No primaries', 'Unified platforms enforced by law'], answer:0},
+  {id:48, chapter:8, set:'ch8', q:'Party organization spans…', choices:[
+    'National committees, state parties, and local precincts', 'Only national committees', 'Only city councils', 'Only party caucuses in Congress'], answer:0},
+
+  // ---- Chapter 9 (Interest Groups) ----
+  {id:49, chapter:9, set:'ch9', q:'An interest group is…', choices:[
+    'An organization seeking to influence public policy', 'A political party', 'A court', 'A bureaucracy'], answer:0},
+  {id:50, chapter:9, set:'ch9', q:'Types of interest groups include…', choices:[
+    'Economic, public interest, single‑issue, and governmental', 'Only economic', 'Only public interest', 'Only foreign'], answer:0},
+  {id:51, chapter:9, set:'ch9', q:'A collective good is…', choices:[
+    'A benefit that cannot be withheld from non‑contributors', 'A private club benefit', 'Personal income', 'A party office'], answer:0},
+  {id:52, chapter:9, set:'ch9', q:'The free rider problem occurs when…', choices:[
+    'People benefit without contributing to the cost', 'Voters skip primaries', 'Judges recuse themselves', 'Members split tickets'], answer:0},
+  {id:53, chapter:9, set:'ch9', q:'Lobbying is…', choices:[
+    'Direct interaction with public officials to influence decisions', 'Only campaign donations', 'Court litigation only', 'Media endorsements only'], answer:0},
+  {id:54, chapter:9, set:'ch9', q:'Amicus curiae briefs are…', choices:[
+    '“Friend of the court” briefs submitted by non‑parties', 'Executive orders', 'Treaties', 'Floor amendments'], answer:0},
+  {id:55, chapter:9, set:'ch9', q:'The iron triangle links…', choices:[
+    'Congressional committees, bureaucracies, and interest groups', 'Courts, voters, and parties', 'States, cities, and counties', 'Media, parties, and polls'], answer:0},
+  {id:56, chapter:9, set:'ch9', q:'Issue networks are…', choices:[
+    'Fluid coalitions of actors around a policy area', 'Permanent party machines', 'Only three‑way alliances', 'Court panels'], answer:0},
+  {id:57, chapter:9, set:'ch9', q:'PACs and Super PACs differ in that…', choices:[
+    'Super PACs can spend unlimited independent expenditures; PACs give limited direct contributions', 'PACs spend unlimited independently', 'Super PACs give unlimited directly to candidates', 'Both are identical under law'], answer:0},
+  {id:58, chapter:9, set:'ch9', q:'Inside lobbying refers to…', choices:[
+    'Direct contact with policymakers', 'Public campaigns only', 'Ballot initiatives', 'Court appeals'], answer:0},
+  {id:59, chapter:9, set:'ch9', q:'Interest‑group effectiveness depends on…', choices:[
+    'Resources, access, and salience of issues', 'Number of TV ads only', 'Court size', 'Population size only'], answer:0},
+  {id:60, chapter:9, set:'ch9', q:'Parties vs. interest groups: key difference is…', choices:[
+    'Parties seek to win office; groups seek to influence policy', 'Groups run primaries', 'Parties file amicus briefs only', 'Groups administer elections'], answer:0},
+  {id:61, chapter:9, set:'ch9', q:'A method used by interest groups is…', choices:[
+    'Grassroots mobilization', 'Judicial review', 'Impeachment', 'Census count'], answer:0},
+  {id:62, chapter:9, set:'ch9', q:'A strength of interest groups can be…', choices:[
+    'Expertise and information for policymakers', 'Guaranteed majority support', 'Complete neutrality', 'Total absence of bias'], answer:0},
+  {id:63, chapter:9, set:'ch9', q:'A common criticism/weakness is…', choices:[
+    'Unequal influence favoring well‑funded groups', 'Too much equality of access', 'No lobbying disclosure', 'No constitutional basis'], answer:0},
+
+  // ---- Chapter 10 (Media) ----
+  {id:64, chapter:10, set:'ch10', q:'The news media are…', choices:[
+    'Organizations that gather and disseminate information to the public', 'Congressional committees', 'Interest groups only', 'Polling firms only'], answer:0},
+  {id:65, chapter:10, set:'ch10', q:'A partisan press is…', choices:[
+    'Media that openly support a political party or viewpoint', 'Objective reporting only', 'State‑owned media', 'Tabloid crime coverage only'], answer:0},
+  {id:66, chapter:10, set:'ch10', q:'Yellow journalism is characterized by…', choices:[
+    'Sensationalism and exaggerated stories to boost sales', 'Strict neutrality', 'Peer‑reviewed analysis', 'Public broadcasting rules'], answer:0},
+  {id:67, chapter:10, set:'ch10', q:'Objective journalism aspires to…', choices:[
+    'Fairness, balance, and factual accuracy', 'Advocacy only', 'Satire only', 'Partisan persuasion'], answer:0},
+  {id:68, chapter:10, set:'ch10', q:'A gatekeeper in media is…', choices:[
+    'An actor deciding what information enters the news stream', 'A polling supervisor', 'A judge', 'A caucus chair'], answer:0},
+  {id:69, chapter:10, set:'ch10', q:'Agenda setting occurs when media…', choices:[
+    'Influence which issues the public thinks are important', 'Write legislation', 'Count ballots', 'Draw districts'], answer:0},
+  {id:70, chapter:10, set:'ch10', q:'Framing refers to…', choices:[
+    'How news is presented to shape interpretation', 'The legal frame around a bill', 'Drawing district borders', 'Camera tripod use'], answer:0},
+  {id:71, chapter:10, set:'ch10', q:'The watchdog function means media…', choices:[
+    'Scrutinize officials and expose wrongdoing', 'Run campaigns', 'Pass statutes', 'Hold primaries'], answer:0},
+  {id:72, chapter:10, set:'ch10', q:'Role of media in politics includes…', choices:[
+    'Informing, watchdogging, and acting as a forum for debate', 'Counting electoral votes', 'Appropriations', 'Judicial review'], answer:0},
+  {id:73, chapter:10, set:'ch10', q:'U.S. media history includes…', choices:[
+    'Partisan presses, penny press, yellow journalism, and broadcast/cable/digital eras', 'Only public broadcasting', 'No newspapers before 1950', 'A constitutional ban on presses'], answer:0},
+  {id:74, chapter:10, set:'ch10', q:'Media bias generally refers to…', choices:[
+    'Perceived tilt in coverage selection or presentation', 'Mathematical sampling error', 'Court bias', 'Gerrymandering'], answer:0},
+
+  // ---- Chapter 11 (Congress) ----
+  {id:75, chapter:11, set:'ch11', q:'House service requirements include…', choices:[
+    '25 years old, 7 years a citizen, resident of state', '35 years old, natural‑born citizen', '30 years old, 9 years a citizen', 'No age requirement'], answer:0},
+  {id:76, chapter:11, set:'ch11', q:'Senate service requirements include…', choices:[
+    '30 years old, 9 years a citizen, resident of state', '25 years old, 7 years a citizen', 'Natural‑born citizen only', 'No residency'], answer:0},
+  {id:77, chapter:11, set:'ch11', q:'Terms of office: House vs. Senate?', choices:[
+    'House 2 years; Senate 6 years (staggered thirds)', 'Both 4 years', 'House 6; Senate 2', 'Both 2 years'], answer:0},
+  {id:78, chapter:11, set:'ch11', q:'Apportionment is…', choices:[
+    'Allocation of House seats among states by population', 'Drawing district lines', 'Allocating Senate seats', 'Committee assignments'], answer:0},
+  {id:79, chapter:11, set:'ch11', q:'Redistricting is…', choices:[
+    'Redrawing district boundaries within states', 'Allocating House seats among states', 'Counting population', 'Filing for office'], answer:0},
+  {id:80, chapter:11, set:'ch11', q:'Gerrymandering is…', choices:[
+    'Drawing districts to advantage a party or group', 'The census', 'Bicameralism', 'Logrolling'], answer:0},
+  {id:81, chapter:11, set:'ch11', q:'A primary election is…', choices:[
+    'An intra‑party contest to choose nominees', 'The general election', 'A referendum', 'A recall'], answer:0},
+  {id:82, chapter:11, set:'ch11', q:'Presiding officers: House and Senate are…', choices:[
+    'Speaker of the House; Vice President (President of the Senate)', 'Majority Leaders only', 'Chief Justice; Speaker', 'President Pro Tempore; Speaker'], answer:0},
+  {id:83, chapter:11, set:'ch11', q:'Party leadership in Congress includes…', choices:[
+    'Majority/minority leaders and whips in each chamber', 'Only committee chairs', 'Only the Speaker', 'Only the VP'], answer:0},
+  {id:84, chapter:11, set:'ch11', q:'Committee system purpose is…', choices:[
+    'Division of labor and policy specialization', 'Judicial review', 'Media relations', 'Caucus elections'], answer:0},
+  {id:85, chapter:11, set:'ch11', q:'Types of committees include…', choices:[
+    'Standing, select, joint, and conference', 'District, state, federal', 'Open, closed, special rule', 'Legislative, judicial, executive'], answer:0},
+  {id:86, chapter:11, set:'ch11', q:'Functions of Congress include…', choices:[
+    'Lawmaking, representation, oversight, and budgeting', 'Electing judges', 'Conducting polls', 'Drawing districts'], answer:0},
+  {id:87, chapter:11, set:'ch11', q:'Trustee theory means representatives…', choices:[
+    'Use their own judgment for constituents’ good', 'Always follow constituent preferences', 'Follow party only', 'Follow interest‑group polls'], answer:0},
+  {id:88, chapter:11, set:'ch11', q:'Delegate theory means representatives…', choices:[
+    'Mirror constituents’ preferences directly', 'Use own judgment', 'Follow party only', 'Follow donors only'], answer:0},
+  {id:89, chapter:11, set:'ch11', q:'A filibuster is…', choices:[
+    'Prolonged debate in the Senate to delay a vote', 'A House discharge petition', 'A veto override', 'An impeachment trial'], answer:0},
+  {id:90, chapter:11, set:'ch11', q:'Cloture is…', choices:[
+    'A Senate vote to end debate (typically 60 votes)', 'A House rule for amendments', 'The census count', 'Committee markup'], answer:0},
+  {id:91, chapter:11, set:'ch11', q:'Congressional reapportionment occurs…', choices:[
+    'After each decennial census', 'Every 2 years', 'Only by court order', 'Every session'], answer:0},
+  {id:92, chapter:11, set:'ch11', q:'Congress’s role in policymaking includes…', choices:[
+    'Agenda setting, lawmaking, and oversight', 'Only signing bills', 'Only executing laws', 'Only judicial review'], answer:0},
+  {id:93, chapter:11, set:'ch11', q:'The legislative process typically includes…', choices:[
+    'Introduction, committee, floor, conference, and presidential action', 'Only party caucus', 'Court ruling then vote', 'Executive order then budget'], answer:0},
+  {id:94, chapter:11, set:'ch11', q:'Overall functions of Congress are…', choices:[
+    'Representation, lawmaking, oversight, and budgeting', 'Only campaigning', 'Only diplomacy', 'Only adjudication'], answer:0},
+];
+
+/********************
+  BUILD SETS
+********************/
+const SET_MAP = {
+  ch67: BANK.filter(q=>q.chapter===6 || q.chapter===7),
+  ch89: BANK.filter(q=>q.chapter===8 || q.chapter===9),
+  ch1011: BANK.filter(q=>q.chapter===10 || q.chapter===11),
+  unit2: [...BANK] // later sliced to 50
+};
+
+/********************
+  STATE
+********************/
+let current = { list:[], answers:[], idx:0 };
+
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]}
+  return arr;
+}
+
+function startQuiz(){
+  const mode = document.getElementById('mode').value;
+  const order = document.getElementById('shuffle').value;
+  let items = [...SET_MAP[mode]];
+  if(mode==='unit2') items = shuffle(items).slice(0,50);
+  if(order==='shuf') shuffle(items);
+  current.list = items;
+  current.answers = new Array(items.length).fill(null);
+  current.idx = 0;
+  document.getElementById('start').classList.add('hidden');
+  document.getElementById('result').classList.add('hidden');
+  document.getElementById('quiz').classList.remove('hidden');
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const q = current.list[current.idx];
+  document.getElementById('progress').textContent = `Q ${current.idx+1} / ${current.list.length}`;
+  document.getElementById('chapterTag').textContent = `Chapter ${q.chapter}`;
+  document.getElementById('qtext').textContent = q.q;
+  const box = document.getElementById('choices');
+  box.innerHTML = '';
+  q.choices.forEach((c,i)=>{
+    const id = `c_${i}`;
+    const div = document.createElement('label');
+    div.className = 'choice';
+    div.innerHTML = `<input type="radio" name="choice" value="${i}" ${current.answers[current.idx]===i?'checked':''}> ${c}`;
+    box.appendChild(div);
+  });
+}
+
+function saveSelection(){
+  const sel = document.querySelector('input[name="choice"]:checked');
+  if(sel){ current.answers[current.idx] = Number(sel.value); }
+}
+
+function nextQ(){
+  saveSelection();
+  if(current.idx < current.list.length-1){ current.idx++; renderQuestion(); }
+  else { finishQuiz(); }
+}
+function prevQ(){ saveSelection(); if(current.idx>0){ current.idx--; renderQuestion(); } }
+function clearSel(){ current.answers[current.idx]=null; renderQuestion(); }
+
+function finishQuiz(){
+  // compute score
+  const results = current.list.map((q,i)=>({q, chosen: current.answers[i]}));
+  const missed = results.filter(r=>r.chosen!==r.q.answer);
+  const correct = results.length - missed.length;
+  document.getElementById('quiz').classList.add('hidden');
+  const scoreline = document.getElementById('scoreline');
+  scoreline.textContent = `Score: ${correct} / ${results.length}  (${Math.round(100*correct/results.length)}%)`;
+  scoreline.className = 'pill ' + (missed.length? 'bad':'ok');
+
+  // clear and show ONLY missed with correct answers
+  const rev = document.getElementById('review');
+  rev.innerHTML = '';
+  if(missed.length===0){
+    const p = document.createElement('p');
+    p.className='note';
+    p.textContent = 'Perfect! No missed questions to review.';
+    rev.appendChild(p);
+  } else {
+    missed.forEach((m,ix)=>{
+      const sec = document.createElement('div');
+      sec.innerHTML = `
+        <h3><span class="qnum">Missed ${ix+1}</span> · <span class="tag">Chapter ${m.q.chapter}</span></h3>
+        <div style="margin:6px 0 8px; font-weight:600">${m.q.q}</div>
+        <div class="pill ok">Correct Answer: ${m.q.choices[m.q.answer]}</div>
+      `;
+      rev.appendChild(sec);
+      const hr = document.createElement('div'); hr.className='sep'; rev.appendChild(hr);
+    });
+  }
+  document.getElementById('result').classList.remove('hidden');
+}
+
+// events
+document.getElementById('begin').addEventListener('click', startQuiz);
+['next','prev','clear'].forEach(id=>document.getElementById(id).addEventListener('click', ({target})=>{
+  if(id==='next') nextQ(); else if(id==='prev') prevQ(); else clearSel();
+}));
+document.getElementById('retry').addEventListener('click', ()=>{
+  document.getElementById('result').classList.add('hidden');
+  document.getElementById('start').classList.remove('hidden');
+});
+document.getElementById('restart').addEventListener('click', ()=>{ location.reload(); });
+</script>
+</body>
+</html>
