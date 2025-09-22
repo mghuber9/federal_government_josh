@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Unit 2 Vocabulary Quiz — Chapters 6–11</title>
+<style>
+  :root{ --bg:#0b1220; --panel:#101a2c; --accent:#4fd1c5; --ok:#22c55e; --bad:#ef4444; --muted:#9fb0c6; --text:#e6edf3; }
+  *{box-sizing:border-box}
+  body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial; color:var(--text); background:radial-gradient(1100px 700px at 20% -10%, #13233d 0%, var(--bg) 60%);} 
+  .wrap{max-width:900px; margin:0 auto; padding:24px}
+  h1{margin:0 0 8px; font-size:clamp(22px,3vw,32px)}
+  p, label{color:var(--muted)}
+  .card{background:var(--panel); border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:18px; box-shadow:0 6px 18px rgba(0,0,0,.25);}
+  .grid{display:grid; gap:12px}
+  .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  select, button{appearance:none; border:1px solid rgba(255,255,255,.12); background:#0f2034; color:var(--text); padding:10px 12px; border-radius:12px; font-size:16px}
+  button{cursor:pointer; background:linear-gradient(135deg, #1f3a5b, #17314f); border:1px solid rgba(79,209,197,.45)}
+  button:hover{filter:brightness(1.08)}
+  .hidden{display:none}
+  .qnum{font-weight:600; color:#b6c6dc}
+  .choice{border:1px solid rgba(255,255,255,.12); padding:10px 12px; border-radius:12px; background:#0f2034; cursor:pointer}
+  .choice input{margin-right:8px}
+  .footer{display:flex; gap:10px; justify-content:space-between; align-items:center; margin-top:12px}
+  .pill{display:inline-block; padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.12); background:#10243a; color:#a7c6ff; font-size:12px}
+  .ok{color:#d1fae5; background:#083a2a; border-color:#0c5;}
+  .bad{color:#fee2e2; background:#421515; border-color:#f66}
+  .tag{font-size:12px; opacity:.9}
+  .review h3{margin:8px 0 6px}
+  .note{font-size:13px; color:#a9bbcf}
+  .sep{height:1px; background:rgba(255,255,255,.08); margin:12px 0}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Unit 2 Vocabulary‑Only Quiz — Chapters 6–11</h1>
+    <p class="note">Choose a section. At the end, the review shows <em>only</em> the missed items with the correct definitions.</p>
+
+    <!-- START -->
+    <section id="start" class="card grid">
+      <div class="grid grid-2">
+        <div>
+          <label for="mode">Choose a vocab set</label>
+          <select id="mode">
+            <option value="ch67">Ch. 6–7 (all vocab)</option>
+            <option value="ch89">Ch. 8–9 (all vocab)</option>
+            <option value="ch1011">Ch. 10–11 (all vocab)</option>
+            <option value="unit2">Unit 2 Mix (random 50)</option>
+          </select>
+        </div>
+        <div>
+          <label for="shuffle">Order</label>
+          <select id="shuffle">
+            <option value="shuf">Shuffle</option>
+            <option value="seq">In order</option>
+          </select>
+        </div>
+      </div>
+      <button id="begin">Start Quiz</button>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="quiz" class="card hidden">
+      <div id="hud" class="footer">
+        <span id="progress" class="pill">Q 1 / N</span>
+        <span id="chapterTag" class="pill">Chapter</span>
+      </div>
+      <div class="sep"></div>
+      <div id="qtext" style="font-size:18px; font-weight:600; line-height:1.35"></div>
+      <div id="choices" class="grid" style="margin-top:12px"></div>
+      <div class="footer">
+        <button id="prev">◀ Prev</button>
+        <div style="display:flex; gap:8px">
+          <button id="clear">Clear</button>
+          <button id="next">Next ▶</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULT / REVIEW -->
+    <section id="result" class="card hidden">
+      <h2 style="margin:0 0 8px">Results</h2>
+      <div id="scoreline" class="pill"></div>
+      <div class="sep"></div>
+      <div id="review" class="review"></div>
+      <div class="footer">
+        <button id="retry">Choose Another Set</button>
+        <button id="restart">Restart</button>
+      </div>
+    </section>
+  </div>
+
+<script>
+/* VOCAB BANK — definition questions only. 
+   Each item: { id, chapter, set:'ch6'..'ch11', q:'TERM: …', choices:[...], answer:index }
+*/
+const BANK = [
+  // Chapter 6 — Public Opinion (vocab)
+  {id:1, chapter:6, set:'ch6', q:'Public opinion', choices:[
+    'Aggregate of individual attitudes about government and politics',
+    'Official policy enacted by Congress',
+    'Court decisions across time',
+    'Campaign advertising only'], answer:0},
+  {id:2, chapter:6, set:'ch6', q:'Political socialization', choices:[
+    'Process by which people acquire political beliefs and values',
+    'The legal process to remove a judge',
+    'Counting votes after elections',
+    'A party fundraising technique'], answer:0},
+  {id:3, chapter:6, set:'ch6', q:'Party identification', choices:[
+    'Psychological attachment to a political party',
+    'A voter ID card',
+    'The party platform document',
+    'A government job test'], answer:0},
+  {id:4, chapter:6, set:'ch6', q:'Selective perception', choices:[
+    'Interpreting information to fit preexisting beliefs',
+    'Choosing candidates by lottery',
+    'Selecting a random sample',
+    'Choosing committee chairs'], answer:0},
+  {id:5, chapter:6, set:'ch6', q:'Ideology', choices:[
+    'Coherent set of beliefs about government’s role', 'Religious creed only', 'A campaign logo', 'A constitutional clause'], answer:0},
+  {id:6, chapter:6, set:'ch6', q:'Sampling error', choices:[
+    'Expected difference between sample result and true population',
+    'Fraudulent ballot stuffing', 'A court error', 'A recount procedure'], answer:0},
+  {id:7, chapter:6, set:'ch6', q:'Populist', choices:[
+    'Proponent of ordinary people vs. perceived elites', 'Non‑partisan judge', 'Strict libertarian only', 'A party treasurer'], answer:0},
+
+  // Chapter 7 — Participation & Elections (vocab)
+  {id:8, chapter:7, set:'ch7', q:'Political participation', choices:[
+    'Citizen activities intended to influence government', 'Bureaucratic rulemaking', 'Judicial review', 'Media ratings'], answer:0},
+  {id:9, chapter:7, set:'ch7', q:'Suffrage', choices:[
+    'Right to vote', 'A customs tax', 'Senate seniority', 'Court jurisdiction'], answer:0},
+  {id:10, chapter:7, set:'ch7', q:'15th Amendment', choices:[
+    'Prohibits denying vote based on race', 'Grants women the vote', 'Lowers voting age to 18', 'Ends poll taxes'], answer:0},
+  {id:11, chapter:7, set:'ch7', q:'Motor Voter Act (1993)', choices:[
+    'Allows voter registration at DMVs', 'Bans absentee ballots', 'Mandates compulsory voting', 'Creates national holiday'], answer:0},
+  {id:12, chapter:7, set:'ch7', q:'Likely voters', choices:[
+    'Individuals identified as most probable to vote', 'Registered non‑citizens', 'Campaign donors only', 'Polling place volunteers'], answer:0},
+  {id:13, chapter:7, set:'ch7', q:'Virtual participation', choices:[
+    'Online political actions (petitions, posts, donations)', 'In‑person rallies only', 'Mail voting only', 'Caucus meetings only'], answer:0},
+  {id:14, chapter:7, set:'ch7', q:'Social capital', choices:[
+    'Networks and norms enabling collective action', 'Personal wealth', 'Corporate taxes', 'Media audience size'], answer:0},
+  {id:15, chapter:7, set:'ch7', q:'Social movement', choices:[
+    'Sustained, organized effort to bring social/political change', 'A party convention', 'Court injunction', 'Military deployment'], answer:0},
+  {id:16, chapter:7, set:'ch7', q:'Primary election', choices:[
+    'Intra‑party election to choose nominees', 'General election', 'Referendum vote', 'Recall election'], answer:0},
+
+  // Chapter 8 — Political Parties (vocab)
+  {id:17, chapter:8, set:'ch8', q:'Political party', choices:[
+    'Organization seeking to win office to influence policy', 'Interest group only', 'Court division', 'A news network'], answer:0},
+  {id:18, chapter:8, set:'ch8', q:'Realignment', choices:[
+    'Durable shift in party coalitions/issues', 'Redrawing of district lines', 'Replacing committee chairs', 'Court reorganization'], answer:0},
+  {id:19, chapter:8, set:'ch8', q:'Dealignment', choices:[
+    'Weakening of party attachments; rise of independents', 'A court realignment', 'A budget realignment', 'Military redeployment'], answer:0},
+  {id:20, chapter:8, set:'ch8', q:'Ticket splitting', choices:[
+    'Voting for different parties for different offices', 'Casting multiple ballots unlawfully', 'Skipping a race', 'Voting early only'], answer:0},
+  {id:21, chapter:8, set:'ch8', q:'Two‑party system (cause)', choices:[
+    'Single‑member districts with plurality rules', 'Constitutional ban on third parties', 'Proportional representation', 'Mandatory coalitions'], answer:0},
+  {id:22, chapter:8, set:'ch8', q:'Proportional representation', choices:[
+    'Seats allocated by party vote share', 'Winner‑take‑all by district', 'At‑large by county size', 'By court seniority'], answer:0},
+  {id:23, chapter:8, set:'ch8', q:'Gender gap', choices:[
+    'Differences between men and women in voting/attitudes', 'Pay disparity statute', 'House rule', 'Military policy'], answer:0},
+  {id:24, chapter:8, set:'ch8', q:'Third party', choices:[
+    'Minor party influencing agenda and elections', 'Unofficial campaign slogan', 'Non‑profit newsroom', 'Court of third instance'], answer:0},
+  {id:25, chapter:8, set:'ch8', q:'Party organization', choices:[
+    'National, state, and local party committees', 'Only a national committee', 'Only state parties', 'Only precincts'], answer:0},
+  {id:26, chapter:8, set:'ch8', q:'Hard money', choices:[
+    'Limited contributions given directly to candidates', 'Unreported cash', 'Independent expenditures only', 'Public grants only'], answer:0},
+
+  // Chapter 9 — Interest Groups (vocab)
+  {id:27, chapter:9, set:'ch9', q:'Interest group', choices:[
+    'Organization that seeks to influence public policy', 'A political party', 'A court', 'A polling firm'], answer:0},
+  {id:28, chapter:9, set:'ch9', q:'Collective good', choices:[
+    'Benefit that cannot be withheld from non‑payers', 'Private club benefit', 'Personal savings', 'Tax rebate'], answer:0},
+  {id:29, chapter:9, set:'ch9', q:'Free rider problem', choices:[
+    'People benefit without contributing to the cost', 'Voters skip primaries', 'Judges recuse themselves', 'Members split tickets'], answer:0},
+  {id:30, chapter:9, set:'ch9', q:'Lobbying', choices:[
+    'Direct interaction with officials to influence decisions', 'Running for office', 'Polling only', 'Court ruling'], answer:0},
+  {id:31, chapter:9, set:'ch9', q:'Amicus curiae brief', choices:[
+    '“Friend of the court” brief by a non‑party', 'Executive order', 'Treaty reservation', 'Floor amendment'], answer:0},
+  {id:32, chapter:9, set:'ch9', q:'Iron triangle', choices:[
+    'Relationship among committees, agencies, and interest groups', 'Court‑media‑party trio', 'States‑cities‑counties', 'PAC‑voter‑media'], answer:0},
+  {id:33, chapter:9, set:'ch9', q:'Issue network', choices:[
+    'Fluid coalition of actors around a policy area', 'Permanent party machine', 'Three‑member board', 'Court panel'], answer:0},
+  {id:34, chapter:9, set:'ch9', q:'PAC (political action committee)', choices:[
+    'Entity that raises limited funds to contribute to candidates', 'Unlimited independent spender only', 'Government account', 'Party caucus'], answer:0},
+  {id:35, chapter:9, set:'ch9', q:'Super PAC', choices:[
+    'Group that spends unlimited independently; no direct donations', 'PAC with contribution limits only', 'Federal agency', 'Party committee'], answer:0},
+  {id:36, chapter:9, set:'ch9', q:'Inside lobbying', choices:[
+    'Direct contact with policymakers', 'Public campaigns only', 'Ballot initiatives', 'Court appeals'], answer:0},
+
+  // Chapter 10 — Media (vocab)
+  {id:37, chapter:10, set:'ch10', q:'News media', choices:[
+    'Organizations that gather and disseminate information', 'Congressional committees', 'Interest groups only', 'Polling firms'], answer:0},
+  {id:38, chapter:10, set:'ch10', q:'Partisan press', choices:[
+    'Media openly aligned with a party/viewpoint', 'Strictly neutral reporting', 'Public broadcasting only', 'Academic journals'], answer:0},
+  {id:39, chapter:10, set:'ch10', q:'Yellow journalism', choices:[
+    'Sensationalized reporting to boost sales', 'Peer‑reviewed analysis', 'Government gazette', 'C‑SPAN coverage'], answer:0},
+  {id:40, chapter:10, set:'ch10', q:'Objective journalism', choices:[
+    'Reporting aspiring to fairness and accuracy', 'Advocacy only', 'Satire news', 'Paid political content'], answer:0},
+  {id:41, chapter:10, set:'ch10', q:'Gatekeeping', choices:[
+    'Deciding which information enters the news stream', 'Counting ballots', 'Drawing districts', 'Camera operation'], answer:0},
+  {id:42, chapter:10, set:'ch10', q:'Agenda setting', choices:[
+    'Media influence on what issues the public thinks important', 'Writing laws', 'Court docket setting', 'Budget scoring'], answer:0},
+  {id:43, chapter:10, set:'ch10', q:'Framing', choices:[
+    'Presentation that shapes interpretation of an issue', 'Building a picture frame', 'Gerrymandering', 'Case briefing'], answer:0},
+  {id:44, chapter:10, set:'ch10', q:'Watchdog function', choices:[
+    'Scrutiny of officials and exposure of wrongdoing', 'Running campaigns', 'Passing statutes', 'Holding primaries'], answer:0},
+
+  // Chapter 11 — Congress (vocab)
+  {id:45, chapter:11, set:'ch11', q:'Apportionment', choices:[
+    'Allocation of House seats among states by population', 'Redrawing district lines within states', 'Senate seat allocation', 'Committee assignments'], answer:0},
+  {id:46, chapter:11, set:'ch11', q:'Redistricting', choices:[
+    'Redrawing electoral district boundaries within a state', 'Allocating House seats among states', 'Counting population', 'Filing for office'], answer:0},
+  {id:47, chapter:11, set:'ch11', q:'Gerrymandering', choices:[
+    'Drawing districts to advantage a party/group', 'The census', 'Bicameralism', 'Logrolling'], answer:0},
+  {id:48, chapter:11, set:'ch11', q:'Primary (congressional)', choices:[
+    'Intra‑party election to choose a nominee', 'General election', 'Referendum', 'Recall'], answer:0},
+  {id:49, chapter:11, set:'ch11', q:'Committee system', choices:[
+    'Division of labor in Congress via specialized groups', 'Court hierarchy', 'Party caucus rules', 'Executive departments'], answer:0},
+  {id:50, chapter:11, set:'ch11', q:'Standing committee', choices:[
+    'Permanent panel with jurisdiction over a policy area', 'Temporary, single‑purpose body', 'House‑Senate conference only', 'Joint ceremonial body'], answer:0},
+  {id:51, chapter:11, set:'ch11', q:'Select (or special) committee', choices:[
+    'Temporary committee for a specific purpose', 'Permanent committee', 'Court special master', 'Executive task force'], answer:0},
+  {id:52, chapter:11, set:'ch11', q:'Joint committee', choices:[
+    'Committee with members from both chambers', 'Only House members', 'Only Senate members', 'State‑federal body'], answer:0},
+  {id:53, chapter:11, set:'ch11', q:'Conference committee', choices:[
+    'Temporary joint committee to reconcile House/Senate bills', 'A permanent oversight panel', 'A party caucus', 'Budget office'], answer:0},
+  {id:54, chapter:11, set:'ch11', q:'Trustee model', choices:[
+    'Representative uses own judgment in policymaking', 'Representative mirrors constituents directly', 'Representative follows party only', 'Representative follows donors'], answer:0},
+  {id:55, chapter:11, set:'ch11', q:'Delegate model', choices:[
+    'Representative reflects constituents’ preferences', 'Representative uses own judgment', 'Party‑first model', 'Interest‑group model'], answer:0},
+  {id:56, chapter:11, set:'ch11', q:'Filibuster', choices:[
+    'Prolonged Senate debate used to delay/block action', 'House discharge petition', 'Veto override', 'Impeachment trial'], answer:0},
+  {id:57, chapter:11, set:'ch11', q:'Cloture', choices:[
+    'Senate vote to end debate (typically 60 votes)', 'House special rule', 'Census count', 'Committee markup'], answer:0},
+  {id:58, chapter:11, set:'ch11', q:'Reapportionment', choices:[
+    'Redistribution of House seats after the decennial census', 'Redrawing districts within states', 'Reassigning committees', 'Rewriting bills'], answer:0},
+  {id:59, chapter:11, set:'ch11', q:'Legislative process', choices:[
+    'Introduction → committee → floor → conference → presidential action', 'Primary → general → certification', 'Nomination → convention → election', 'Docket → briefing → argument'], answer:0}
+];
+
+// Build sets
+const SET_MAP = {
+  ch67: BANK.filter(q=>q.chapter===6 || q.chapter===7),
+  ch89: BANK.filter(q=>q.chapter===8 || q.chapter===9),
+  ch1011: BANK.filter(q=>q.chapter===10 || q.chapter===11),
+  unit2: [...BANK]
+};
+
+// State
+let current = { list:[], answers:[], idx:0 };
+
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+
+function startQuiz(){
+  const mode = document.getElementById('mode').value;
+  const order = document.getElementById('shuffle').value;
+  let items = [...SET_MAP[mode]];
+  if(mode==='unit2') items = shuffle(items).slice(0,50);
+  if(order==='shuf') shuffle(items);
+  current.list = items;
+  current.answers = new Array(items.length).fill(null);
+  current.idx = 0;
+  document.getElementById('start').classList.add('hidden');
+  document.getElementById('result').classList.add('hidden');
+  document.getElementById('quiz').classList.remove('hidden');
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const q = current.list[current.idx];
+  document.getElementById('progress').textContent = `Q ${current.idx+1} / ${current.list.length}`;
+  document.getElementById('chapterTag').textContent = `Chapter ${q.chapter}`;
+  document.getElementById('qtext').textContent = `Define: ${q.q}`;
+  const box = document.getElementById('choices');
+  box.innerHTML = '';
+  q.choices.forEach((c,i)=>{
+    const div = document.createElement('label');
+    div.className='choice';
+    div.innerHTML = `<input type="radio" name="choice" value="${i}" ${current.answers[current.idx]===i?'checked':''}> ${c}`;
+    box.appendChild(div);
+  });
+}
+
+function saveSelection(){ const sel = document.querySelector('input[name="choice"]:checked'); if(sel){ current.answers[current.idx] = Number(sel.value); } }
+function nextQ(){ saveSelection(); if(current.idx < current.list.length-1){ current.idx++; renderQuestion(); } else { finishQuiz(); } }
+function prevQ(){ saveSelection(); if(current.idx>0){ current.idx--; renderQuestion(); } }
+function clearSel(){ current.answers[current.idx]=null; renderQuestion(); }
+
+function finishQuiz(){
+  const results = current.list.map((q,i)=>({q, chosen: current.answers[i]}));
+  const missed = results.filter(r=>r.chosen!==r.q.answer);
+  const correct = results.length - missed.length;
+  document.getElementById('quiz').classList.add('hidden');
+  const scoreline = document.getElementById('scoreline');
+  scoreline.textContent = `Score: ${correct} / ${results.length}  (${Math.round(100*correct/results.length)}%)`;
+  scoreline.className = 'pill ' + (missed.length? 'bad':'ok');
+
+  // show only missed with correct definitions
+  const rev = document.getElementById('review');
+  rev.innerHTML='';
+  if(missed.length===0){
+    const p = document.createElement('p'); p.className='note'; p.textContent='Perfect! No missed terms.'; rev.appendChild(p);
+  } else {
+    missed.forEach((m,ix)=>{
+      const sec = document.createElement('div');
+      sec.innerHTML = `
+        <h3><span class="qnum">Missed ${ix+1}</span> · <span class="tag">Chapter ${m.q.chapter}</span></h3>
+        <div style="margin:6px 0 8px; font-weight:600">Term: ${m.q.q}</div>
+        <div class="pill ok">Correct Definition: ${m.q.choices[m.q.answer]}</div>
+      `;
+      rev.appendChild(sec);
+      const hr = document.createElement('div'); hr.className='sep'; rev.appendChild(hr);
+    });
+  }
+  document.getElementById('result').classList.remove('hidden');
+}
+
+// Events
+document.getElementById('begin').addEventListener('click', startQuiz);
+['next','prev','clear'].forEach(id=>document.getElementById(id).addEventListener('click', ()=>{
+  if(id==='next') nextQ(); else if(id==='prev') prevQ(); else clearSel();
+}));
+document.getElementById('retry').addEventListener('click', ()=>{ document.getElementById('result').classList.add('hidden'); document.getElementById('start').classList.remove('hidden'); });
+document.getElementById('restart').addEventListener('click', ()=>{ location.reload(); });
+</script>
+</body>
+</html>
