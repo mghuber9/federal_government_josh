@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Unit 2 — Lightning Round MCQ</title>
+<style>
+  :root{
+    --bg:#0b1220; --panel:#101a2c; --ink:#e6edf3; --muted:#9fb0c6; --accent:#4fd1c5;
+    --ok:#22c55e; --bad:#ef4444; --tile:#0f2034; --tile-border:rgba(255,255,255,.12);
+  }
+  *{box-sizing:border-box}
+  body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial; color:var(--ink); background:radial-gradient(1100px 700px at 20% -10%, #13233d 0%, var(--bg) 60%);} 
+  .wrap{max-width:980px; margin:0 auto; padding:24px}
+  h1{margin:0 0 6px; font-size:clamp(22px,3vw,32px)}
+  p,label{color:var(--muted)}
+  .card{background:var(--panel); border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:18px; box-shadow:0 6px 18px rgba(0,0,0,.25)}
+  .grid{display:grid; gap:12px}
+  .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  select,button{appearance:none; border:1px solid rgba(255,255,255,.12); background:#0f2034; color:var(--ink); padding:10px 12px; border-radius:12px; font-size:16px}
+  button{cursor:pointer; background:linear-gradient(135deg,#1f3a5b,#17314f); border:1px solid rgba(79,209,197,.45)}
+  button:hover{filter:brightness(1.08)}
+  .hidden{display:none}
+  .pill{display:inline-block; padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.12); background:#10243a; color:#a7c6ff; font-size:12px}
+  .hud{display:flex; gap:8px; align-items:center; justify-content:space-between; flex-wrap:wrap}
+  .qtext{font-size:clamp(18px,2.2vw,22px); font-weight:700; line-height:1.35}
+  .choices{display:grid; gap:12px; grid-template-columns:repeat(2,minmax(0,1fr)); margin-top:12px}
+  @media (max-width: 820px){ .choices{grid-template-columns:1fr;} }
+  .tile{min-height:110px; padding:14px; border-radius:14px; border:1px solid var(--tile-border); background:var(--tile); cursor:pointer; display:flex; align-items:center}
+  .tile .inner{font-size:clamp(16px,2.1vw,18px); line-height:1.35}
+  .tile.correct{background:#0e2b22; border-color:#1f8a67}
+  .tile.wrong{background:#3a0f16; border-color:#ff6b6b}
+  .muted{color:var(--muted)}
+  .sep{height:1px; background:rgba(255,255,255,.08); margin:12px 0}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Lightning Round — Multiple Choice (Big Tiles)</h1>
+    <p class="muted">Auto‑advance on answer. Stopwatch runs during the round. Review shows only missed items with correct answers.</p>
+
+    <!-- START -->
+    <section id="start" class="card grid">
+      <div class="grid grid-2">
+        <div>
+          <label for="section">Section</label>
+          <select id="section">
+            <option value="ch67">Ch. 6–7 (all)</option>
+            <option value="ch89">Ch. 8–9 (all)</option>
+            <option value="ch1011">Ch. 10–11 (all)</option>
+            <option value="unit2">Unit 2 (random 50)</option>
+          </select>
+        </div>
+        <div>
+          <label for="mode">Play mode</label>
+          <select id="mode">
+            <option value="t2d">Term → Definition</option>
+            <option value="d2t">Definition → Term</option>
+          </select>
+        </div>
+      </div>
+      <div class="hud">
+        <button id="begin">Start Round</button>
+        <span class="pill" id="hint">Tip: Correct answer order is shuffled every time.</span>
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="quiz" class="card hidden">
+      <div class="hud">
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+          <span class="pill" id="setTag">Set</span>
+          <span class="pill" id="modeTag">Mode</span>
+          <span class="pill" id="progress">Q 1 / N</span>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center">
+          <span class="pill" id="timer">00:00</span>
+          <span class="pill" id="best">Best: —</span>
+        </div>
+      </div>
+      <div class="sep"></div>
+      <div id="prompt" class="qtext"></div>
+      <div id="choices" class="choices"></div>
+    </section>
+
+    <!-- RESULT -->
+    <section id="result" class="card hidden">
+      <h2 style="margin:0 0 6px">Round Complete</h2>
+      <div class="hud" style="margin-bottom:6px">
+        <span class="pill" id="scoreline">Score</span>
+        <span class="pill" id="timeline">Time</span>
+        <span class="pill" id="bestline">Best Time</span>
+      </div>
+      <div class="sep"></div>
+      <div id="review"></div>
+      <div class="hud">
+        <button id="retry">New Round</button>
+        <button id="restart">Back to Start</button>
+      </div>
+    </section>
+  </div>
+
+<script>
+// ------------- Helpers -------------
+function shuffle(a){ const r=[...a]; for(let i=r.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [r[i],r[j]]=[r[j],r[i]]; } return r; }
+function fmtTime(s){ const m=Math.floor(s/60).toString().padStart(2,'0'); const ss=(s%60).toString().padStart(2,'0'); return `${m}:${ss}`; }
+function setBest(key, seconds){ const prev = Number(localStorage.getItem(key)||Infinity); if(seconds < prev){ localStorage.setItem(key, String(seconds)); } }
+function getBest(key){ const v = localStorage.getItem(key); return v? fmtTime(Number(v)) : '—'; }
+
+// ------------- Vocab Bank (59) -------------
+const BANK = [
+  // ch6–7
+  {chapter:6, set:'ch67', term:'Public opinion', def:'Aggregate of individual attitudes about government and politics.'},
+  {chapter:6, set:'ch67', term:'Political socialization', def:'Process by which people acquire political beliefs and values.'},
+  {chapter:6, set:'ch67', term:'Party identification', def:'Psychological attachment to a political party.'},
+  {chapter:6, set:'ch67', term:'Selective perception', def:'Interpreting information to fit preexisting beliefs.'},
+  {chapter:6, set:'ch67', term:'Ideology', def:'Coherent set of beliefs about the role of government.'},
+  {chapter:6, set:'ch67', term:'Sampling error', def:'Expected difference between sample result and true population.'},
+  {chapter:6, set:'ch67', term:'Populist', def:'Proponent of ordinary people vs. perceived elites.'},
+  {chapter:7, set:'ch67', term:'Political participation', def:'Citizen activities intended to influence government.'},
+  {chapter:7, set:'ch67', term:'Suffrage', def:'Right to vote.'},
+  {chapter:7, set:'ch67', term:'15th Amendment', def:'Prohibits denying vote based on race.'},
+  {chapter:7, set:'ch67', term:'Motor Voter Act (1993)', def:'Allows voter registration at DMVs.'},
+  {chapter:7, set:'ch67', term:'Likely voters', def:'Individuals identified as most probable to vote.'},
+  {chapter:7, set:'ch67', term:'Virtual participation', def:'Online political actions (petitions, posts, donations).'},
+  {chapter:7, set:'ch67', term:'Social capital', def:'Networks and norms enabling collective action.'},
+  {chapter:7, set:'ch67', term:'Social movement', def:'Sustained, organized effort to bring social/political change.'},
+  {chapter:7, set:'ch67', term:'Primary election', def:'Intra-party election to choose nominees.'},
+  // ch8–9
+  {chapter:8, set:'ch89', term:'Political party', def:'Organization seeking to win office to influence policy.'},
+  {chapter:8, set:'ch89', term:'Realignment', def:'Durable shift in party coalitions/issues.'},
+  {chapter:8, set:'ch89', term:'Dealignment', def:'Weakening of party attachments; rise of independents.'},
+  {chapter:8, set:'ch89', term:'Ticket splitting', def:'Voting for different parties for different offices.'},
+  {chapter:8, set:'ch89', term:'Two-party system', def:'Result of single-member districts with plurality rules.'},
+  {chapter:8, set:'ch89', term:'Proportional representation', def:'Seats allocated by party vote share.'},
+  {chapter:8, set:'ch89', term:'Gender gap', def:'Differences between men and women in voting/attitudes.'},
+  {chapter:8, set:'ch89', term:'Third party', def:'Minor party influencing agenda and elections.'},
+  {chapter:8, set:'ch89', term:'Party organization', def:'National, state, and local party committees.'},
+  {chapter:8, set:'ch89', term:'Hard money', def:'Limited contributions given directly to candidates.'},
+  {chapter:9, set:'ch89', term:'Interest group', def:'Organization that seeks to influence public policy.'},
+  {chapter:9, set:'ch89', term:'Collective good', def:'Benefit that cannot be withheld from non-payers.'},
+  {chapter:9, set:'ch89', term:'Free rider problem', def:'People benefit without contributing to the cost.'},
+  {chapter:9, set:'ch89', term:'Lobbying', def:'Direct interaction with officials to influence decisions.'},
+  {chapter:9, set:'ch89', term:'Amicus curiae brief', def:'"Friend of the court" brief by a non-party.'},
+  {chapter:9, set:'ch89', term:'Iron triangle', def:'Relationship among committees, agencies, and interest groups.'},
+  {chapter:9, set:'ch89', term:'Issue network', def:'Fluid coalition of actors around a policy area.'},
+  {chapter:9, set:'ch89', term:'PAC (political action committee)', def:'Entity that raises limited funds to contribute to candidates.'},
+  {chapter:9, set:'ch89', term:'Super PAC', def:'Group that spends unlimited independently; no direct donations.'},
+  {chapter:9, set:'ch89', term:'Inside lobbying', def:'Direct contact with policymakers.'},
+  // ch10–11
+  {chapter:10, set:'ch1011', term:'News media', def:'Organizations that gather and disseminate information.'},
+  {chapter:10, set:'ch1011', term:'Partisan press', def:'Media openly aligned with a party/viewpoint.'},
+  {chapter:10, set:'ch1011', term:'Yellow journalism', def:'Sensationalized reporting to boost sales.'},
+  {chapter:10, set:'ch1011', term:'Objective journalism', def:'Reporting aspiring to fairness and accuracy.'},
+  {chapter:10, set:'ch1011', term:'Gatekeeping', def:'Deciding which information enters the news stream.'},
+  {chapter:10, set:'ch1011', term:'Agenda setting', def:'Media influence on what issues the public thinks important.'},
+  {chapter:10, set:'ch1011', term:'Framing', def:'Presentation that shapes interpretation of an issue.'},
+  {chapter:10, set:'ch1011', term:'Watchdog function', def:'Scrutiny of officials and exposure of wrongdoing.'},
+  {chapter:11, set:'ch1011', term:'Apportionment', def:'Allocation of House seats among states by population.'},
+  {chapter:11, set:'ch1011', term:'Redistricting', def:'Redrawing electoral district boundaries within a state.'},
+  {chapter:11, set:'ch1011', term:'Gerrymandering', def:'Drawing districts to advantage a party/group.'},
+  {chapter:11, set:'ch1011', term:'Primary (congressional)', def:'Intra-party election to choose a nominee.'},
+  {chapter:11, set:'ch1011', term:'Committee system', def:'Division of labor in Congress via specialized groups.'},
+  {chapter:11, set:'ch1011', term:'Standing committee', def:'Permanent panel with jurisdiction over a policy area.'},
+  {chapter:11, set:'ch1011', term:'Select (or special) committee', def:'Temporary committee for a specific purpose.'},
+  {chapter:11, set:'ch1011', term:'Joint committee', def:'Committee with members from both chambers.'},
+  {chapter:11, set:'ch1011', term:'Conference committee', def:'Temporary joint committee to reconcile House/Senate bills.'},
+  {chapter:11, set:'ch1011', term:'Trustee model', def:'Representative uses own judgment in policymaking.'},
+  {chapter:11, set:'ch1011', term:'Delegate model', def:'Representative reflects constituents’ preferences.'},
+  {chapter:11, set:'ch1011', term:'Filibuster', def:'Prolonged Senate debate used to delay/block action.'},
+  {chapter:11, set:'ch1011', term:'Cloture', def:'Senate vote to end debate (typically 60 votes).'},
+  {chapter:11, set:'ch1011', term:'Reapportionment', def:'Redistribution of House seats after the decennial census.'},
+  {chapter:11, set:'ch1011', term:'Legislative process', def:'Introduction → committee → floor → conference → presidential action.'}
+];
+
+const SETS = {
+  ch67: BANK.filter(x=>x.set==='ch67'),
+  ch89: BANK.filter(x=>x.set==='ch89'),
+  ch1011: BANK.filter(x=>x.set==='ch1011'),
+  unit2: [...BANK]
+};
+const SET_LABELS = { ch67:'Ch. 6–7', ch89:'Ch. 8–9', ch1011:'Ch. 10–11', unit2:'Unit 2 (50 random)' };
+
+// ------------- State -------------
+let state = { list:[], idx:0, mode:'t2d', setKey:'ch67', answers:[], misses:[], timer:null, seconds:0 };
+
+function startRound(){
+  const setKey = document.getElementById('section').value; state.setKey=setKey;
+  const mode = document.getElementById('mode').value; state.mode=mode;
+  let items = [...SETS[setKey]];
+  if(setKey==='unit2') items = shuffle(items).slice(0,50);
+  state.list = shuffle(items); // question order
+  state.answers = new Array(state.list.length).fill(null);
+  state.misses = [];
+  state.idx = 0; state.seconds = 0; startTimer();
+  document.getElementById('start').classList.add('hidden');
+  document.getElementById('result').classList.add('hidden');
+  document.getElementById('quiz').classList.remove('hidden');
+  document.getElementById('setTag').textContent = SET_LABELS[state.setKey];
+  document.getElementById('modeTag').textContent = (state.mode==='t2d'?'Term → Definition':'Definition → Term');
+  document.getElementById('best').textContent = 'Best: ' + getBest(bestKey());
+  renderQ();
+}
+
+function bestKey(){ return `best_${state.setKey}_${state.mode}`; }
+
+function startTimer(){ if(state.timer) clearInterval(state.timer); state.timer = setInterval(()=>{ state.seconds++; document.getElementById('timer').textContent = fmtTime(state.seconds); },1000); }
+function stopTimer(){ if(state.timer){ clearInterval(state.timer); state.timer=null; } }
+
+function renderQ(){
+  const q = state.list[state.idx];
+  document.getElementById('progress').textContent = `Q ${state.idx+1} / ${state.list.length}`;
+  const prompt = (state.mode==='t2d') ? q.term : q.def;
+  document.getElementById('prompt').textContent = prompt + (state.mode==='t2d'? '' : '');
+  const choices = buildChoices(q);
+  const box = document.getElementById('choices'); box.innerHTML='';
+  choices.forEach((c)=>{
+    const btn = document.createElement('button');
+    btn.className='tile';
+    const inner = document.createElement('div'); inner.className='inner'; inner.textContent=c.text; btn.appendChild(inner);
+    btn.addEventListener('click', ()=> pick(c.correct, btn, q));
+    box.appendChild(btn);
+  });
+}
+
+function buildChoices(q){
+  // Build 3 distractors from the same set
+  const pool = state.list; // already subset
+  let distractors=[];
+  while(distractors.length<3){
+    const cand = pool[Math.floor(Math.random()*pool.length)];
+    if(state.mode==='t2d'){
+      if(cand!==q && !distractors.includes(cand.def)) distractors.push(cand.def);
+    } else {
+      if(cand!==q && !distractors.includes(cand.term)) distractors.push(cand.term);
+    }
+  }
+  const correct = (state.mode==='t2d') ? q.def : q.term;
+  const choices = shuffle([ {text:correct, correct:true}, ...distractors.map(d=>({text:d, correct:false})) ]);
+  return choices;
+}
+
+function pick(isCorrect, node, q){
+  // visual feedback
+  node.classList.add(isCorrect? 'correct' : 'wrong');
+  if(!isCorrect){ state.misses.push({q, mode:state.mode}); }
+  // auto advance after a short delay
+  setTimeout(()=>{
+    if(state.idx < state.list.length-1){ state.idx++; renderQ(); }
+    else { finish(); }
+  }, 550);
+}
+
+function finish(){
+  stopTimer();
+  const total = state.list.length;
+  const missed = state.misses.length;
+  const correct = total - missed;
+  setBest(bestKey(), state.seconds);
+  document.getElementById('quiz').classList.add('hidden');
+  document.getElementById('result').classList.remove('hidden');
+  document.getElementById('scoreline').textContent = `Score: ${correct} / ${total} (${Math.round(correct/total*100)}%)`;
+  document.getElementById('timeline').textContent = `Time: ${fmtTime(state.seconds)}`;
+  document.getElementById('bestline').textContent = `Best: ${getBest(bestKey())}`;
+
+  const rev = document.getElementById('review'); rev.innerHTML='';
+  if(missed===0){
+    const p = document.createElement('p'); p.className='muted'; p.textContent='Perfect! No missed items to review.'; rev.appendChild(p);
+  } else {
+    const list = document.createElement('div'); list.className='grid'; list.style.gridTemplateColumns='1fr'; list.style.gap='10px';
+    state.misses.forEach((m,i)=>{
+      const row = document.createElement('div'); row.className='card'; row.style.padding='12px';
+      const prompt = (m.mode==='t2d')? m.q.term : m.q.def;
+      const ans =   (m.mode==='t2d')? m.q.def  : m.q.term;
+      row.innerHTML = `<div style="font-weight:700; margin-bottom:6px">Missed ${i+1} · Ch. ${m.q.chapter}</div>`+
+                      `<div style="margin-bottom:6px">${prompt}</div>`+
+                      `<div class="pill" style="display:inline-block">Correct: ${ans}</div>`;
+      list.appendChild(row);
+    });
+    rev.appendChild(list);
+  }
+}
+
+// navigation
+document.getElementById('begin').addEventListener('click', startRound);
+document.getElementById('retry').addEventListener('click', startRound);
+document.getElementById('restart').addEventListener('click', ()=>{
+  document.getElementById('result').classList.add('hidden');
+  document.getElementById('start').classList.remove('hidden');
+});
+</script>
+</body>
+</html>
