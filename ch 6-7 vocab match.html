@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Unit 2 — Vocab Match Game (Ch. 6–11)</title>
+<style>
+  :root{ --bg:#0b1220; --panel:#0f1a2c; --ink:#e6edf3; --muted:#9fb0c6; --accent:#4fd1c5; --ok:#22c55e; --bad:#ef4444; }
+  *{box-sizing:border-box}
+  body{margin:0; font-family:system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial; color:var(--ink); background:radial-gradient(1100px 700px at 20% -10%, #13233d 0%, var(--bg) 60%);} 
+  .wrap{max-width:1000px; margin:0 auto; padding:24px}
+  h1{margin:0 0 8px; font-size:clamp(22px,3vw,32px)}
+  p,label{color:var(--muted)}
+  .card{background:var(--panel); border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:18px; box-shadow:0 6px 18px rgba(0,0,0,.25)}
+  .row{display:grid; gap:12px}
+  .row-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  select, button{appearance:none; border:1px solid rgba(255,255,255,.12); background:#0f2034; color:var(--ink); padding:10px 12px; border-radius:12px; font-size:15px}
+  button{cursor:pointer; background:linear-gradient(135deg, #1f3a5b, #17314f); border:1px solid rgba(79,209,197,.45)}
+  button:hover{filter:brightness(1.08)}
+  .pill{display:inline-block; padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.12); background:#10243a; color:#a7c6ff; font-size:12px}
+  .hud{display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap}
+  .grid{display:grid; gap:10px; margin-top:12px}
+  .grid.match{grid-template-columns:repeat(5, minmax(0,1fr))}
+  @media (max-width: 900px){ .grid.match{ grid-template-columns:repeat(3, minmax(0,1fr)); } }
+  .tile{position:relative; min-height:90px; padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,.12); background:#0f2034; cursor:pointer; transition:transform .08s ease, background .2s ease}
+  .tile:hover{transform:translateY(-2px)}
+  .tile.matched{background:#0e2b22; border-color:#1f8a67}
+  .tile.selected{outline:2px solid var(--accent)}
+  .tile .small{font-size:12px; color:#9fb0c6}
+  .tile .big{font-size:15px; line-height:1.35}
+  .tile .chapter{position:absolute; right:8px; bottom:8px; font-size:10px; opacity:.8}
+  .sep{height:1px; background:rgba(255,255,255,.08); margin:12px 0}
+  .note{font-size:13px; color:#a9bbcf}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Vocab Match — Unit 2 (Ch. 6–11)</h1>
+    <p class="note">Flip and match <em>terms ↔ definitions</em>. Choose a section and number of pairs. Try to keep your <b>streak</b> going!</p>
+
+    <!-- Controls -->
+    <section class="card row row-2">
+      <div>
+        <label for="mode">Section</label>
+        <select id="mode">
+          <option value="ch67">Ch. 6–7</option>
+          <option value="ch89">Ch. 8–9</option>
+          <option value="ch1011">Ch. 10–11</option>
+          <option value="unit2">Unit 2 (all)</option>
+        </select>
+      </div>
+      <div>
+        <label for="pairs">Pairs per round</label>
+        <select id="pairs">
+          <option value="6">6 pairs</option>
+          <option value="8">8 pairs</option>
+          <option value="10" selected>10 pairs</option>
+          <option value="12">12 pairs</option>
+        </select>
+      </div>
+      <div>
+        <label for="order">Term side</label>
+        <select id="order">
+          <option value="mixed" selected>Mixed (both sides)</option>
+          <option value="terms">Only terms visible (definitions hidden)</option>
+          <option value="defs">Only definitions visible (terms hidden)</option>
+        </select>
+      </div>
+      <div style="display:flex; align-items:flex-end; gap:8px">
+        <button id="start">Start / New Round</button>
+        <button id="peek">Peek 3s</button>
+        <button id="study">Study Mode</button>
+      </div>
+    </section>
+
+    <!-- HUD -->
+    <section class="card hud" style="margin-top:12px">
+      <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+        <span id="setLabel" class="pill">Set</span>
+        <span id="progress" class="pill">0 / 0 matched</span>
+        <span id="streak" class="pill">Streak: 0</span>
+        <span id="best" class="pill">Best: 0</span>
+        <span id="timer" class="pill">00:00</span>
+      </div>
+      <div style="display:flex; gap:8px; align-items:center">
+        <button id="giveup" title="Show remaining matches">Give Up</button>
+        <button id="next">Next Round ▶</button>
+      </div>
+    </section>
+
+    <!-- Board -->
+    <section id="board" class="card">
+      <div id="grid" class="grid match"></div>
+      <div class="sep"></div>
+      <div id="summary" class="note">Start a round to populate the board.</div>
+    </section>
+
+    <!-- Study Modal (simple inline) -->
+    <section id="studyPane" class="card" style="margin-top:12px; display:none">
+      <div class="hud"><span class="pill">Study Mode — Tap to flip</span><button id="closeStudy">Close</button></div>
+      <div class="sep"></div>
+      <div id="studyGrid" class="grid" style="grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px"></div>
+    </section>
+  </div>
+
+<script>
+// ---------- Data Bank (59 terms) ----------
+const BANK = [
+  // ch6–7
+  {chapter:6, set:'ch67', term:'Public opinion', def:'Aggregate of individual attitudes about government and politics.'},
+  {chapter:6, set:'ch67', term:'Political socialization', def:'Process by which people acquire political beliefs and values.'},
+  {chapter:6, set:'ch67', term:'Party identification', def:'Psychological attachment to a political party.'},
+  {chapter:6, set:'ch67', term:'Selective perception', def:'Interpreting information to fit preexisting beliefs.'},
+  {chapter:6, set:'ch67', term:'Ideology', def:'Coherent set of beliefs about the role of government.'},
+  {chapter:6, set:'ch67', term:'Sampling error', def:'Expected difference between sample result and true population.'},
+  {chapter:6, set:'ch67', term:'Populist', def:'Proponent of ordinary people vs. perceived elites.'},
+  {chapter:7, set:'ch67', term:'Political participation', def:'Citizen activities intended to influence government.'},
+  {chapter:7, set:'ch67', term:'Suffrage', def:'Right to vote.'},
+  {chapter:7, set:'ch67', term:'15th Amendment', def:'Prohibits denying vote based on race.'},
+  {chapter:7, set:'ch67', term:'Motor Voter Act (1993)', def:'Allows voter registration at DMVs.'},
+  {chapter:7, set:'ch67', term:'Likely voters', def:'Individuals identified as most probable to vote.'},
+  {chapter:7, set:'ch67', term:'Virtual participation', def:'Online political actions (petitions, posts, donations).'},
+  {chapter:7, set:'ch67', term:'Social capital', def:'Networks and norms enabling collective action.'},
+  {chapter:7, set:'ch67', term:'Social movement', def:'Sustained, organized effort to bring social/political change.'},
+  {chapter:7, set:'ch67', term:'Primary election', def:'Intra-party election to choose nominees.'},
+  // ch8–9
+  {chapter:8, set:'ch89', term:'Political party', def:'Organization seeking to win office to influence policy.'},
+  {chapter:8, set:'ch89', term:'Realignment', def:'Durable shift in party coalitions/issues.'},
+  {chapter:8, set:'ch89', term:'Dealignment', def:'Weakening of party attachments; rise of independents.'},
+  {chapter:8, set:'ch89', term:'Ticket splitting', def:'Voting for different parties for different offices.'},
+  {chapter:8, set:'ch89', term:'Two-party system', def:'Result of single-member districts with plurality rules.'},
+  {chapter:8, set:'ch89', term:'Proportional representation', def:'Seats allocated by party vote share.'},
+  {chapter:8, set:'ch89', term:'Gender gap', def:'Differences between men and women in voting/attitudes.'},
+  {chapter:8, set:'ch89', term:'Third party', def:'Minor party influencing agenda and elections.'},
+  {chapter:8, set:'ch89', term:'Party organization', def:'National, state, and local party committees.'},
+  {chapter:8, set:'ch89', term:'Hard money', def:'Limited contributions given directly to candidates.'},
+  {chapter:9, set:'ch89', term:'Interest group', def:'Organization that seeks to influence public policy.'},
+  {chapter:9, set:'ch89', term:'Collective good', def:'Benefit that cannot be withheld from non-payers.'},
+  {chapter:9, set:'ch89', term:'Free rider problem', def:'People benefit without contributing to the cost.'},
+  {chapter:9, set:'ch89', term:'Lobbying', def:'Direct interaction with officials to influence decisions.'},
+  {chapter:9, set:'ch89', term:'Amicus curiae brief', def:'"Friend of the court" brief by a non-party.'},
+  {chapter:9, set:'ch89', term:'Iron triangle', def:'Relationship among committees, agencies, and interest groups.'},
+  {chapter:9, set:'ch89', term:'Issue network', def:'Fluid coalition of actors around a policy area.'},
+  {chapter:9, set:'ch89', term:'PAC (political action committee)', def:'Entity that raises limited funds to contribute to candidates.'},
+  {chapter:9, set:'ch89', term:'Super PAC', def:'Group that spends unlimited independently; no direct donations.'},
+  {chapter:9, set:'ch89', term:'Inside lobbying', def:'Direct contact with policymakers.'},
+  // ch10–11
+  {chapter:10, set:'ch1011', term:'News media', def:'Organizations that gather and disseminate information.'},
+  {chapter:10, set:'ch1011', term:'Partisan press', def:'Media openly aligned with a party/viewpoint.'},
+  {chapter:10, set:'ch1011', term:'Yellow journalism', def:'Sensationalized reporting to boost sales.'},
+  {chapter:10, set:'ch1011', term:'Objective journalism', def:'Reporting aspiring to fairness and accuracy.'},
+  {chapter:10, set:'ch1011', term:'Gatekeeping', def:'Deciding which information enters the news stream.'},
+  {chapter:10, set:'ch1011', term:'Agenda setting', def:'Media influence on what issues the public thinks important.'},
+  {chapter:10, set:'ch1011', term:'Framing', def:'Presentation that shapes interpretation of an issue.'},
+  {chapter:10, set:'ch1011', term:'Watchdog function', def:'Scrutiny of officials and exposure of wrongdoing.'},
+  {chapter:11, set:'ch1011', term:'Apportionment', def:'Allocation of House seats among states by population.'},
+  {chapter:11, set:'ch1011', term:'Redistricting', def:'Redrawing electoral district boundaries within a state.'},
+  {chapter:11, set:'ch1011', term:'Gerrymandering', def:'Drawing districts to advantage a party/group.'},
+  {chapter:11, set:'ch1011', term:'Primary (congressional)', def:'Intra-party election to choose a nominee.'},
+  {chapter:11, set:'ch1011', term:'Committee system', def:'Division of labor in Congress via specialized groups.'},
+  {chapter:11, set:'ch1011', term:'Standing committee', def:'Permanent panel with jurisdiction over a policy area.'},
+  {chapter:11, set:'ch1011', term:'Select (or special) committee', def:'Temporary committee for a specific purpose.'},
+  {chapter:11, set:'ch1011', term:'Joint committee', def:'Committee with members from both chambers.'},
+  {chapter:11, set:'ch1011', term:'Conference committee', def:'Temporary joint committee to reconcile House/Senate bills.'},
+  {chapter:11, set:'ch1011', term:'Trustee model', def:'Representative uses own judgment in policymaking.'},
+  {chapter:11, set:'ch1011', term:'Delegate model', def:'Representative reflects constituents’ preferences.'},
+  {chapter:11, set:'ch1011', term:'Filibuster', def:'Prolonged Senate debate used to delay/block action.'},
+  {chapter:11, set:'ch1011', term:'Cloture', def:'Senate vote to end debate (typically 60 votes).'},
+  {chapter:11, set:'ch1011', term:'Reapportionment', def:'Redistribution of House seats after the decennial census.'},
+  {chapter:11, set:'ch1011', term:'Legislative process', def:'Introduction → committee → floor → conference → presidential action.'}
+];
+
+const SETS = {
+  ch67: BANK.filter(x=>x.set==='ch67'),
+  ch89: BANK.filter(x=>x.set==='ch89'),
+  ch1011: BANK.filter(x=>x.set==='ch1011'),
+  unit2: [...BANK]
+};
+const SET_LABELS = { ch67:'Ch. 6–7', ch89:'Ch. 8–9', ch1011:'Ch. 10–11', unit2:'Unit 2 (all)' };
+
+// ---------- Helpers ----------
+function shuffle(a){ const r=[...a]; for(let i=r.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [r[i],r[j]]=[r[j],r[i]]; } return r; }
+function el(tag, opts={}){ const n=document.createElement(tag); Object.assign(n, opts); return n; }
+function fmtTime(sec){ const m=Math.floor(sec/60).toString().padStart(2,'0'); const s=(sec%60).toString().padStart(2,'0'); return `${m}:${s}`; }
+
+// ---------- Game State ----------
+let state = { setKey:'ch67', pool:[], pairs:10, order:'mixed', board:[], first:null, lock:false, matched:0, streak:0, best:0, time:0, tick:null };
+
+function buildRound(){
+  const mode = document.getElementById('mode').value; state.setKey=mode;
+  const pairsSel = parseInt(document.getElementById('pairs').value,10); state.pairs=pairsSel;
+  const ord = document.getElementById('order').value; state.order=ord;
+  const pool = [...SETS[mode]];
+  const sample = shuffle(pool).slice(0, Math.min(pairsSel, pool.length));
+  state.pool = sample;
+  // Build tiles: for each pair create two tiles (term card and def card)
+  let tiles=[];
+  sample.forEach((it, idx)=>{
+    const a = {key:`${idx}t`, pair:idx, kind:'term', text:it.term, chapter:it.chapter};
+    const b = {key:`${idx}d`, pair:idx, kind:'def', text:it.def, chapter:it.chapter};
+    if(state.order==='terms'){ tiles.push(a, {...b, hidden:true}); }
+    else if(state.order==='defs'){ tiles.push({...a, hidden:true}, b); }
+    else { tiles.push(a,b); }
+  });
+  state.board = shuffle(tiles);
+  state.first=null; state.lock=false; state.matched=0; state.streak=0; resetTimer(); startTimer();
+  renderBoard();
+  document.getElementById('setLabel').textContent = SET_LABELS[state.setKey] + ` — ${sample.length} pairs in deck`;
+  document.getElementById('progress').textContent = `${state.matched} / ${state.pool.length} matched`;
+  document.getElementById('streak').textContent = `Streak: ${state.streak}`;
+}
+
+function renderBoard(){
+  const grid = document.getElementById('grid'); grid.innerHTML='';
+  state.board.forEach((card)=>{
+    const div = el('div'); div.className = 'tile'; div.dataset.key = card.key; 
+    const top = el('div', {className:'small', textContent: (card.kind==='term'?'Term':'Definition')});
+    const big = el('div', {className:'big', textContent: (card.hidden? '????' : card.text)});
+    const ch = el('div', {className:'chapter', textContent:`Ch. ${card.chapter}`});
+    div.append(top,big,ch);
+    div.addEventListener('click', ()=> onPick(card, div));
+    grid.appendChild(div);
+  });
+  document.getElementById('summary').textContent = 'Match pairs by clicking two tiles. Use Peek to briefly reveal hidden sides.';
+}
+
+function onPick(card, node){
+  if(state.lock) return;
+  if(node.classList.contains('matched')) return;
+  // reveal if hidden
+  if(card.hidden){ node.querySelector('.big').textContent = card.text; }
+  node.classList.add('selected');
+
+  if(!state.first){ state.first = {card,node}; return; }
+  if(node===state.first.node) return; // ignore same click
+
+  // Compare
+  state.lock=true;
+  const match = (state.first.card.pair===card.pair && state.first.card.kind!==card.kind);
+  setTimeout(()=>{
+    if(match){
+      node.classList.add('matched');
+      state.first.node.classList.add('matched');
+      state.matched+=1; state.streak+=1; if(state.streak>state.best){ state.best=state.streak; }
+      document.getElementById('progress').textContent = `${state.matched} / ${state.pool.length} matched`;
+      document.getElementById('streak').textContent = `Streak: ${state.streak}`;
+      document.getElementById('best').textContent = `Best: ${state.best}`;
+      // Auto-finish
+      if(state.matched===state.pool.length){ stopTimer(); document.getElementById('summary').textContent = `Great! Completed in ${fmtTime(state.time)} with best streak ${state.best}.`; }
+    } else {
+      state.streak=0; document.getElementById('streak').textContent = `Streak: ${state.streak}`;
+      // Flip back hidden sides if they were hidden-only mode
+      [node, state.first.node].forEach(n=>{
+        const k = n.dataset.key; const c = state.board.find(t=>t.key===k);
+        if(c && (state.order==='terms' || state.order==='defs') && (c.hidden===true)){
+          setTimeout(()=>{ n.querySelector('.big').textContent = '????'; }, 300);
+        }
+      });
+    }
+    [node, state.first.node].forEach(n=> n.classList.remove('selected'));
+    state.first=null; state.lock=false;
+  }, 350);
+}
+
+// Timer
+function resetTimer(){ if(state.tick){ clearInterval(state.tick); state.tick=null; } state.time=0; document.getElementById('timer').textContent = fmtTime(state.time); }
+function startTimer(){ if(state.tick) clearInterval(state.tick); state.tick=setInterval(()=>{ state.time++; document.getElementById('timer').textContent = fmtTime(state.time); },1000); }
+function stopTimer(){ if(state.tick){ clearInterval(state.tick); state.tick=null; } }
+
+// Peek
+function doPeek(){
+  const nodes = Array.from(document.querySelectorAll('.tile'));
+  const toReveal = nodes.filter(n=>{
+    const k=n.dataset.key; const c=state.board.find(t=>t.key===k);
+    return c && c.hidden===true && !n.classList.contains('matched');
+  });
+  toReveal.forEach(n=>{ const c=state.board.find(t=>t.key===n.dataset.key); n.querySelector('.big').textContent=c.text; });
+  setTimeout(()=>{
+    toReveal.forEach(n=>{ const c=state.board.find(t=>t.key===n.dataset.key); n.querySelector('.big').textContent='????'; });
+  }, 3000);
+}
+
+// Study Mode
+function openStudy(){
+  const pane = document.getElementById('studyPane'); pane.style.display='block';
+  const grid = document.getElementById('studyGrid'); grid.innerHTML='';
+  const list = [...SETS[state.setKey]];
+  list.forEach(item=>{
+    const card = el('div'); card.className='tile';
+    const front = el('div',{className:'big', textContent:item.term});
+    const small = el('div',{className:'small', textContent:`Ch. ${item.chapter}`});
+    const back = el('div',{className:'big', textContent:item.def, style:'display:none; margin-top:8px'});
+    card.append(front, small, back);
+    card.addEventListener('click', ()=>{
+      const showTerm = front.style.display!== 'none';
+      front.style.display = showTerm?'none':'block';
+      small.style.display = showTerm?'none':'block';
+      back.style.display = showTerm?'block':'none';
+    });
+    grid.appendChild(card);
+  });
+}
+function closeStudy(){ document.getElementById('studyPane').style.display='none'; }
+
+// Give Up
+function giveUp(){
+  // Highlight remaining matches by turning them green briefly
+  const remain = document.querySelectorAll('.tile:not(.matched)');
+  remain.forEach(n=>{ n.style.outline='2px solid #f59e0b'; setTimeout(()=>{ n.style.outline=''; }, 1000); });
+}
+
+// Next round
+function nextRound(){ buildRound(); }
+
+// Wire up
+document.getElementById('start').addEventListener('click', buildRound);
+document.getElementById('peek').addEventListener('click', doPeek);
+document.getElementById('study').addEventListener('click', openStudy);
+document.getElementById('closeStudy').addEventListener('click', closeStudy);
+document.getElementById('giveup').addEventListener('click', giveUp);
+document.getElementById('next').addEventListener('click', nextRound);
+
+// Initial
+document.getElementById('summary').textContent = 'Choose a section and click Start / New Round to begin.';
+</script>
+</body>
+</html>
