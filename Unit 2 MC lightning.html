@@ -94,6 +94,7 @@
       <div id="review"></div>
       <div class="hud">
         <button id="retry">New Round</button>
+        <button id="retryMissed">Retry Missed Only</button>
         <button id="restart">Back to Start</button>
       </div>
     </section>
@@ -220,7 +221,7 @@ const SETS = {
 const SET_LABELS = { ch67:'Ch. 6–7 (29)', ch89:'Ch. 8–9 (34)', ch1011:'Ch. 10–11 (31)', unit2:'Unit 2 (50 random)' };
 
 // ---------- State ----------
-let state = { list:[], idx:0, setKey:'unit2', answers:[], misses:[], timer:null, seconds:0 };
+let state = { list:[], idx:0, setKey:'unit2', answers:[], misses:[], timer:null, seconds:0, missedOnly:false };
 
 function bestKey(){ return `best_${state.setKey}`; }
 function startTimer(){ if(state.timer) clearInterval(state.timer); state.timer = setInterval(()=>{ state.seconds++; document.getElementById('timer').textContent = fmtTime(state.seconds); },1000); }
@@ -233,7 +234,7 @@ function startRound(){
   if(sk==='unit2') items = shuffle(items).slice(0,50);
   if(ord==='shuf') items = shuffle(items);
   state.list = items.map(x=>({...x})); // shallow copy
-  state.idx = 0; state.misses=[]; state.seconds=0; startTimer();
+  state.idx = 0; state.misses=[]; state.seconds=0; state.missedOnly=false; startTimer();
   document.getElementById('start').classList.add('hidden');
   document.getElementById('result').classList.add('hidden');
   document.getElementById('quiz').classList.remove('hidden');
@@ -271,7 +272,7 @@ function pick(isCorrect, node){
 function finish(){
   stopTimer();
   const total = state.list.length; const missed = state.misses.length; const correct = total - missed;
-  setBest(bestKey(), state.seconds);
+  if(!state.missedOnly){ setBest(bestKey(), state.seconds); }
   document.getElementById('quiz').classList.add('hidden');
   document.getElementById('result').classList.remove('hidden');
   document.getElementById('scoreline').textContent = `Score: ${correct} / ${total} (${Math.round(correct/total*100)}%)`;
@@ -293,6 +294,18 @@ function finish(){
     });
     rev.appendChild(list);
   }
+}
+
+function startRoundMissed(){
+  if(!state.misses || state.misses.length===0){ alert('No missed items to retry.'); return; }
+  const items = state.misses.map(m=>m); // full question objects
+  state.list = shuffle(items);
+  state.idx = 0; state.seconds = 0; state.missedOnly = true; startTimer();
+  document.getElementById('result').classList.add('hidden');
+  document.getElementById('quiz').classList.remove('hidden');
+  document.getElementById('setTag').textContent = (SET_LABELS[state.setKey] + ' — Missed Only');
+  document.getElementById('best').textContent = 'Best: ' + getBest(bestKey());
+  renderQ();
 }
 
 // nav
