@@ -282,7 +282,11 @@ function startRoundMissed(){
   if(!state.misses || state.misses.length===0){ alert('No missed items to retry.'); return; }
   const items = state.misses.map(m=>m);
   state.list = shuffle(items);
-  state.idx = 0; state.seconds = 0; state.missedOnly = true; startTimer();
+  state.idx = 0;
+  state.seconds = 0;
+  state.missedOnly = true;
+  state.misses = []; // RESET misses so this retry shows its own results
+  startTimer();
   document.getElementById('result').classList.add('hidden');
   document.getElementById('quiz').classList.remove('hidden');
   document.getElementById('setTag').textContent = SET_LABELS[state.setKey] + ' — Missed Only';
