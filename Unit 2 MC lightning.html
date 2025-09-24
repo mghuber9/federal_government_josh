@@ -3,12 +3,13 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Unit 2 — MC Lightning (94 Questions)</title>
+<title>Unit 2 — Lightning Round (94 MC Questions)</title>
 <style>
   :root{
     --bg:#0b1220; --panel:#101a2c; --ink:#e6edf3; --muted:#9fb0c6; --accent:#4fd1c5;
     --ok:#22c55e; --bad:#ef4444; --tile:#0f2034; --tile-border:rgba(255,255,255,.12);
   }
+  *{box-sizing:border-box}
   body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial; color:var(--ink); background:radial-gradient(1100px 700px at 20% -10%, #13233d 0%, var(--bg) 60%);} 
   .wrap{max-width:980px; margin:0 auto; padding:24px}
   h1{margin:0 0 6px; font-size:clamp(22px,3vw,32px)}
@@ -36,7 +37,7 @@
 <body>
   <div class="wrap">
     <h1>Lightning Round — Unit 2 (94 MC Questions)</h1>
-    <p class="muted">Auto-advance on answer. Stopwatch runs during the round. End screen shows only missed items with the correct answer.</p>
+    <p class="muted">Auto‑advance on answer. Stopwatch runs during the round. End screen shows only missed items with the correct answer.</p>
 
     <!-- START -->
     <section id="start" class="card grid">
@@ -44,9 +45,9 @@
         <div>
           <label for="section">Section</label>
           <select id="section">
-            <option value="ch67">Ch. 6–7 (29)</option>
-            <option value="ch89">Ch. 8–9 (34)</option>
-            <option value="ch1011">Ch. 10–11 (31)</option>
+            <option value="ch67">Ch. 6–7 (all 29)</option>
+            <option value="ch89">Ch. 8–9 (all 34)</option>
+            <option value="ch1011">Ch. 10–11 (all 31)</option>
             <option value="unit2" selected>Unit 2 (random 50)</option>
           </select>
         </div>
@@ -106,9 +107,109 @@ function fmtTime(s){ const m=Math.floor(s/60).toString().padStart(2,'0'); const 
 function setBest(key, seconds){ const prev = Number(localStorage.getItem(key)||Infinity); if(seconds < prev){ localStorage.setItem(key, String(seconds)); } }
 function getBest(key){ const v = localStorage.getItem(key); return v? fmtTime(Number(v)) : '—'; }
 
-// ---------- Question Bank ----------
+// ---------- Question Bank (94 total) ----------
+// Each item: {chapter, set:'ch67'|'ch89'|'ch1011', q:'stem', choices:[...], answer: index}
+// This bank is adapted from your earlier MC sets (Ch. 6–7: 29; Ch. 8–9: 34; Ch. 10–11: 31)
 const BANK = [
-  // paste all 94 question objects here (as in your current working MC file)
+  // ===== Ch. 6–7 (29) =====
+  {chapter:6,set:'ch67',q:'Define public opinion.',choices:['The sum of individual attitudes about government and politics','The media narrative set by elites','A formal vote in Congress','A court’s interpretation of the law'],answer:0},
+  {chapter:6,set:'ch67',q:'What is political socialization?',choices:['The process by which people acquire political beliefs and values','A vote to remove an official from office','The organization of political parties','A method of counting votes'],answer:0},
+  {chapter:6,set:'ch67',q:'What is party identification?',choices:['An individual’s psychological attachment to a political party','A voter registration requirement','The official party platform','A method of apportionment'],answer:0},
+  {chapter:6,set:'ch67',q:'What is selective perception?',choices:['Interpreting information in ways that reinforce preexisting beliefs','Choosing candidates by lottery','The scientific selection of poll samples','The court’s selection of cases'],answer:0},
+  {chapter:6,set:'ch67',q:'What is an ideology?',choices:['A coherent set of beliefs about the role of government','A single-issue interest group','A media ownership rule','A constitutional amendment'],answer:0},
+  {chapter:6,set:'ch67',q:'How is public opinion commonly measured?',choices:['Scientific surveys using probability sampling','Town halls only','Election returns only','Court rulings'],answer:0},
+  {chapter:6,set:'ch67',q:'What is sampling error?',choices:['The margin of error arising from drawing a sample instead of a census','Intentional bias by pollsters','Counting ballots incorrectly','Deviation caused by gerrymandering'],answer:0},
+  {chapter:6,set:'ch67',q:'What is a populist?',choices:['A person who champions the interests of ordinary people against elites','A strict libertarian','A nonvoter','A Supreme Court justice'],answer:0},
+  {chapter:6,set:'ch67',q:'Pollsters evaluate public opinion primarily by…',choices:['Constructing representative samples and asking standardized questions','Reading newspaper editorials','Consulting party platforms','Tracking vetoes'],answer:0},
+  {chapter:6,set:'ch67',q:'Which factor most shapes political opinions early in life?',choices:['Family and early social environment','Supreme Court decisions','State budgets','Weather'],answer:0},
+  {chapter:7,set:'ch67',q:'Define political participation.',choices:['Activities by citizens intended to influence government and politics','Any governmental action','Court filings by lawyers','Media ownership'],answer:0},
+  {chapter:7,set:'ch67',q:'What is suffrage?',choices:['The right to vote','A tax on imports','Civil service reform','Court jurisdiction'],answer:0},
+  {chapter:7,set:'ch67',q:'Who was Susan B. Anthony?',choices:['A leader of the women’s suffrage movement','First female Speaker of the House','A Supreme Court justice','Author of the Federalist Papers'],answer:0},
+  {chapter:7,set:'ch67',q:'What did the 15th Amendment do?',choices:['Prohibited denying the vote on the basis of race','Granted women the vote','Lowered the voting age to 18','Ended poll taxes'],answer:0},
+  {chapter:7,set:'ch67',q:'U.S. voter turnout is typically…',choices:['Lower than in many other established democracies','Higher than every other democracy','Identical to Canada','Unchanged since 1800'],answer:0},
+  {chapter:7,set:'ch67',q:'Motor Voter Act (1993) primarily…',choices:['Facilitated voter registration at DMVs','Mandated compulsory voting','Banned absentee ballots','Created same-day registration nationwide'],answer:0},
+  {chapter:7,set:'ch67',q:'“Likely voters” are typically identified by…',choices:['Past voting history and expressed intent','Party donations only','Jury service','Tax bracket'],answer:0},
+  {chapter:7,set:'ch67',q:'Virtual participation includes…',choices:['Online activities like petitions and political posts','Only in-person rallies','Voting by mail','Caucus attendance'],answer:0},
+  {chapter:7,set:'ch67',q:'Social capital refers to…',choices:['Networks and norms that enable collective action','Personal income','Government revenue','Campaign funds'],answer:0},
+  {chapter:7,set:'ch67',q:'A social movement is…',choices:['Sustained, organized collective action to bring change','A military deployment','A party convention','A court injunction'],answer:0},
+  {chapter:7,set:'ch67',q:'Which was a historical barrier to voting?',choices:['Literacy tests and poll taxes','Compulsory voting','Same-day registration','Early voting'],answer:0},
+  {chapter:7,set:'ch67',q:'Which amendment granted women the right to vote?',choices:['19th Amendment','24th Amendment','26th Amendment','17th Amendment'],answer:0},
+  {chapter:7,set:'ch67',q:'Which factor often increases turnout?',choices:['Competitive elections','Weekday voting only','Longer lines','Fewer polling places'],answer:0},
+  {chapter:7,set:'ch67',q:'A reform aimed at improving turnout is…',choices:['Automatic voter registration','Shortening polling hours','Eliminating absentee voting','Raising voting age'],answer:0},
+  {chapter:7,set:'ch67',q:'Historically, how were nominees chosen?',choices:['Party caucuses and conventions dominated the process','Only by national primaries','By courts','By the Electoral College'],answer:0},
+  {chapter:7,set:'ch67',q:'Today, nominees are mainly chosen through…',choices:['State primaries and caucuses','Congressional votes','Supreme Court rulings','Random selection'],answer:0},
+  {chapter:7,set:'ch67',q:'Which is a type of election?',choices:['Primary, general, and runoff','Judicial review','Census sampling','Appropriations'],answer:0},
+  {chapter:7,set:'ch67',q:'Election law reform often addresses…',choices:['Campaign finance and voting access','Treaty ratification','Court appointments','War powers'],answer:0},
+  {chapter:7,set:'ch67',q:'A common campaign strategy is…',choices:['Targeted messaging to persuadable voters','Banning debates','Ignoring fundraising','Avoiding media'],answer:0},
+
+  // ===== Ch. 8–9 (34) =====
+  {chapter:8,set:'ch89',q:'What is a political party?',choices:['An organization that seeks to win office to influence policy','A PAC that cannot endorse candidates','A social club','A branch of government'],answer:0},
+  {chapter:8,set:'ch89',q:'Which best describes U.S. party history?',choices:['Periodic realignments and evolving coalitions','Unbroken one-party rule','No third parties ever','Parties banned by the Constitution'],answer:0},
+  {chapter:8,set:'ch89',q:'Realignment is…',choices:['A durable shift in party coalitions and issue bases','Switching a single vote','Redrawing district lines','Changing committee chairs'],answer:0},
+  {chapter:8,set:'ch89',q:'Dealignment is…',choices:['A trend toward weaker party attachments/independence','A court realigning powers','A budget cut','A foreign policy pivot'],answer:0},
+  {chapter:8,set:'ch89',q:'What united many in the Whig Party?',choices:['Opposition to Jacksonian Democrats','Support for direct democracy only','Promotion of monarchy','Isolationism'],answer:0},
+  {chapter:8,set:'ch89',q:'Ticket splitting means…',choices:['Voting for candidates of different parties on the same ballot','Casting multiple ballots','Spoiling ballots intentionally','Only voting in primaries'],answer:0},
+  {chapter:8,set:'ch89',q:'Why a two-party system in the U.S.?',choices:['Single-member districts with plurality (winner-take-all) rules','Mandatory coalition governments','Proportional representation nationwide','Constitutional ban on third parties'],answer:0},
+  {chapter:8,set:'ch89',q:'Proportional representation allocates seats by…',choices:['Party vote share','Geographic land area','Population density','Court seniority'],answer:0},
+  {chapter:8,set:'ch89',q:'The gender gap refers to…',choices:['Differences in political attitudes or voting between men and women','A wage law','A House rule','Military ranks'],answer:0},
+  {chapter:8,set:'ch89',q:'Third parties in the U.S. often…',choices:['Influence major parties and highlight neglected issues','Win most federal offices','Are unconstitutional','Run primaries for both parties'],answer:0},
+  {chapter:8,set:'ch89',q:'Party organization typically includes…',choices:['National, state, and local committees','Only a national committee','Only state committees','Only local precincts'],answer:0},
+  {chapter:8,set:'ch89',q:'Hard money is…',choices:['Campaign funds given directly to candidates with legal limits','Unreported cash','Public financing only','Independent expenditures only'],answer:0},
+  {chapter:8,set:'ch89',q:'European vs. American parties differ because…',choices:['European parties are often more centralized and ideological','U.S. parties are more centralized','Europe bans party discipline','Both are constitutionally identical'],answer:0},
+  {chapter:8,set:'ch89',q:'Democratic vs. Republican philosophies typically differ most on…',choices:['Scope of government and regulation levels','The number of states','The size of the Senate','Judicial salaries'],answer:0},
+  {chapter:8,set:'ch89',q:'Party decline is associated with…',choices:['Candidate-centered campaigns and media changes','Stronger party machines','More patronage','Closed conventions only'],answer:0},
+  {chapter:8,set:'ch89',q:'Third-party political impact includes…',choices:['Spoiler effects and agenda setting for major parties','Control of all committees','Writing the Constitution','Running courts'],answer:0},
+  {chapter:8,set:'ch89',q:'A core party function is…',choices:['Recruiting candidates and organizing elections','Passing statutes directly','Conducting judicial review','Census counting'],answer:0},
+  {chapter:8,set:'ch89',q:'A characteristic of U.S. parties is…',choices:['Decentralization across federalism levels','Strict national discipline','No primaries','Unified platforms enforced by law'],answer:0},
+  {chapter:8,set:'ch89',q:'Party organization spans…',choices:['National committees, state parties, and local precincts','Only national committees','Only city councils','Only party caucuses in Congress'],answer:0},
+  {chapter:9,set:'ch89',q:'An interest group is…',choices:['An organization seeking to influence public policy','A political party','A court','A bureaucracy'],answer:0},
+  {chapter:9,set:'ch89',q:'Types of interest groups include…',choices:['Economic, public interest, single-issue, and governmental','Only economic','Only public interest','Only foreign'],answer:0},
+  {chapter:9,set:'ch89',q:'A collective good is…',choices:['A benefit that cannot be withheld from non-contributors','A private club benefit','Personal income','A party office'],answer:0},
+  {chapter:9,set:'ch89',q:'The free rider problem occurs when…',choices:['People benefit without contributing to the cost','Voters skip primaries','Judges recuse themselves','Members split tickets'],answer:0},
+  {chapter:9,set:'ch89',q:'Lobbying is…',choices:['Direct interaction with public officials to influence decisions','Only campaign donations','Court litigation only','Media endorsements only'],answer:0},
+  {chapter:9,set:'ch89',q:'Amicus curiae briefs are…',choices:['Friend of the court briefs submitted by non-parties','Executive orders','Treaties','Floor amendments'],answer:0},
+  {chapter:9,set:'ch89',q:'The iron triangle links…',choices:['Congressional committees, bureaucracies, and interest groups','Courts, voters, and parties','States, cities, and counties','Media, parties, and polls'],answer:0},
+  {chapter:9,set:'ch89',q:'Issue networks are…',choices:['Fluid coalitions of actors around a policy area','Permanent party machines','Only three-way alliances','Court panels'],answer:0},
+  {chapter:9,set:'ch89',q:'PACs and Super PACs differ in that…',choices:['Super PACs can spend unlimited independent expenditures; PACs give limited direct contributions','PACs spend unlimited independently','Super PACs give unlimited directly to candidates','Both are identical under law'],answer:0},
+  {chapter:9,set:'ch89',q:'Inside lobbying refers to…',choices:['Direct contact with policymakers','Public campaigns only','Ballot initiatives','Court appeals'],answer:0},
+  {chapter:9,set:'ch89',q:'Interest-group effectiveness depends on…',choices:['Resources, access, and salience of issues','Number of TV ads only','Court size','Population size only'],answer:0},
+  {chapter:9,set:'ch89',q:'Parties vs. interest groups: key difference is…',choices:['Parties seek to win office; groups seek to influence policy','Groups run primaries','Parties file amicus briefs only','Groups administer elections'],answer:0},
+  {chapter:9,set:'ch89',q:'A method used by interest groups is…',choices:['Grassroots mobilization','Judicial review','Impeachment','Census count'],answer:0},
+  {chapter:9,set:'ch89',q:'A strength of interest groups can be…',choices:['Expertise and information for policymakers','Guaranteed majority support','Complete neutrality','Total absence of bias'],answer:0},
+  {chapter:9,set:'ch89',q:'A common criticism/weakness is…',choices:['Unequal influence favoring well-funded groups','Too much equality of access','No lobbying disclosure','No constitutional basis'],answer:0},
+
+  // ===== Ch. 10–11 (31) =====
+  {chapter:10,set:'ch1011',q:'The news media are…',choices:['Organizations that gather and disseminate information to the public','Congressional committees','Interest groups only','Polling firms only'],answer:0},
+  {chapter:10,set:'ch1011',q:'A partisan press is…',choices:['Media that openly support a political party or viewpoint','Objective reporting only','State-owned media','Tabloid crime coverage only'],answer:0},
+  {chapter:10,set:'ch1011',q:'Yellow journalism is characterized by…',choices:['Sensationalism and exaggerated stories to boost sales','Strict neutrality','Peer-reviewed analysis','Public broadcasting rules'],answer:0},
+  {chapter:10,set:'ch1011',q:'Objective journalism aspires to…',choices:['Fairness, balance, and factual accuracy','Advocacy only','Satire only','Partisan persuasion'],answer:0},
+  {chapter:10,set:'ch1011',q:'A gatekeeper in media is…',choices:['An actor deciding what information enters the news stream','A polling supervisor','A judge','A caucus chair'],answer:0},
+  {chapter:10,set:'ch1011',q:'Agenda setting occurs when media…',choices:['Influence which issues the public thinks are important','Write legislation','Count ballots','Draw districts'],answer:0},
+  {chapter:10,set:'ch1011',q:'Framing refers to…',choices:['How news is presented to shape interpretation','The legal frame around a bill','Drawing district borders','Camera tripod use'],answer:0},
+  {chapter:10,set:'ch1011',q:'The watchdog function means media…',choices:['Scrutinize officials and expose wrongdoing','Run campaigns','Pass statutes','Hold primaries'],answer:0},
+  {chapter:10,set:'ch1011',q:'Role of media in politics includes…',choices:['Informing, watchdogging, and acting as a forum for debate','Counting electoral votes','Appropriations','Judicial review'],answer:0},
+  {chapter:10,set:'ch1011',q:'U.S. media history includes…',choices:['Partisan presses, penny press, yellow journalism, and broadcast/cable/digital eras','Only public broadcasting','No newspapers before 1950','A constitutional ban on presses'],answer:0},
+  {chapter:10,set:'ch1011',q:'Media bias generally refers to…',choices:['Perceived tilt in coverage selection or presentation','Mathematical sampling error','Court bias','Gerrymandering'],answer:0},
+  {chapter:11,set:'ch1011',q:'House service requirements include…',choices:['25 years old, 7 years a citizen, resident of state','35 years old, natural-born citizen','30 years old, 9 years a citizen','No age requirement'],answer:0},
+  {chapter:11,set:'ch1011',q:'Senate service requirements include…',choices:['30 years old, 9 years a citizen, resident of state','25 years old, 7 years a citizen','Natural-born citizen only','No residency'],answer:0},
+  {chapter:11,set:'ch1011',q:'Terms of office: House vs. Senate?',choices:['House 2 years; Senate 6 years (staggered thirds)','Both 4 years','House 6; Senate 2','Both 2 years'],answer:0},
+  {chapter:11,set:'ch1011',q:'Apportionment is…',choices:['Allocation of House seats among states by population','Drawing district lines','Allocating Senate seats','Committee assignments'],answer:0},
+  {chapter:11,set:'ch1011',q:'Redistricting is…',choices:['Redrawing district boundaries within states','Allocating House seats among states','Counting population','Filing for office'],answer:0},
+  {chapter:11,set:'ch1011',q:'Gerrymandering is…',choices:['Drawing districts to advantage a party or group','The census','Bicameralism','Logrolling'],answer:0},
+  {chapter:11,set:'ch1011',q:'A primary election is…',choices:['An intra-party contest to choose nominees','The general election','A referendum','A recall'],answer:0},
+  {chapter:11,set:'ch1011',q:'Presiding officers: House and Senate are…',choices:['Speaker of the House; Vice President (President of the Senate)','Majority Leaders only','Chief Justice; Speaker','President Pro Tempore; Speaker'],answer:0},
+  {chapter:11,set:'ch1011',q:'Party leadership in Congress includes…',choices:['Majority/minority leaders and whips in each chamber','Only committee chairs','Only the Speaker','Only the VP'],answer:0},
+  {chapter:11,set:'ch1011',q:'Committee system purpose is…',choices:['Division of labor and policy specialization','Judicial review','Media relations','Caucus elections'],answer:0},
+  {chapter:11,set:'ch1011',q:'Types of committees include…',choices:['Standing, select, joint, and conference','District, state, federal','Open, closed, special rule','Legislative, judicial, executive'],answer:0},
+  {chapter:11,set:'ch1011',q:'Functions of Congress include…',choices:['Lawmaking, representation, oversight, and budgeting','Electing judges','Conducting polls','Drawing districts'],answer:0},
+  {chapter:11,set:'ch1011',q:'Trustee theory means representatives…',choices:['Use their own judgment for constituents’ good','Always follow constituent preferences','Follow party only','Follow interest-group polls'],answer:0},
+  {chapter:11,set:'ch1011',q:'Delegate theory means representatives…',choices:['Mirror constituents’ preferences directly','Use own judgment','Follow party only','Follow donors only'],answer:0},
+  {chapter:11,set:'ch1011',q:'A filibuster is…',choices:['Prolonged debate in the Senate to delay a vote','A House discharge petition','A veto override','An impeachment trial'],answer:0},
+  {chapter:11,set:'ch1011',q:'Cloture is…',choices:['A Senate vote to end debate (typically 60 votes)','A House rule for amendments','The census count','Committee markup'],answer:0},
+  {chapter:11,set:'ch1011',q:'Congressional reapportionment occurs…',choices:['After each decennial census','Every 2 years','Only by court order','Every session'],answer:0},
+  {chapter:11,set:'ch1011',q:'Congress’s role in policymaking includes…',choices:['Agenda setting, lawmaking, and oversight','Only signing bills','Only executing laws','Only judicial review'],answer:0},
+  {chapter:11,set:'ch1011',q:'The legislative process typically includes…',choices:['Introduction, committee, floor, conference, and presidential action','Only party caucus','Court ruling then vote','Executive order then budget'],answer:0},
+  {chapter:11,set:'ch1011',q:'Overall functions of Congress are…',choices:['Representation, lawmaking, oversight, and budgeting','Only campaigning','Only diplomacy','Only adjudication'],answer:0}
 ];
 
 const SETS = {
@@ -121,7 +222,8 @@ const SET_LABELS = { ch67:'Ch. 6–7 (29)', ch89:'Ch. 8–9 (34)', ch1011:'Ch. 1
 
 // ---------- State ----------
 let state = { list:[], idx:0, setKey:'unit2', answers:[], misses:[], timer:null, seconds:0, missedOnly:false };
-function bestKey(){ return `best_mc_${state.setKey}`; }
+
+function bestKey(){ return `best_${state.setKey}`; }
 function startTimer(){ if(state.timer) clearInterval(state.timer); state.timer = setInterval(()=>{ state.seconds++; document.getElementById('timer').textContent = fmtTime(state.seconds); },1000); }
 function stopTimer(){ if(state.timer){ clearInterval(state.timer); state.timer=null; } }
 
@@ -131,7 +233,7 @@ function startRound(){
   let items = [...SETS[sk]];
   if(sk==='unit2') items = shuffle(items).slice(0,50);
   if(ord==='shuf') items = shuffle(items);
-  state.list = items.map(x=>({...x}));
+  state.list = items.map(x=>({...x})); // shallow copy
   state.idx = 0; state.misses=[]; state.seconds=0; state.missedOnly=false; startTimer();
   document.getElementById('start').classList.add('hidden');
   document.getElementById('result').classList.add('hidden');
@@ -176,38 +278,53 @@ function finish(){
   document.getElementById('scoreline').textContent = `Score: ${correct} / ${total} (${Math.round(correct/total*100)}%)`;
   document.getElementById('timeline').textContent = `Time: ${fmtTime(state.seconds)}`;
   document.getElementById('bestline').textContent = `Best: ${getBest(bestKey())}`;
+
   const rev = document.getElementById('review'); rev.innerHTML='';
   if(missed===0){
-    rev.innerHTML = '<p class=\"muted\">Perfect! No missed items to review.</p>';
+    rev.innerHTML = '<p class="muted">Perfect! No missed items to review.</p>';
   } else {
+    const list = document.createElement('div'); list.className='grid'; list.style.gridTemplateColumns='1fr'; list.style.gap='10px';
     state.misses.forEach((m,i)=>{
+      const row = document.createElement('div'); row.className='card'; row.style.padding='12px';
       const correctText = m.choices[m.answer];
-      rev.innerHTML += `<div>Missed ${i+1} · Ch. ${m.chapter} — Correct: ${correctText}</div>`;
+      row.innerHTML = `<div style="font-weight:700; margin-bottom:6px">Missed ${i+1} · Ch. ${m.chapter}</div>`+
+                      `<div style="margin-bottom:6px">${m.q}</div>`+
+                      `<div class="pill" style="display:inline-block">Correct: ${correctText}</div>`;
+      list.appendChild(row);
     });
+    rev.appendChild(list);
   }
 }
 
 function startRoundMissed(){
   if(!state.misses || state.misses.length===0){ alert('No missed items to retry.'); return; }
-  const items = state.misses.map(m=>m);
+  const items = state.misses.map(m=>m); // full question objects
   state.list = shuffle(items);
-  state.idx = 0; state.seconds = 0; state.missedOnly = true; state.misses = [];
-  startTimer();
+state.idx = 0;
+state.seconds = 0;
+state.missedOnly = true;
+state.misses = [];   // <-- ADD THIS
+startTimer();
+
+  
   document.getElementById('result').classList.add('hidden');
   document.getElementById('quiz').classList.remove('hidden');
-  document.getElementById('setTag').textContent = SET_LABELS[state.setKey] + ' — Missed Only';
+  document.getElementById('setTag').textContent = (SET_LABELS[state.setKey] + ' — Missed Only');
   document.getElementById('best').textContent = 'Best: ' + getBest(bestKey());
   renderQ();
 }
 
 // nav
-document.getElementById('begin').addEventListener('click', startRound);
-document.getElementById('retry').addEventListener('click', startRound);
-document.getElementById('retryMissed').addEventListener('click', startRoundMissed);
-document.getElementById('restart').addEventListener('click', ()=>{
-  document.getElementById('result').classList.add('hidden');
-  document.getElementById('start').classList.remove('hidden');
-});
+ document.getElementById('begin').addEventListener('click', startRound);
+ document.getElementById('retry').addEventListener('click', startRound);
+ document.getElementById('retryMissed').addEventListener('click', startRoundMissed);  // <-- ADD THIS
+ document.getElementById('restart').addEventListener('click', ()=>{
+   document.getElementById('result').classList.add('hidden');
+   document.getElementById('start').classList.remove('hidden');
+ });
+
+
+  
 </script>
 </body>
 </html>
