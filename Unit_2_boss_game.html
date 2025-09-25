@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Unit 2 — Arcade MC (Blaster + Boss)</title>
+<title>Unit 2 — Arcade MC (Blaster + Boss, Readable Answers)</title>
 <style>
   :root{
     --bg:#0b1220; --panel:#101a2c; --ink:#e6edf3; --muted:#9fb0c6; --accent:#4fd1c5;
@@ -29,12 +29,19 @@
   .ok{color:var(--ok)}
   .y{color:var(--yellow)}
   .grid{display:grid; gap:10px}
+  /* Answer panel (static, big and readable) */
+  .answers{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px}
+  @media (max-width:780px){ .answers{grid-template-columns:1fr;} }
+  .ans{padding:14px; border-radius:14px; border:1px solid var(--tile-border); background:var(--tile); cursor:pointer}
+  .ans:hover{filter:brightness(1.06)}
+  .ans .lbl{display:inline-block; min-width:2.2em; font-weight:700; color:#a7c6ff}
+  .ans .txt{font-size:clamp(16px,2.2vw,18px); line-height:1.35}
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>Unit 2 — Arcade MC (Blaster + Boss)</h1>
-  <p class="muted">Use <b>A / B / C / D</b> keys or click a ship. Correct blasts enemies, wrong drains energy. Power-ups drop during waves. Boss fights every few questions. Clear all three levels to win.</p>
+  <p class="muted">Use <b>A / B / C / D</b> keys, click a ship, or click an answer tile. Correct blasts enemies; wrong drains energy. Power-ups drop during waves. Boss fights every few questions. Levels cover Ch. 6–7, 8–9, 10–11.</p>
 
   <!-- MENU -->
   <section id="menu" class="card grid">
@@ -59,7 +66,7 @@
       <button id="startL2">Level 2 — Ch. 8–9</button>
       <button id="startL3">Level 3 — Ch. 10–11</button>
     </div>
-    <p class="muted">Tip: Boss takes multiple hits. Power-ups: <span class="ok">❤️ Heal</span>, <span class="y">🔥 Double Damage</span>, <span>❄️ Slow Time</span>.</p>
+    <p class="muted">Power-ups: <span class="ok">❤️ Heal</span>, <span class="y">🔥 Double Damage</span>, <span>❄️ Slow Time</span>. Answers are now fixed below the canvas for readability; ships show only A/B/C/D.</p>
   </section>
 
   <!-- HUD -->
@@ -81,10 +88,16 @@
     <canvas id="game" width="960" height="560"></canvas>
   </section>
 
-  <!-- PROMPT -->
+  <!-- PROMPT + ANSWER PANEL -->
   <section id="promptCard" class="card hidden">
-    <div id="questionText" style="font-weight:700; font-size:18px; line-height:1.3"></div>
-    <div class="muted" style="margin-top:6px">Press <b>A</b>, <b>B</b>, <b>C</b>, or <b>D</b> (or click a ship).</div>
+    <div id="questionText" style="font-weight:700; font-size:18px; line-height:1.3; margin-bottom:10px"></div>
+    <div class="answers">
+      <button class="ans" id="ansA"><span class="lbl">A)</span> <span class="txt" id="txtA"></span></button>
+      <button class="ans" id="ansB"><span class="lbl">B)</span> <span class="txt" id="txtB"></span></button>
+      <button class="ans" id="ansC"><span class="lbl">C)</span> <span class="txt" id="txtC"></span></button>
+      <button class="ans" id="ansD"><span class="lbl">D)</span> <span class="txt" id="txtD"></span></button>
+    </div>
+    <div class="muted" style="margin-top:6px">Press A/B/C/D, click a ship, or click a tile below.</div>
   </section>
 
   <!-- RESULTS -->
@@ -228,7 +241,7 @@ const ctx = canvas.getContext('2d');
 let WIDTH = canvas.width, HEIGHT = canvas.height;
 
 let state = {
-  scene: 'menu',           // menu | play | boss | levelclear | gameover | results
+  scene: 'menu',           // menu | play | boss | results
   level: 1,                // 1,2,3
   campaign: false,
   difficulty: 'normal',
@@ -239,15 +252,15 @@ let state = {
   timeSec: 0,
   timerHandle: null,
   // question flow
-  pool: [],                // full level pool (shuffled)
-  bossPool: [],            // ≈25%
-  stagePool: [],           // ≈75%
-  qIndex: 0,               // index inside current phase pool
-  phase: 'stage',          // stage | boss
-  phaseCounter: 0,         // count stage questions to trigger boss
+  pool: [],
+  bossPool: [],
+  stagePool: [],
+  qIndex: 0,
+  phase: 'stage',
+  phaseCounter: 0,
   // current question/choices
   currentQ: null,
-  choices: [],
+  choices: [],   // [{key:'A'|'B'|'C'|'D', text:'..', correct:true/false, lane:0..3}]
   ships: [],
   laser: null,
   // powerups
@@ -264,10 +277,10 @@ let state = {
 // ---------- UI helpers ----------
 function setScene(s){
   state.scene = s;
-  document.getElementById('menu').classList.toggle('hidden', s!=='menu');
-  document.getElementById('hud').classList.toggle('hidden', !(s==='play'||s==='boss'));
-  document.getElementById('promptCard').classList.toggle('hidden', !(s==='play'||s==='boss'));
-  document.getElementById('results').classList.toggle('hidden', s!=='results');
+  $('#menu').classList.toggle('hidden', s!=='menu');
+  $('#hud').classList.toggle('hidden', !(s==='play'||s==='boss'));
+  $('#promptCard').classList.toggle('hidden', !(s==='play'||s==='boss'));
+  $('#results').classList.toggle('hidden', s!=='results');
 }
 function startTimer(){
   stopTimer();
@@ -292,22 +305,16 @@ function splitPools(full){
 }
 
 function startLevel(lvl, isCampaign=false){
-  state.level = lvl;
-  state.campaign = isCampaign;
-  state.score = 0;
-  state.streak = 0;
-  state.timeSec = 0;
+  state.level = lvl; state.campaign = isCampaign;
+  state.score = 0; state.streak = 0; state.timeSec = 0;
   state.energyMax = (state.difficulty==='hard'? 90:100);
   state.energy = state.energyMax;
-  state.misses = [];
-  resetPowers();
+  state.misses = []; resetPowers();
   state.pool = getLevelPool(lvl);
   const parts = splitPools(state.pool);
   state.stagePool = parts.stagePool;
   state.bossPool = shuffle(parts.bossPool);
-  state.phase='stage';
-  state.qIndex=0;
-  state.phaseCounter=0;
+  state.phase='stage'; state.qIndex=0; state.phaseCounter=0;
   prepQuestion();
   updateHUD();
   setScene('play');
@@ -319,7 +326,7 @@ function updateHUD(){
   $('#levelTag').textContent = levelLabel;
   $('#phaseTag').textContent = (state.scene==='boss' || state.phase==='boss')? 'Boss Fight':'Blaster Wave';
   const total = (state.phase==='boss')? state.bossPool.length : state.stagePool.length;
-  const idx = (state.phase==='boss')? state.qIndex : state.qIndex;
+  const idx = state.qIndex;
   $('#progressTag').textContent = `Q ${Math.min(idx+1,total)} / ${total}`;
   $('#scoreTag').textContent = `Score: ${state.score}`;
   $('#streakTag').textContent = `Streak: ${state.streak}`;
@@ -329,44 +336,50 @@ function updateHUD(){
 function prepQuestion(){
   const pool = (state.phase==='boss')? state.bossPool : state.stagePool;
   if(state.qIndex >= pool.length){
-    // phase done: switch or level end
     if(state.phase==='stage' && state.bossPool.length>0){
       state.phase='boss'; state.qIndex=0; state.bossHPMax = Math.min(10, 5 + state.level*2); state.bossHP = state.bossHPMax;
       setScene('boss'); updateHUD();
-    } else {
-      // level complete
-      endLevel(true);
-      return;
-    }
+    } else { endLevel(true); return; }
   }
   state.currentQ = pool[state.qIndex];
-  // build choices: correct + 3 random distractors from this phase pool
+  buildChoices();
+  buildShips();
+  $('#questionText').textContent = state.currentQ.q;
+  // Fill static answer tiles
+  $('#txtA').textContent = state.choices.find(c=>c.key==='A').text;
+  $('#txtB').textContent = state.choices.find(c=>c.key==='B').text;
+  $('#txtC').textContent = state.choices.find(c=>c.key==='C').text;
+  $('#txtD').textContent = state.choices.find(c=>c.key==='D').text;
+  updateHUD();
+}
+
+function buildChoices(){
   const correct = state.currentQ.choices[state.currentQ.answer];
   const distractors = shuffle(state.currentQ.choices.filter((_,i)=>i!==state.currentQ.answer)).slice(0,3);
-  const labeled = shuffle([
+  const pack = shuffle([
     {key:'A', text: correct, correct:true},
     {key:'B', text: distractors[0], correct:false},
     {key:'C', text: distractors[1], correct:false},
     {key:'D', text: distractors[2], correct:false},
   ]);
-  state.choices = labeled.map((c,i)=>({...c, lane:i}));
-  buildShips();
-  $('#questionText').textContent = state.currentQ.q;
-  updateHUD();
+  // ensure stable ordering by keys A-D in the static panel
+  const byKey = {A:pack.find(p=>p.key==='A'), B:pack.find(p=>p.key==='B'), C:pack.find(p=>p.key==='C'), D:pack.find(p=>p.key==='D')};
+  state.choices = ['A','B','C','D'].map(k=>({...byKey[k], lane:{A:0,B:1,C:2,D:3}[k]}));
 }
 
 function buildShips(){
-  // four ships span evenly across width
+  // Slower fall speed + ships show only their letter
   const pad = 40;
   const w = (WIDTH - pad*2) / 4 - 16;
   const lanes = [0,1,2,3];
   state.ships = lanes.map((lane, idx)=>{
     const x = pad + idx * (w+16);
-    const speed = (state.scene==='boss'||state.phase==='boss')? 90 : 110;
+    // ↓↓↓ Slower speeds (was ~110)
+    const base = (state.scene==='boss'||state.phase==='boss')? 60 : 70;
+    const speed = state.hasSlow ? base*0.55 : base;
     return {
-      x, y: 70, w, h: 40, vy: (state.hasSlow? speed*0.5 : speed),
+      x, y: 70, w, h: 48, vy: speed,
       label: state.choices[idx].key,
-      text: state.choices[idx].text,
       correct: state.choices[idx].correct,
       alive: true, explode:0
     };
@@ -392,32 +405,23 @@ function render(dt){
   // HUD bars
   drawBars();
 
-  if(state.scene==='menu'){
-    drawMenuHint();
-    return;
-  }
+  if(state.scene==='menu'){ drawMenuHint(); return; }
 
-  // powers timeout
+  // power durations
   const now = performance.now();
   if(state.hasSlow && now > state.slowUntil){ state.hasSlow=false; }
   if(state.doubleDmg && now > state.doubleUntil){ state.doubleDmg=false; }
 
-  // boss sprite
-  if(state.scene==='boss' || state.phase==='boss'){
-    drawBoss(dt);
-  }
+  if(state.scene==='boss' || state.phase==='boss'){ drawBoss(dt); }
 
-  // ships
+  // ships (letters only)
   state.ships.forEach(s=>{
     if(!s.alive) return;
-    s.vy = (state.hasSlow? s.vy*0.999 : s.vy); // already slowed; keep constant-ish
     s.y += s.vy * dt;
-    drawShip(s);
+    drawShipLetterOnly(s);
     if(s.y + s.h >= HEIGHT-140 && s.alive){
-      // missed any ship counts as "pass"; only penalize if the missed one was correct
       if(s.correct){
         damage(15);
-        // record miss
         state.misses.push({q: state.currentQ});
         flash('#301019');
       }
@@ -427,27 +431,25 @@ function render(dt){
 
   // laser
   if(state.laser){
-    state.laser.t += 900*dt;
+    state.laser.t += 700*dt; // slightly slower visual laser
     drawLaser(state.laser);
     if(state.laser.t >= 1){ state.laser=null; }
   }
 
-  // if all ships resolved -> advance
+  // advance when all ships resolved
   if((state.scene==='play'||state.scene==='boss') && state.ships.every(s=>!s.alive)){
     nextQuestion();
   }
 }
 
 function nextQuestion(){
-  // phase counters
   if(state.phase==='stage'){
     state.phaseCounter++;
-    // every 4th question, if any bosses left, switch to boss phase soon
     if(state.phaseCounter>=3 && state.bossPool.length>0){
       state.phase='boss'; state.qIndex=0;
       state.bossHPMax = Math.min(10, 5 + state.level*2);
       state.bossHP = state.bossHPMax;
-      resetPowers(); // reset offensive powers when boss starts
+      resetPowers();
       setScene('boss');
     }else{
       state.qIndex++;
@@ -460,25 +462,28 @@ function nextQuestion(){
 
 // ---------- Input ----------
 window.addEventListener('keydown', (e)=>{
-  if(['a','b','c','d'].includes(e.key.toLowerCase())){
-    fireKey(e.key.toUpperCase());
-  }
+  const key = e.key.toUpperCase();
+  if(['A','B','C','D'].includes(key)) fireKey(key);
 });
 canvas.addEventListener('click',(e)=>{
   const rect = canvas.getBoundingClientRect();
   const mx = (e.clientX - rect.left) * (canvas.width/rect.width);
   const my = (e.clientY - rect.top) * (canvas.height/rect.height);
-  // find clicked ship
   const s = state.ships.find(s=> s.alive && mx>=s.x && mx<=s.x+s.w && my>=s.y && my<=s.y+s.h);
   if(s){ fireKey(s.label); }
 });
+// static answer tiles
+$('#ansA').addEventListener('click', ()=> fireKey('A'));
+$('#ansB').addEventListener('click', ()=> fireKey('B'));
+$('#ansC').addEventListener('click', ()=> fireKey('C'));
+$('#ansD').addEventListener('click', ()=> fireKey('D'));
 
 function fireKey(letter){
   if(!(state.scene==='play'||state.scene==='boss')) return;
   const target = state.ships.find(s=>s.alive && s.label===letter);
   if(!target) return;
 
-  // draw laser
+  // laser originates center-bottom
   state.laser = { x: WIDTH/2, y: HEIGHT-110, tx: target.x+target.w/2, ty: target.y+target.h/2, t:0 };
 
   if(target.correct){
@@ -486,27 +491,18 @@ function fireKey(letter){
     state.score += 10 + Math.min(state.streak*2, 10);
     state.streak++;
     flash('#102b1f');
-    // boss damage (if any)
     if(state.scene==='boss' || state.phase==='boss'){
       const dmg = state.doubleDmg? 2:1;
       state.bossHP -= dmg;
       state.bossShake = 6;
       if(state.bossHP<=0){
-        // boss defeated -> move on
-        state.phase='stage';
-        state.phaseCounter=0;
-        state.qIndex=state.stagePool.findIndex(q=>q===state.currentQ); // ensure idx progression
-        state.qIndex = Math.max(0, state.qIndex);
-        // remove used boss question
-        state.bossPool.splice(state.bossPool.indexOf(state.currentQ),1);
-        // advance stage index by 1 to keep flow
-        if(state.stagePool.length>0) state.qIndex = Math.min(state.stagePool.length-1, state.qIndex);
+        state.phase='stage'; state.phaseCounter=0;
+        // consume this boss question
+        const idx = state.bossPool.indexOf(state.currentQ);
+        if(idx>-1) state.bossPool.splice(idx,1);
         setScene('play');
-      }else{
-        // keep boss question alive; still need to resolve ships to proceed
       }
     }else{
-      // chance for power-up on correct in stage phase
       maybeGrantPowerup();
     }
   }else{
@@ -520,12 +516,11 @@ function fireKey(letter){
 
 // ---------- Power-ups ----------
 function maybeGrantPowerup(){
-  // ~30% chance
   if(Math.random()<0.3){
     const p = pick(['heal','double','slow']);
     if(p==='heal'){ state.energy = clamp(state.energy+15, 0, state.energyMax); toast('❤️ +15 Energy'); }
     if(p==='double'){ state.doubleDmg=true; state.doubleUntil=performance.now()+12000; toast('🔥 Double Damage (12s)'); }
-    if(p==='slow'){ state.hasSlow=true; state.slowUntil=performance.now()+10000; toast('❄️ Slow Time (10s)'); }
+    if(p==='slow'){ state.hasSlow=true; state.slowUntil=performance.now()+12000; toast('❄️ Slow Time (12s)'); } // stronger slow
   }
 }
 
@@ -533,9 +528,7 @@ function maybeGrantPowerup(){
 function damage(amount){
   const mult = (state.difficulty==='hard'? 1.25:1.0);
   state.energy = clamp(state.energy - Math.round(amount*mult), 0, state.energyMax);
-  if(state.energy<=0){
-    endLevel(false);
-  }
+  if(state.energy<=0){ endLevel(false); }
 }
 
 // ---------- End & Results ----------
@@ -565,12 +558,9 @@ function endLevel(cleared){
     });
     list.appendChild(ul);
   }
-  // next/ retry buttons
   $('#retryLevel').onclick = ()=> startLevel(state.level, state.campaign);
   $('#nextLevel').classList.toggle('hidden', !(state.campaign && cleared && state.level<3));
-  $('#nextLevel').onclick = ()=>{
-    startLevel(state.level+1, true);
-  };
+  $('#nextLevel').onclick = ()=> startLevel(state.level+1, true);
 }
 
 // ---------- Visuals ----------
@@ -580,22 +570,17 @@ function gradientBG(){
   ctx.fillStyle=g; ctx.fillRect(0,0,WIDTH,HEIGHT);
 }
 function drawStars(){
-  ctx.save();
-  ctx.globalAlpha=0.25;
-  for(let i=0;i<50;i++){
-    const x=(i*173)%WIDTH, y=(i*97)%HEIGHT; ctx.fillStyle='#a7c6ff'; ctx.fillRect(x, y, 2, 2);
-  }
+  ctx.save(); ctx.globalAlpha=0.25;
+  for(let i=0;i<50;i++){ const x=(i*173)%WIDTH, y=(i*97)%HEIGHT; ctx.fillStyle='#a7c6ff'; ctx.fillRect(x, y, 2, 2); }
   ctx.restore();
 }
 function drawBars(){
-  // energy bar
   const x=20, y=HEIGHT-110, w=240, h=12;
   ctx.fillStyle='rgba(255,255,255,.08)'; ctx.fillRect(x,y,w,h);
   const pct = state.energy/state.energyMax;
   ctx.fillStyle = pct>0.5? '#22c55e' : pct>0.25? '#f59e0b' : '#ef4444';
   ctx.fillRect(x,y,w*pct,h);
   ctx.strokeStyle='rgba(255,255,255,.18)'; ctx.strokeRect(x,y,w,h);
-  // power-ups icons
   let px = x+w+16;
   if(state.doubleDmg){ drawPill(px,y-2,'🔥 x2'); px+=58; }
   if(state.hasSlow){ drawPill(px,y-2,'❄️'); px+=46; }
@@ -603,19 +588,19 @@ function drawBars(){
 function drawPill(x,y,t){ ctx.fillStyle='rgba(255,255,255,.12)'; roundRect(ctx,x,y,44,16,8,true,false); ctx.fillStyle='#a7c6ff'; ctx.font='12px system-ui'; ctx.fillText(t,x+10,y+12); }
 function drawMenuHint(){
   ctx.save();
-  ctx.fillStyle='rgba(255,255,255,.06)';
-  roundRect(ctx, WIDTH/2-160, HEIGHT-150, 320, 60, 12, true,false);
+  ctx.fillStyle='rgba(255,255,255,.06)'; roundRect(ctx, WIDTH/2-160, HEIGHT-150, 320, 60, 12, true,false);
   ctx.fillStyle='#9fb0c6'; ctx.font='14px system-ui';
-  ctx.fillText('Start a level to begin. Use A/B/C/D keys or click ships.', WIDTH/2-145, HEIGHT-120);
+  ctx.fillText('Start a level to begin. Use A/B/C/D keys or click tiles.', WIDTH/2-145, HEIGHT-120);
   ctx.restore();
 }
-function drawShip(s){
+function drawShipLetterOnly(s){
   ctx.save();
   ctx.shadowColor='rgba(0,0,0,.35)'; ctx.shadowBlur=8;
   ctx.fillStyle = s.correct? 'rgba(79,209,197,.14)': 'rgba(255,255,255,.07)';
   roundRect(ctx, s.x, s.y, s.w, s.h, 10, true,false);
   ctx.strokeStyle='rgba(255,255,255,.18)'; ctx.strokeRect(s.x, s.y, s.w, s.h);
-  ctx.fillStyle='#e6edf3'; ctx.font='14px system-ui'; ctx.fillText(`${s.label}) ${s.text}`, s.x+8, s.y+24, s.w-12);
+  ctx.fillStyle='#e6edf3'; ctx.font='bold 18px system-ui';
+  ctx.fillText(s.label, s.x + s.w/2 - 6, s.y + s.h/2 + 6);
   if(s.explode>0){
     s.explode-=0.02;
     ctx.globalAlpha = Math.max(0,s.explode);
@@ -636,8 +621,6 @@ function drawBoss(dt){
   const bx = WIDTH/2 - w/2 + (state.bossShake? (Math.random()-0.5)*state.bossShake : 0);
   const by = 40 + (state.bossShake? (Math.random()-0.5)*state.bossShake : 0);
   if(state.bossShake>0) state.bossShake = Math.max(0, state.bossShake-10*dt);
-
-  // body
   ctx.save();
   ctx.fillStyle='rgba(255,255,255,.06)'; roundRect(ctx, bx, by, w, h, 16, true,false);
   ctx.strokeStyle='rgba(255,255,255,.18)'; ctx.strokeRect(bx, by, w, h);
@@ -650,7 +633,6 @@ function drawBoss(dt){
   roundRect(ctx, barX, barY, barW*pct, 10, 6, true,false);
   ctx.restore();
 }
-
 function roundRect(ctx, x, y, w, h, r, fill, stroke){
   if (typeof r === 'undefined') r = 5;
   if (typeof r === 'number') r = {tl:r,tr:r,br:r,bl:r};
@@ -712,12 +694,9 @@ document.getElementById('startCampaign').addEventListener('click', ()=> startWit
 document.getElementById('startL1').addEventListener('click', ()=> startWith(1,false));
 document.getElementById('startL2').addEventListener('click', ()=> startWith(2,false));
 document.getElementById('startL3').addEventListener('click', ()=> startWith(3,false));
-document.getElementById('backToMenu').addEventListener('click', ()=>{
-  stopTimer(); setScene('menu');
-});
+document.getElementById('backToMenu').addEventListener('click', ()=>{ stopTimer(); setScene('menu'); });
 document.getElementById('retryLevel').addEventListener('click', ()=> startLevel(state.level, state.campaign));
 document.getElementById('nextLevel').addEventListener('click', ()=> startLevel(state.level+1, true));
-
 </script>
 </body>
 </html>
