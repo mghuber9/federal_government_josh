@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Unit 2 — Arcade MC (Blaster + Boss)</title>
+<style>
+  :root{
+    --bg:#0b1220; --panel:#101a2c; --ink:#e6edf3; --muted:#9fb0c6; --accent:#4fd1c5;
+    --ok:#22c55e; --bad:#ef4444; --tile:#0f2034; --tile-border:rgba(255,255,255,.12);
+    --yellow:#f59e0b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:radial-gradient(1000px 700px at 20% -10%, #13233d 0%, var(--bg) 60%); color:var(--ink); font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial}
+  .wrap{max-width:980px; margin:0 auto; padding:18px}
+  h1{margin:8px 0 6px; font-size:clamp(20px,3vw,30px)}
+  p{color:var(--muted); margin:6px 0 12px}
+  .card{background:var(--panel); border:1px solid rgba(255,255,255,.08); border-radius:14px; padding:16px; box-shadow:0 8px 24px rgba(0,0,0,.25)}
+  .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:space-between}
+  select,button{appearance:none; border:1px solid rgba(255,255,255,.12); background:#0f2034; color:var(--ink); padding:10px 12px; border-radius:12px; font-size:16px}
+  button{cursor:pointer; background:linear-gradient(135deg,#1f3a5b,#17314f); border:1px solid rgba(79,209,197,.45)}
+  button:hover{filter:brightness(1.08)}
+  .pill{display:inline-block; padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.12); background:#10243a; color:#a7c6ff; font-size:12px}
+  .muted{color:var(--muted)}
+  .sep{height:1px; background:rgba(255,255,255,.08); margin:12px 0}
+  canvas{display:block; width:100%; height:auto; background:linear-gradient(#09111f,#0a1526)}
+  .hidden{display:none}
+  .bad{color:var(--bad)}
+  .ok{color:var(--ok)}
+  .y{color:var(--yellow)}
+  .grid{display:grid; gap:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Unit 2 — Arcade MC (Blaster + Boss)</h1>
+  <p class="muted">Use <b>A / B / C / D</b> keys or click a ship. Correct blasts enemies, wrong drains energy. Power-ups drop during waves. Boss fights every few questions. Clear all three levels to win.</p>
+
+  <!-- MENU -->
+  <section id="menu" class="card grid">
+    <div class="row">
+      <div>
+        <label class="pill">Mode: Blaster (75%) + Boss (25%)</label>
+      </div>
+      <div>
+        <label>
+          Difficulty
+          <select id="difficulty">
+            <option value="normal" selected>Normal</option>
+            <option value="hard">Hard</option>
+          </select>
+        </label>
+      </div>
+    </div>
+    <div class="sep"></div>
+    <div class="row">
+      <button id="startCampaign">Start Campaign (Ch. 6–11)</button>
+      <button id="startL1">Level 1 — Ch. 6–7</button>
+      <button id="startL2">Level 2 — Ch. 8–9</button>
+      <button id="startL3">Level 3 — Ch. 10–11</button>
+    </div>
+    <p class="muted">Tip: Boss takes multiple hits. Power-ups: <span class="ok">❤️ Heal</span>, <span class="y">🔥 Double Damage</span>, <span>❄️ Slow Time</span>.</p>
+  </section>
+
+  <!-- HUD -->
+  <section id="hud" class="card row hidden">
+    <div class="row">
+      <span class="pill" id="levelTag">Level</span>
+      <span class="pill" id="phaseTag">Phase</span>
+      <span class="pill" id="progressTag">Q 0 / 0</span>
+    </div>
+    <div class="row">
+      <span class="pill" id="scoreTag">Score: 0</span>
+      <span class="pill" id="streakTag">Streak: 0</span>
+      <span class="pill" id="timerTag">Time: 00:00</span>
+    </div>
+  </section>
+
+  <!-- CANVAS -->
+  <section class="card">
+    <canvas id="game" width="960" height="560"></canvas>
+  </section>
+
+  <!-- PROMPT -->
+  <section id="promptCard" class="card hidden">
+    <div id="questionText" style="font-weight:700; font-size:18px; line-height:1.3"></div>
+    <div class="muted" style="margin-top:6px">Press <b>A</b>, <b>B</b>, <b>C</b>, or <b>D</b> (or click a ship).</div>
+  </section>
+
+  <!-- RESULTS -->
+  <section id="results" class="card hidden">
+    <h2 id="resultTitle" style="margin:0 0 8px">Results</h2>
+    <div class="row">
+      <span class="pill" id="summaryScore">Score</span>
+      <span class="pill" id="summaryAcc">Accuracy</span>
+      <span class="pill" id="summaryTime">Time</span>
+    </div>
+    <div class="sep"></div>
+    <div id="missedList"></div>
+    <div class="sep"></div>
+    <div class="row">
+      <button id="backToMenu">Back to Menu</button>
+      <button id="retryLevel">Retry Level</button>
+      <button id="nextLevel" class="hidden">Next Level</button>
+    </div>
+  </section>
+</div>
+
+<script>
+// ---------- Helpers ----------
+const $ = sel => document.querySelector(sel);
+function fmtTime(s){const m=String(Math.floor(s/60)).padStart(2,'0'); const ss=String(s%60).padStart(2,'0'); return `${m}:${ss}`;}
+function shuffle(a){const r=[...a]; for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [r[i],r[j]]=[r[j],r[i]];} return r;}
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
+
+// ---------- BANK (94 MC) ----------
+const BANK = [
+  // ===== Ch. 6–7 (29) =====
+  {chapter:6,set:'ch67',q:'Define public opinion.',choices:['The sum of individual attitudes about government and politics','The media narrative set by elites','A formal vote in Congress','A court’s interpretation of the law'],answer:0},
+  {chapter:6,set:'ch67',q:'What is political socialization?',choices:['The process by which people acquire political beliefs and values','A vote to remove an official from office','The organization of political parties','A method of counting votes'],answer:0},
+  {chapter:6,set:'ch67',q:'What is party identification?',choices:['An individual’s psychological attachment to a political party','A voter registration requirement','The official party platform','A method of apportionment'],answer:0},
+  {chapter:6,set:'ch67',q:'What is selective perception?',choices:['Interpreting information in ways that reinforce preexisting beliefs','Choosing candidates by lottery','The scientific selection of poll samples','The court’s selection of cases'],answer:0},
+  {chapter:6,set:'ch67',q:'What is an ideology?',choices:['A coherent set of beliefs about the role of government','A single-issue interest group','A media ownership rule','A constitutional amendment'],answer:0},
+  {chapter:6,set:'ch67',q:'How is public opinion commonly measured?',choices:['Scientific surveys using probability sampling','Town halls only','Election returns only','Court rulings'],answer:0},
+  {chapter:6,set:'ch67',q:'What is sampling error?',choices:['The margin of error arising from drawing a sample instead of a census','Intentional bias by pollsters','Counting ballots incorrectly','Deviation caused by gerrymandering'],answer:0},
+  {chapter:6,set:'ch67',q:'What is a populist?',choices:['A person who champions the interests of ordinary people against elites','A strict libertarian','A nonvoter','A Supreme Court justice'],answer:0},
+  {chapter:6,set:'ch67',q:'Pollsters evaluate public opinion primarily by…',choices:['Constructing representative samples and asking standardized questions','Reading newspaper editorials','Consulting party platforms','Tracking vetoes'],answer:0},
+  {chapter:6,set:'ch67',q:'Which factor most shapes political opinions early in life?',choices:['Family and early social environment','Supreme Court decisions','State budgets','Weather'],answer:0},
+  {chapter:7,set:'ch67',q:'Define political participation.',choices:['Activities by citizens intended to influence government and politics','Any governmental action','Court filings by lawyers','Media ownership'],answer:0},
+  {chapter:7,set:'ch67',q:'What is suffrage?',choices:['The right to vote','A tax on imports','Civil service reform','Court jurisdiction'],answer:0},
+  {chapter:7,set:'ch67',q:'Who was Susan B. Anthony?',choices:['A leader of the women’s suffrage movement','First female Speaker of the House','A Supreme Court justice','Author of the Federalist Papers'],answer:0},
+  {chapter:7,set:'ch67',q:'What did the 15th Amendment do?',choices:['Prohibited denying the vote on the basis of race','Granted women the vote','Lowered the voting age to 18','Ended poll taxes'],answer:0},
+  {chapter:7,set:'ch67',q:'U.S. voter turnout is typically…',choices:['Lower than in many other established democracies','Higher than every other democracy','Identical to Canada','Unchanged since 1800'],answer:0},
+  {chapter:7,set:'ch67',q:'Motor Voter Act (1993) primarily…',choices:['Facilitated voter registration at DMVs','Mandated compulsory voting','Banned absentee ballots','Created same-day registration nationwide'],answer:0},
+  {chapter:7,set:'ch67',q:'“Likely voters” are typically identified by…',choices:['Past voting history and expressed intent','Party donations only','Jury service','Tax bracket'],answer:0},
+  {chapter:7,set:'ch67',q:'Virtual participation includes…',choices:['Online activities like petitions and political posts','Only in-person rallies','Voting by mail','Caucus attendance'],answer:0},
+  {chapter:7,set:'ch67',q:'Social capital refers to…',choices:['Networks and norms that enable collective action','Personal income','Government revenue','Campaign funds'],answer:0},
+  {chapter:7,set:'ch67',q:'A social movement is…',choices:['Sustained, organized collective action to bring change','A military deployment','A party convention','A court injunction'],answer:0},
+  {chapter:7,set:'ch67',q:'Which was a historical barrier to voting?',choices:['Literacy tests and poll taxes','Compulsory voting','Same-day registration','Early voting'],answer:0},
+  {chapter:7,set:'ch67',q:'Which amendment granted women the right to vote?',choices:['19th Amendment','24th Amendment','26th Amendment','17th Amendment'],answer:0},
+  {chapter:7,set:'ch67',q:'Which factor often increases turnout?',choices:['Competitive elections','Weekday voting only','Longer lines','Fewer polling places'],answer:0},
+  {chapter:7,set:'ch67',q:'A reform aimed at improving turnout is…',choices:['Automatic voter registration','Shortening polling hours','Eliminating absentee voting','Raising voting age'],answer:0},
+  {chapter:7,set:'ch67',q:'Historically, how were nominees chosen?',choices:['Party caucuses and conventions dominated the process','Only by national primaries','By courts','By the Electoral College'],answer:0},
+  {chapter:7,set:'ch67',q:'Today, nominees are mainly chosen through…',choices:['State primaries and caucuses','Congressional votes','Supreme Court rulings','Random selection'],answer:0},
+  {chapter:7,set:'ch67',q:'Which is a type of election?',choices:['Primary, general, and runoff','Judicial review','Census sampling','Appropriations'],answer:0},
+  {chapter:7,set:'ch67',q:'Election law reform often addresses…',choices:['Campaign finance and voting access','Treaty ratification','Court appointments','War powers'],answer:0},
+  {chapter:7,set:'ch67',q:'A common campaign strategy is…',choices:['Targeted messaging to persuadable voters','Banning debates','Ignoring fundraising','Avoiding media'],answer:0},
+
+  // ===== Ch. 8–9 (34) =====
+  {chapter:8,set:'ch89',q:'What is a political party?',choices:['An organization that seeks to win office to influence policy','A PAC that cannot endorse candidates','A social club','A branch of government'],answer:0},
+  {chapter:8,set:'ch89',q:'Which best describes U.S. party history?',choices:['Periodic realignments and evolving coalitions','Unbroken one-party rule','No third parties ever','Parties banned by the Constitution'],answer:0},
+  {chapter:8,set:'ch89',q:'Realignment is…',choices:['A durable shift in party coalitions and issue bases','Switching a single vote','Redrawing district lines','Changing committee chairs'],answer:0},
+  {chapter:8,set:'ch89',q:'Dealignment is…',choices:['A trend toward weaker party attachments/independence','A court realigning powers','A budget cut','A foreign policy pivot'],answer:0},
+  {chapter:8,set:'ch89',q:'What united many in the Whig Party?',choices:['Opposition to Jacksonian Democrats','Support for direct democracy only','Promotion of monarchy','Isolationism'],answer:0},
+  {chapter:8,set:'ch89',q:'Ticket splitting means…',choices:['Voting for candidates of different parties on the same ballot','Casting multiple ballots','Spoiling ballots intentionally','Only voting in primaries'],answer:0},
+  {chapter:8,set:'ch89',q:'Why a two-party system in the U.S.?',choices:['Single-member districts with plurality (winner-take-all) rules','Mandatory coalition governments','Proportional representation nationwide','Constitutional ban on third parties'],answer:0},
+  {chapter:8,set:'ch89',q:'Proportional representation allocates seats by…',choices:['Party vote share','Geographic land area','Population density','Court seniority'],answer:0},
+  {chapter:8,set:'ch89',q:'The gender gap refers to…',choices:['Differences in political attitudes or voting between men and women','A wage law','A House rule','Military ranks'],answer:0},
+  {chapter:8,set:'ch89',q:'Third parties in the U.S. often…',choices:['Influence major parties and highlight neglected issues','Win most federal offices','Are unconstitutional','Run primaries for both parties'],answer:0},
+  {chapter:8,set:'ch89',q:'Party organization typically includes…',choices:['National, state, and local committees','Only a national committee','Only state committees','Only local precincts'],answer:0},
+  {chapter:8,set:'ch89',q:'Hard money is…',choices:['Campaign funds given directly to candidates with legal limits','Unreported cash','Public financing only','Independent expenditures only'],answer:0},
+  {chapter:8,set:'ch89',q:'European vs. American parties differ because…',choices:['European parties are often more centralized and ideological','U.S. parties are more centralized','Europe bans party discipline','Both are constitutionally identical'],answer:0},
+  {chapter:8,set:'ch89',q:'Democratic vs. Republican philosophies typically differ most on…',choices:['Scope of government and regulation levels','The number of states','The size of the Senate','Judicial salaries'],answer:0},
+  {chapter:8,set:'ch89',q:'Party decline is associated with…',choices:['Candidate-centered campaigns and media changes','Stronger party machines','More patronage','Closed conventions only'],answer:0},
+  {chapter:8,set:'ch89',q:'Third-party political impact includes…',choices:['Spoiler effects and agenda setting for major parties','Control of all committees','Writing the Constitution','Running courts'],answer:0},
+  {chapter:8,set:'ch89',q:'A core party function is…',choices:['Recruiting candidates and organizing elections','Passing statutes directly','Conducting judicial review','Census counting'],answer:0},
+  {chapter:8,set:'ch89',q:'A characteristic of U.S. parties is…',choices:['Decentralization across federalism levels','Strict national discipline','No primaries','Unified platforms enforced by law'],answer:0},
+  {chapter:8,set:'ch89',q:'Party organization spans…',choices:['National committees, state parties, and local precincts','Only national committees','Only city councils','Only party caucuses in Congress'],answer:0},
+  {chapter:9,set:'ch89',q:'An interest group is…',choices:['An organization seeking to influence public policy','A political party','A court','A bureaucracy'],answer:0},
+  {chapter:9,set:'ch89',q:'Types of interest groups include…',choices:['Economic, public interest, single-issue, and governmental','Only economic','Only public interest','Only foreign'],answer:0},
+  {chapter:9,set:'ch89',q:'A collective good is…',choices:['A benefit that cannot be withheld from non-contributors','A private club benefit','Personal income','A party office'],answer:0},
+  {chapter:9,set:'ch89',q:'The free rider problem occurs when…',choices:['People benefit without contributing to the cost','Voters skip primaries','Judges recuse themselves','Members split tickets'],answer:0},
+  {chapter:9,set:'ch89',q:'Lobbying is…',choices:['Direct interaction with public officials to influence decisions','Only campaign donations','Court litigation only','Media endorsements only'],answer:0},
+  {chapter:9,set:'ch89',q:'Amicus curiae briefs are…',choices:['Friend of the court briefs submitted by non-parties','Executive orders','Treaties','Floor amendments'],answer:0},
+  {chapter:9,set:'ch89',q:'The iron triangle links…',choices:['Congressional committees, bureaucracies, and interest groups','Courts, voters, and parties','States, cities, and counties','Media, parties, and polls'],answer:0},
+  {chapter:9,set:'ch89',q:'Issue networks are…',choices:['Fluid coalitions of actors around a policy area','Permanent party machines','Only three-way alliances','Court panels'],answer:0},
+  {chapter:9,set:'ch89',q:'PACs and Super PACs differ in that…',choices:['Super PACs can spend unlimited independent expenditures; PACs give limited direct contributions','PACs spend unlimited independently','Super PACs give unlimited directly to candidates','Both are identical under law'],answer:0},
+  {chapter:9,set:'ch89',q:'Inside lobbying refers to…',choices:['Direct contact with policymakers','Public campaigns only','Ballot initiatives','Court appeals'],answer:0},
+  {chapter:9,set:'ch89',q:'Interest-group effectiveness depends on…',choices:['Resources, access, and salience of issues','Number of TV ads only','Court size','Population size only'],answer:0},
+  {chapter:9,set:'ch89',q:'Parties vs. interest groups: key difference is…',choices:['Parties seek to win office; groups seek to influence policy','Groups run primaries','Parties file amicus briefs only','Groups administer elections'],answer:0},
+  {chapter:9,set:'ch89',q:'A method used by interest groups is…',choices:['Grassroots mobilization','Judicial review','Impeachment','Census count'],answer:0},
+  {chapter:9,set:'ch89',q:'A strength of interest groups can be…',choices:['Expertise and information for policymakers','Guaranteed majority support','Complete neutrality','Total absence of bias'],answer:0},
+  {chapter:9,set:'ch89',q:'A common criticism/weakness is…',choices:['Unequal influence favoring well-funded groups','Too much equality of access','No lobbying disclosure','No constitutional basis'],answer:0},
+
+  // ===== Ch. 10–11 (31) =====
+  {chapter:10,set:'ch1011',q:'The news media are…',choices:['Organizations that gather and disseminate information to the public','Congressional committees','Interest groups only','Polling firms only'],answer:0},
+  {chapter:10,set:'ch1011',q:'A partisan press is…',choices:['Media that openly support a political party or viewpoint','Objective reporting only','State-owned media','Tabloid crime coverage only'],answer:0},
+  {chapter:10,set:'ch1011',q:'Yellow journalism is characterized by…',choices:['Sensationalism and exaggerated stories to boost sales','Strict neutrality','Peer-reviewed analysis','Public broadcasting rules'],answer:0},
+  {chapter:10,set:'ch1011',q:'Objective journalism aspires to…',choices:['Fairness, balance, and factual accuracy','Advocacy only','Satire only','Partisan persuasion'],answer:0},
+  {chapter:10,set:'ch1011',q:'A gatekeeper in media is…',choices:['An actor deciding what information enters the news stream','A polling supervisor','A judge','A caucus chair'],answer:0},
+  {chapter:10,set:'ch1011',q:'Agenda setting occurs when media…',choices:['Influence which issues the public thinks are important','Write legislation','Count ballots','Draw districts'],answer:0},
+  {chapter:10,set:'ch1011',q:'Framing refers to…',choices:['How news is presented to shape interpretation','The legal frame around a bill','Drawing district borders','Camera tripod use'],answer:0},
+  {chapter:10,set:'ch1011',q:'The watchdog function means media…',choices:['Scrutinize officials and expose wrongdoing','Run campaigns','Pass statutes','Hold primaries'],answer:0},
+  {chapter:10,set:'ch1011',q:'Role of media in politics includes…',choices:['Informing, watchdogging, and acting as a forum for debate','Counting electoral votes','Appropriations','Judicial review'],answer:0},
+  {chapter:10,set:'ch1011',q:'U.S. media history includes…',choices:['Partisan presses, penny press, yellow journalism, and broadcast/cable/digital eras','Only public broadcasting','No newspapers before 1950','A constitutional ban on presses'],answer:0},
+  {chapter:10,set:'ch1011',q:'Media bias generally refers to…',choices:['Perceived tilt in coverage selection or presentation','Mathematical sampling error','Court bias','Gerrymandering'],answer:0},
+  {chapter:11,set:'ch1011',q:'House service requirements include…',choices:['25 years old, 7 years a citizen, resident of state','35 years old, natural-born citizen','30 years old, 9 years a citizen','No age requirement'],answer:0},
+  {chapter:11,set:'ch1011',q:'Senate service requirements include…',choices:['30 years old, 9 years a citizen, resident of state','25 years old, 7 years a citizen','Natural-born citizen only','No residency'],answer:0},
+  {chapter:11,set:'ch1011',q:'Terms of office: House vs. Senate?',choices:['House 2 years; Senate 6 years (staggered thirds)','Both 4 years','House 6; Senate 2','Both 2 years'],answer:0},
+  {chapter:11,set:'ch1011',q:'Apportionment is…',choices:['Allocation of House seats among states by population','Drawing district lines','Allocating Senate seats','Committee assignments'],answer:0},
+  {chapter:11,set:'ch1011',q:'Redistricting is…',choices:['Redrawing district boundaries within states','Allocating House seats among states','Counting population','Filing for office'],answer:0},
+  {chapter:11,set:'ch1011',q:'Gerrymandering is…',choices:['Drawing districts to advantage a party or group','The census','Bicameralism','Logrolling'],answer:0},
+  {chapter:11,set:'ch1011',q:'A primary election is…',choices:['An intra-party contest to choose nominees','The general election','A referendum','A recall'],answer:0},
+  {chapter:11,set:'ch1011',q:'Presiding officers: House and Senate are…',choices:['Speaker of the House; Vice President (President of the Senate)','Majority Leaders only','Chief Justice; Speaker','President Pro Tempore; Speaker'],answer:0},
+  {chapter:11,set:'ch1011',q:'Party leadership in Congress includes…',choices:['Majority/minority leaders and whips in each chamber','Only committee chairs','Only the Speaker','Only the VP'],answer:0},
+  {chapter:11,set:'ch1011',q:'Committee system purpose is…',choices:['Division of labor and policy specialization','Judicial review','Media relations','Caucus elections'],answer:0},
+  {chapter:11,set:'ch1011',q:'Types of committees include…',choices:['Standing, select, joint, and conference','District, state, federal','Open, closed, special rule','Legislative, judicial, executive'],answer:0},
+  {chapter:11,set:'ch1011',q:'Functions of Congress include…',choices:['Lawmaking, representation, oversight, and budgeting','Electing judges','Conducting polls','Drawing districts'],answer:0},
+  {chapter:11,set:'ch1011',q:'Trustee theory means representatives…',choices:['Use their own judgment for constituents’ good','Always follow constituent preferences','Follow party only','Follow interest-group polls'],answer:0},
+  {chapter:11,set:'ch1011',q:'Delegate theory means representatives…',choices:['Mirror constituents’ preferences directly','Use own judgment','Follow party only','Follow donors only'],answer:0},
+  {chapter:11,set:'ch1011',q:'A filibuster is…',choices:['Prolonged debate in the Senate to delay a vote','A House discharge petition','A veto override','An impeachment trial'],answer:0},
+  {chapter:11,set:'ch1011',q:'Cloture is…',choices:['A Senate vote to end debate (typically 60 votes)','A House rule for amendments','The census count','Committee markup'],answer:0},
+  {chapter:11,set:'ch1011',q:'Congressional reapportionment occurs…',choices:['After each decennial census','Every 2 years','Only by court order','Every session'],answer:0},
+  {chapter:11,set:'ch1011',q:'Congress’s role in policymaking includes…',choices:['Agenda setting, lawmaking, and oversight','Only signing bills','Only executing laws','Only judicial review'],answer:0},
+  {chapter:11,set:'ch1011',q:'The legislative process typically includes…',choices:['Introduction, committee, floor, conference, and presidential action','Only party caucus','Court ruling then vote','Executive order then budget'],answer:0},
+  {chapter:11,set:'ch1011',q:'Overall functions of Congress are…',choices:['Representation, lawmaking, oversight, and budgeting','Only campaigning','Only diplomacy','Only adjudication'],answer:0}
+];
+
+// Buckets
+const CH67 = BANK.filter(q=>q.set==='ch67');
+const CH89 = BANK.filter(q=>q.set==='ch89');
+const CH1011 = BANK.filter(q=>q.set==='ch1011');
+
+// ---------- Game State ----------
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+let WIDTH = canvas.width, HEIGHT = canvas.height;
+
+let state = {
+  scene: 'menu',           // menu | play | boss | levelclear | gameover | results
+  level: 1,                // 1,2,3
+  campaign: false,
+  difficulty: 'normal',
+  energyMax: 100,
+  energy: 100,
+  score: 0,
+  streak: 0,
+  timeSec: 0,
+  timerHandle: null,
+  // question flow
+  pool: [],                // full level pool (shuffled)
+  bossPool: [],            // ≈25%
+  stagePool: [],           // ≈75%
+  qIndex: 0,               // index inside current phase pool
+  phase: 'stage',          // stage | boss
+  phaseCounter: 0,         // count stage questions to trigger boss
+  // current question/choices
+  currentQ: null,
+  choices: [],
+  ships: [],
+  laser: null,
+  // powerups
+  hasSlow:false, slowUntil:0,
+  doubleDmg:false, doubleUntil:0,
+  // boss
+  bossHPMax: 5,
+  bossHP: 5,
+  bossShake:0,
+  // tracking
+  misses:[]
+};
+
+// ---------- UI helpers ----------
+function setScene(s){
+  state.scene = s;
+  document.getElementById('menu').classList.toggle('hidden', s!=='menu');
+  document.getElementById('hud').classList.toggle('hidden', !(s==='play'||s==='boss'));
+  document.getElementById('promptCard').classList.toggle('hidden', !(s==='play'||s==='boss'));
+  document.getElementById('results').classList.toggle('hidden', s!=='results');
+}
+function startTimer(){
+  stopTimer();
+  state.timerHandle=setInterval(()=>{ state.timeSec++; $('#timerTag').textContent='Time: '+fmtTime(state.timeSec); },1000);
+}
+function stopTimer(){ if(state.timerHandle){ clearInterval(state.timerHandle); state.timerHandle=null; } }
+function resetPowers(){ state.hasSlow=false; state.doubleDmg=false; state.slowUntil=0; state.doubleUntil=0; }
+
+// ---------- Level prep ----------
+function getLevelPool(lvl){
+  if(lvl===1) return shuffle([...CH67]);
+  if(lvl===2) return shuffle([...CH89]);
+  return shuffle([...CH1011]);
+}
+function splitPools(full){
+  const total = full.length;
+  const bossCount = Math.max(1, Math.round(total*0.25));
+  const stageCount = total - bossCount;
+  const stagePool = full.slice(0, stageCount);
+  const bossPool = full.slice(stageCount);
+  return {stagePool, bossPool};
+}
+
+function startLevel(lvl, isCampaign=false){
+  state.level = lvl;
+  state.campaign = isCampaign;
+  state.score = 0;
+  state.streak = 0;
+  state.timeSec = 0;
+  state.energyMax = (state.difficulty==='hard'? 90:100);
+  state.energy = state.energyMax;
+  state.misses = [];
+  resetPowers();
+  state.pool = getLevelPool(lvl);
+  const parts = splitPools(state.pool);
+  state.stagePool = parts.stagePool;
+  state.bossPool = shuffle(parts.bossPool);
+  state.phase='stage';
+  state.qIndex=0;
+  state.phaseCounter=0;
+  prepQuestion();
+  updateHUD();
+  setScene('play');
+  startTimer();
+}
+
+function updateHUD(){
+  const levelLabel = (state.level===1?'Level 1 — Ch. 6–7': state.level===2?'Level 2 — Ch. 8–9':'Level 3 — Ch. 10–11');
+  $('#levelTag').textContent = levelLabel;
+  $('#phaseTag').textContent = (state.scene==='boss' || state.phase==='boss')? 'Boss Fight':'Blaster Wave';
+  const total = (state.phase==='boss')? state.bossPool.length : state.stagePool.length;
+  const idx = (state.phase==='boss')? state.qIndex : state.qIndex;
+  $('#progressTag').textContent = `Q ${Math.min(idx+1,total)} / ${total}`;
+  $('#scoreTag').textContent = `Score: ${state.score}`;
+  $('#streakTag').textContent = `Streak: ${state.streak}`;
+}
+
+// ---------- Question prep ----------
+function prepQuestion(){
+  const pool = (state.phase==='boss')? state.bossPool : state.stagePool;
+  if(state.qIndex >= pool.length){
+    // phase done: switch or level end
+    if(state.phase==='stage' && state.bossPool.length>0){
+      state.phase='boss'; state.qIndex=0; state.bossHPMax = Math.min(10, 5 + state.level*2); state.bossHP = state.bossHPMax;
+      setScene('boss'); updateHUD();
+    } else {
+      // level complete
+      endLevel(true);
+      return;
+    }
+  }
+  state.currentQ = pool[state.qIndex];
+  // build choices: correct + 3 random distractors from this phase pool
+  const correct = state.currentQ.choices[state.currentQ.answer];
+  const distractors = shuffle(state.currentQ.choices.filter((_,i)=>i!==state.currentQ.answer)).slice(0,3);
+  const labeled = shuffle([
+    {key:'A', text: correct, correct:true},
+    {key:'B', text: distractors[0], correct:false},
+    {key:'C', text: distractors[1], correct:false},
+    {key:'D', text: distractors[2], correct:false},
+  ]);
+  state.choices = labeled.map((c,i)=>({...c, lane:i}));
+  buildShips();
+  $('#questionText').textContent = state.currentQ.q;
+  updateHUD();
+}
+
+function buildShips(){
+  // four ships span evenly across width
+  const pad = 40;
+  const w = (WIDTH - pad*2) / 4 - 16;
+  const lanes = [0,1,2,3];
+  state.ships = lanes.map((lane, idx)=>{
+    const x = pad + idx * (w+16);
+    const speed = (state.scene==='boss'||state.phase==='boss')? 90 : 110;
+    return {
+      x, y: 70, w, h: 40, vy: (state.hasSlow? speed*0.5 : speed),
+      label: state.choices[idx].key,
+      text: state.choices[idx].text,
+      correct: state.choices[idx].correct,
+      alive: true, explode:0
+    };
+  });
+}
+
+// ---------- Game loop ----------
+let lastTs = 0;
+function loop(ts){
+  const dt = Math.min(0.033, (ts - lastTs)/1000 || 0.016);
+  lastTs = ts;
+  render(dt);
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+function render(dt){
+  // background
+  ctx.clearRect(0,0,WIDTH,HEIGHT);
+  gradientBG();
+  drawStars();
+
+  // HUD bars
+  drawBars();
+
+  if(state.scene==='menu'){
+    drawMenuHint();
+    return;
+  }
+
+  // powers timeout
+  const now = performance.now();
+  if(state.hasSlow && now > state.slowUntil){ state.hasSlow=false; }
+  if(state.doubleDmg && now > state.doubleUntil){ state.doubleDmg=false; }
+
+  // boss sprite
+  if(state.scene==='boss' || state.phase==='boss'){
+    drawBoss(dt);
+  }
+
+  // ships
+  state.ships.forEach(s=>{
+    if(!s.alive) return;
+    s.vy = (state.hasSlow? s.vy*0.999 : s.vy); // already slowed; keep constant-ish
+    s.y += s.vy * dt;
+    drawShip(s);
+    if(s.y + s.h >= HEIGHT-140 && s.alive){
+      // missed any ship counts as "pass"; only penalize if the missed one was correct
+      if(s.correct){
+        damage(15);
+        // record miss
+        state.misses.push({q: state.currentQ});
+        flash('#301019');
+      }
+      s.alive=false;
+    }
+  });
+
+  // laser
+  if(state.laser){
+    state.laser.t += 900*dt;
+    drawLaser(state.laser);
+    if(state.laser.t >= 1){ state.laser=null; }
+  }
+
+  // if all ships resolved -> advance
+  if((state.scene==='play'||state.scene==='boss') && state.ships.every(s=>!s.alive)){
+    nextQuestion();
+  }
+}
+
+function nextQuestion(){
+  // phase counters
+  if(state.phase==='stage'){
+    state.phaseCounter++;
+    // every 4th question, if any bosses left, switch to boss phase soon
+    if(state.phaseCounter>=3 && state.bossPool.length>0){
+      state.phase='boss'; state.qIndex=0;
+      state.bossHPMax = Math.min(10, 5 + state.level*2);
+      state.bossHP = state.bossHPMax;
+      resetPowers(); // reset offensive powers when boss starts
+      setScene('boss');
+    }else{
+      state.qIndex++;
+    }
+  }else{
+    state.qIndex++;
+  }
+  prepQuestion();
+}
+
+// ---------- Input ----------
+window.addEventListener('keydown', (e)=>{
+  if(['a','b','c','d'].includes(e.key.toLowerCase())){
+    fireKey(e.key.toUpperCase());
+  }
+});
+canvas.addEventListener('click',(e)=>{
+  const rect = canvas.getBoundingClientRect();
+  const mx = (e.clientX - rect.left) * (canvas.width/rect.width);
+  const my = (e.clientY - rect.top) * (canvas.height/rect.height);
+  // find clicked ship
+  const s = state.ships.find(s=> s.alive && mx>=s.x && mx<=s.x+s.w && my>=s.y && my<=s.y+s.h);
+  if(s){ fireKey(s.label); }
+});
+
+function fireKey(letter){
+  if(!(state.scene==='play'||state.scene==='boss')) return;
+  const target = state.ships.find(s=>s.alive && s.label===letter);
+  if(!target) return;
+
+  // draw laser
+  state.laser = { x: WIDTH/2, y: HEIGHT-110, tx: target.x+target.w/2, ty: target.y+target.h/2, t:0 };
+
+  if(target.correct){
+    target.alive=false; target.explode=0.4;
+    state.score += 10 + Math.min(state.streak*2, 10);
+    state.streak++;
+    flash('#102b1f');
+    // boss damage (if any)
+    if(state.scene==='boss' || state.phase==='boss'){
+      const dmg = state.doubleDmg? 2:1;
+      state.bossHP -= dmg;
+      state.bossShake = 6;
+      if(state.bossHP<=0){
+        // boss defeated -> move on
+        state.phase='stage';
+        state.phaseCounter=0;
+        state.qIndex=state.stagePool.findIndex(q=>q===state.currentQ); // ensure idx progression
+        state.qIndex = Math.max(0, state.qIndex);
+        // remove used boss question
+        state.bossPool.splice(state.bossPool.indexOf(state.currentQ),1);
+        // advance stage index by 1 to keep flow
+        if(state.stagePool.length>0) state.qIndex = Math.min(state.stagePool.length-1, state.qIndex);
+        setScene('play');
+      }else{
+        // keep boss question alive; still need to resolve ships to proceed
+      }
+    }else{
+      // chance for power-up on correct in stage phase
+      maybeGrantPowerup();
+    }
+  }else{
+    damage(10);
+    state.streak=0;
+    flash('#3a1016');
+    target.alive=false;
+    state.misses.push({q: state.currentQ});
+  }
+}
+
+// ---------- Power-ups ----------
+function maybeGrantPowerup(){
+  // ~30% chance
+  if(Math.random()<0.3){
+    const p = pick(['heal','double','slow']);
+    if(p==='heal'){ state.energy = clamp(state.energy+15, 0, state.energyMax); toast('❤️ +15 Energy'); }
+    if(p==='double'){ state.doubleDmg=true; state.doubleUntil=performance.now()+12000; toast('🔥 Double Damage (12s)'); }
+    if(p==='slow'){ state.hasSlow=true; state.slowUntil=performance.now()+10000; toast('❄️ Slow Time (10s)'); }
+  }
+}
+
+// ---------- Damage / End ----------
+function damage(amount){
+  const mult = (state.difficulty==='hard'? 1.25:1.0);
+  state.energy = clamp(state.energy - Math.round(amount*mult), 0, state.energyMax);
+  if(state.energy<=0){
+    endLevel(false);
+  }
+}
+
+// ---------- End & Results ----------
+function endLevel(cleared){
+  stopTimer();
+  setScene('results');
+  const title = cleared? `Level ${state.level} Cleared!`:`Level ${state.level} Failed`;
+  $('#resultTitle').textContent = title;
+  const totalQs = (state.level===1? CH67.length : state.level===2? CH89.length : CH1011.length);
+  const missed = state.misses.length;
+  const correct = totalQs - missed;
+  $('#summaryScore').textContent = `Score: ${state.score}`;
+  $('#summaryAcc').textContent = `Accuracy: ${correct}/${totalQs} (${Math.round(correct/totalQs*100)}%)`;
+  $('#summaryTime').textContent = `Time: ${fmtTime(state.timeSec)}`;
+  const list = $('#missedList'); list.innerHTML='';
+  if(missed===0){
+    list.innerHTML = '<p class="ok">Perfect! No missed items.</p>';
+  }else{
+    const ul = document.createElement('div'); ul.className='grid';
+    state.misses.forEach((m,i)=>{
+      const div=document.createElement('div'); div.className='card';
+      const ans = m.q.choices[m.q.answer];
+      div.innerHTML = `<div style="font-weight:700;margin-bottom:6px">Missed ${i+1} · Ch. ${m.q.chapter}</div>
+      <div style="margin-bottom:6px">${m.q.q}</div>
+      <div class="pill">Correct: ${ans}</div>`;
+      ul.appendChild(div);
+    });
+    list.appendChild(ul);
+  }
+  // next/ retry buttons
+  $('#retryLevel').onclick = ()=> startLevel(state.level, state.campaign);
+  $('#nextLevel').classList.toggle('hidden', !(state.campaign && cleared && state.level<3));
+  $('#nextLevel').onclick = ()=>{
+    startLevel(state.level+1, true);
+  };
+}
+
+// ---------- Visuals ----------
+function gradientBG(){
+  const g = ctx.createLinearGradient(0,0,0,HEIGHT);
+  g.addColorStop(0,'#0a1629'); g.addColorStop(1,'#0b1a32');
+  ctx.fillStyle=g; ctx.fillRect(0,0,WIDTH,HEIGHT);
+}
+function drawStars(){
+  ctx.save();
+  ctx.globalAlpha=0.25;
+  for(let i=0;i<50;i++){
+    const x=(i*173)%WIDTH, y=(i*97)%HEIGHT; ctx.fillStyle='#a7c6ff'; ctx.fillRect(x, y, 2, 2);
+  }
+  ctx.restore();
+}
+function drawBars(){
+  // energy bar
+  const x=20, y=HEIGHT-110, w=240, h=12;
+  ctx.fillStyle='rgba(255,255,255,.08)'; ctx.fillRect(x,y,w,h);
+  const pct = state.energy/state.energyMax;
+  ctx.fillStyle = pct>0.5? '#22c55e' : pct>0.25? '#f59e0b' : '#ef4444';
+  ctx.fillRect(x,y,w*pct,h);
+  ctx.strokeStyle='rgba(255,255,255,.18)'; ctx.strokeRect(x,y,w,h);
+  // power-ups icons
+  let px = x+w+16;
+  if(state.doubleDmg){ drawPill(px,y-2,'🔥 x2'); px+=58; }
+  if(state.hasSlow){ drawPill(px,y-2,'❄️'); px+=46; }
+}
+function drawPill(x,y,t){ ctx.fillStyle='rgba(255,255,255,.12)'; roundRect(ctx,x,y,44,16,8,true,false); ctx.fillStyle='#a7c6ff'; ctx.font='12px system-ui'; ctx.fillText(t,x+10,y+12); }
+function drawMenuHint(){
+  ctx.save();
+  ctx.fillStyle='rgba(255,255,255,.06)';
+  roundRect(ctx, WIDTH/2-160, HEIGHT-150, 320, 60, 12, true,false);
+  ctx.fillStyle='#9fb0c6'; ctx.font='14px system-ui';
+  ctx.fillText('Start a level to begin. Use A/B/C/D keys or click ships.', WIDTH/2-145, HEIGHT-120);
+  ctx.restore();
+}
+function drawShip(s){
+  ctx.save();
+  ctx.shadowColor='rgba(0,0,0,.35)'; ctx.shadowBlur=8;
+  ctx.fillStyle = s.correct? 'rgba(79,209,197,.14)': 'rgba(255,255,255,.07)';
+  roundRect(ctx, s.x, s.y, s.w, s.h, 10, true,false);
+  ctx.strokeStyle='rgba(255,255,255,.18)'; ctx.strokeRect(s.x, s.y, s.w, s.h);
+  ctx.fillStyle='#e6edf3'; ctx.font='14px system-ui'; ctx.fillText(`${s.label}) ${s.text}`, s.x+8, s.y+24, s.w-12);
+  if(s.explode>0){
+    s.explode-=0.02;
+    ctx.globalAlpha = Math.max(0,s.explode);
+    ctx.strokeStyle='#4fd1c5'; ctx.beginPath(); ctx.arc(s.x+s.w/2, s.y+s.h/2, 26*(1-s.explode), 0, Math.PI*2); ctx.stroke();
+  }
+  ctx.restore();
+}
+function drawLaser(L){
+  ctx.save();
+  ctx.strokeStyle='#4fd1c5'; ctx.lineWidth=2;
+  const x = L.x + (L.tx-L.x)*L.t;
+  const y = L.y + (L.ty-L.y)*L.t;
+  ctx.beginPath(); ctx.moveTo(L.x,L.y); ctx.lineTo(x,y); ctx.stroke();
+  ctx.restore();
+}
+function drawBoss(dt){
+  const w=360, h=60;
+  const bx = WIDTH/2 - w/2 + (state.bossShake? (Math.random()-0.5)*state.bossShake : 0);
+  const by = 40 + (state.bossShake? (Math.random()-0.5)*state.bossShake : 0);
+  if(state.bossShake>0) state.bossShake = Math.max(0, state.bossShake-10*dt);
+
+  // body
+  ctx.save();
+  ctx.fillStyle='rgba(255,255,255,.06)'; roundRect(ctx, bx, by, w, h, 16, true,false);
+  ctx.strokeStyle='rgba(255,255,255,.18)'; ctx.strokeRect(bx, by, w, h);
+  ctx.fillStyle='#e6edf3'; ctx.font='16px system-ui'; ctx.fillText(`Boss — Ch. ${(state.level===1? '6–7':state.level===2?'8–9':'10–11')}`, bx+12, by+22);
+  // HP bar
+  const barW = w-24, barX = bx+12, barY = by+h-20;
+  ctx.fillStyle='rgba(255,255,255,.1)'; roundRect(ctx, barX, barY, barW, 10, 6, true,false);
+  const pct = clamp(state.bossHP/state.bossHPMax,0,1);
+  ctx.fillStyle = pct>0.5? '#4fd1c5' : pct>0.25? '#f59e0b' : '#ef4444';
+  roundRect(ctx, barX, barY, barW*pct, 10, 6, true,false);
+  ctx.restore();
+}
+
+function roundRect(ctx, x, y, w, h, r, fill, stroke){
+  if (typeof r === 'undefined') r = 5;
+  if (typeof r === 'number') r = {tl:r,tr:r,br:r,bl:r};
+  else { const rr = r; r = {tl:rr,tr:rr,br:rr,bl:rr}; }
+  ctx.beginPath();
+  ctx.moveTo(x+r.tl, y);
+  ctx.lineTo(x+w-r.tr, y);
+  ctx.quadraticCurveTo(x+w, y, x+w, y+r.tr);
+  ctx.lineTo(x+w, y+h-r.br);
+  ctx.quadraticCurveTo(x+w, y+h, x+w-r.br, y+h);
+  ctx.lineTo(x+r.bl, y+h);
+  ctx.quadraticCurveTo(x, y+h, x, y+h-r.bl);
+  ctx.lineTo(x, y+r.tl);
+  ctx.quadraticCurveTo(x, y, x+r.tl, y);
+  ctx.closePath();
+  if(fill) ctx.fill();
+  if(stroke) ctx.stroke();
+}
+
+// subtle flash feedback
+let flashT=0, flashColor='#000';
+function flash(col){ flashT=0.15; flashColor=col; }
+(function flashLoop(){
+  if(flashT>0){
+    ctx.save();
+    ctx.globalAlpha = flashT;
+    ctx.fillStyle = flashColor;
+    ctx.fillRect(0,0,WIDTH,HEIGHT);
+    ctx.restore();
+    flashT -= 0.02;
+  }
+  requestAnimationFrame(flashLoop);
+})();
+
+// small toast
+let toastT=0, toastMsg='';
+function toast(msg){ toastMsg=msg; toastT=1.2; }
+(function toastLoop(){
+  if(toastT>0){
+    const a = Math.min(1, toastT);
+    ctx.save();
+    ctx.globalAlpha = a*0.9;
+    roundRect(ctx, WIDTH/2-90, HEIGHT-170, 180, 34, 10, true,false);
+    ctx.fillStyle='#a7c6ff'; ctx.font='14px system-ui';
+    ctx.fillText(toastMsg, WIDTH/2-70, HEIGHT-148);
+    ctx.restore();
+    toastT -= 0.02;
+  }
+  requestAnimationFrame(toastLoop);
+})();
+
+// ---------- Menu buttons ----------
+function startWith(level, campaign=false){
+  state.difficulty = $('#difficulty').value;
+  setScene('play');
+  startLevel(level, campaign);
+}
+document.getElementById('startCampaign').addEventListener('click', ()=> startWith(1,true));
+document.getElementById('startL1').addEventListener('click', ()=> startWith(1,false));
+document.getElementById('startL2').addEventListener('click', ()=> startWith(2,false));
+document.getElementById('startL3').addEventListener('click', ()=> startWith(3,false));
+document.getElementById('backToMenu').addEventListener('click', ()=>{
+  stopTimer(); setScene('menu');
+});
+document.getElementById('retryLevel').addEventListener('click', ()=> startLevel(state.level, state.campaign));
+document.getElementById('nextLevel').addEventListener('click', ()=> startLevel(state.level+1, true));
+
+</script>
+</body>
+</html>
