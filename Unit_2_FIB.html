@@ -3,11 +3,9 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Unit 2 — Fill-in-the-Blank Quiz (Ch. 6–11)</title>
+<title>Unit 2 — Fill-in-the-Blank (Self-Grade)</title>
 <style>
-  :root{
-    --bg:#0b1220; --panel:#101a2c; --accent:#4fd1c5; --ok:#22c55e; --bad:#ef4444; --muted:#9fb0c6; --text:#e6edf3;
-  }
+  :root{ --bg:#0b1220; --panel:#101a2c; --accent:#4fd1c5; --muted:#9fb0c6; --text:#e6edf3; }
   *{box-sizing:border-box}
   body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial; color:var(--text);
        background:radial-gradient(1100px 700px at 20% -10%, #13233d 0%, var(--bg) 60%);} 
@@ -29,26 +27,21 @@
   .footer{display:flex; gap:10px; justify-content:space-between; align-items:center; margin-top:12px}
   .pill{display:inline-block; padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.12);
         background:#10243a; color:#a7c6ff; font-size:12px}
-  .ok{color:#d1fae5; background:#083a2a; border-color:#0c5;}
-  .bad{color:#fee2e2; background:#421515; border-color:#f66}
   .tag{font-size:12px; opacity:.9}
   .review h3{margin:8px 0 6px}
   .note{font-size:13px; color:#a9bbcf}
   .sep{height:1px; background:rgba(255,255,255,.08); margin:12px 0}
   .row{display:grid; gap:8px; grid-template-columns: 1fr}
   .mini{font-size:12px; color:#9fb0c6}
-  .status{font-weight:700; padding:2px 8px; border-radius:999px; display:inline-block}
-  .status.ok{background:#0b3; color:#eaffef}
-  .status.bad{background:#b10; color:#ffecec}
   @media print { body{background:#fff; color:#000} }
 </style>
 </head>
 <body>
   <div class="wrap">
     <h1>Unit 2 Fill-in-the-Blank — Chapters 6–11</h1>
-    <p class="note">Type your answers. After Submit, you’ll see your answer next to the correct answer for easy self-grading. You can also download/print a PDF report.</p>
+    <p class="note">Type your answers. After Submit, you’ll see your answer next to the correct answer for self-grading. You can also download/print a PDF report.</p>
 
-    <!-- START SCREEN -->
+    <!-- START -->
     <section id="start" class="card grid">
       <div class="grid grid-2">
         <div>
@@ -71,7 +64,7 @@
       <button id="begin">Start Quiz</button>
     </section>
 
-    <!-- QUIZ SCREEN -->
+    <!-- QUIZ -->
     <section id="quiz" class="card hidden">
       <div id="hud" class="footer">
         <span id="progress" class="pill">Q 1 / N</span>
@@ -84,7 +77,7 @@
       <div class="row" style="margin-top:12px">
         <label for="answerBox">Your answer</label>
         <input id="answerBox" type="text" placeholder="Type your answer here…" autocomplete="off" />
-        <div class="mini">Tip: spelling doesn’t have to be perfect — close matches count.</div>
+        <div class="mini">No auto-grading — compare to the key on the next screen.</div>
       </div>
 
       <div class="footer">
@@ -96,10 +89,9 @@
       </div>
     </section>
 
-    <!-- RESULT / REVIEW SCREEN -->
+    <!-- REVIEW -->
     <section id="result" class="card hidden">
-      <h2 style="margin:0 0 8px">Results</h2>
-      <div id="scoreline" class="pill"></div>
+      <h2 style="margin:0 0 8px">Review & Self-Grade</h2>
       <div class="sep"></div>
       <div id="review" class="review"></div>
       <div class="footer">
@@ -323,34 +315,9 @@ const SET_MAP = {
 let current = { list:[], answers:[], idx:0 };
 let lastResults = [];
 
-/* ------------------ UTILS ------------------ */
+/* ------------------ HELPERS ------------------ */
 function shuffle(arr){ for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]} return arr; }
-function normalize(s){ return (s||'').toLowerCase().replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim(); }
-function lev(a,b){
-  const m=a.length,n=b.length,dp=Array.from({length:m+1},()=>Array(n+1).fill(0));
-  for(let i=0;i<=m;i++) dp[i][0]=i; for(let j=0;j<=n;j++) dp[0][j]=j;
-  for(let i=1;i<=m;i++){ for(let j=1;j<=n;j++){ const cost=a[i-1]===b[j-1]?0:1;
-    dp[i][j]=Math.min(dp[i-1][j]+1, dp[i][j-1]+1, dp[i-1][j-1]+cost); } }
-  return dp[m][n];
-}
-function jaccardTokens(a,b){
-  const A=new Set(normalize(a).split(' ').filter(Boolean));
-  const B=new Set(normalize(b).split(' ').filter(Boolean));
-  if(!A.size || !B.size) return 0;
-  const inter=[...A].filter(x=>B.has(x)).length;
-  const uni = new Set([...A,...B]).size;
-  return inter/uni;
-}
-function closeMatch(student, correct){
-  const s=normalize(student), c=normalize(correct);
-  if(!s) return false;
-  if(s===c) return true;
-  const d=lev(s,c), ratio = 1 - d/Math.max(s.length,c.length);
-  if(ratio>=0.86) return true;
-  if(jaccardTokens(s,c)>=0.70) return true;
-  if(s.includes(c) || c.includes(s)) return true;
-  return false;
-}
+function escapeHTML(s){ return (s||'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
 /* ------------------ FLOW ------------------ */
 function renderQuestion(){
@@ -362,10 +329,7 @@ function renderQuestion(){
   box.value = current.answers[current.idx] || '';
   box.focus();
 }
-function saveInput(){
-  const val = document.getElementById('answerBox').value;
-  current.answers[current.idx] = val;
-}
+function saveInput(){ current.answers[current.idx] = document.getElementById('answerBox').value; }
 function nextQ(){ saveInput(); if(current.idx < current.list.length-1){ current.idx++; renderQuestion(); } else { finishQuiz(); } }
 function prevQ(){ saveInput(); if(current.idx>0){ current.idx--; renderQuestion(); } }
 function clearInput(){ document.getElementById('answerBox').value=''; current.answers[current.idx]=''; }
@@ -385,31 +349,24 @@ function startQuiz(){
 
 function finishQuiz(){
   saveInput();
-  const results = current.list.map((q,i)=>{
-    const correct = q.choices[q.answer];
-    const student = current.answers[i] || '';
-    const right = closeMatch(student, correct);
-    return { idx:i+1, chapter:q.chapter, q:q.q, student, correct, right };
-  });
-  lastResults = results;
+  lastResults = current.list.map((q,i)=>({
+    idx:i+1, chapter:q.chapter, q:q.q,
+    student: current.answers[i] || '',
+    correct: q.choices[q.answer]
+  }));
 
-  const correctCount = results.filter(r=>r.right).length;
   document.getElementById('quiz').classList.add('hidden');
-  const scoreline = document.getElementById('scoreline');
-  scoreline.textContent = `Score: ${correctCount} / ${results.length}  (${Math.round(100*correctCount/results.length)}%)`;
-  scoreline.className = 'pill ' + (correctCount===results.length ? 'ok':'bad');
 
   const rev = document.getElementById('review');
   rev.innerHTML = '';
-  results.forEach(r=>{
+  lastResults.forEach(r=>{
     const sec = document.createElement('div');
     sec.innerHTML = `
-      <h3><span class="qnum">Q ${r.idx}</span> · <span class="tag">Chapter ${r.chapter}</span> ·
-        <span class="status ${r.right?'ok':'bad'}">${r.right?'✔ Correct':'✖ Incorrect'}</span></h3>
+      <h3><span class="qnum">Q ${r.idx}</span> · <span class="tag">Chapter ${r.chapter}</span></h3>
       <div style="margin:6px 0 8px; font-weight:600">${r.q}</div>
       <div style="display:grid; gap:6px">
         <div><span class="pill" style="margin-right:6px">Your Answer</span> ${r.student?escapeHTML(r.student):'<em class="note">[blank]</em>'}</div>
-        <div><span class="pill ok" style="margin-right:6px">Correct Answer</span> ${r.correct}</div>
+        <div><span class="pill" style="margin-right:6px; background:#103a26; color:#d1fae5; border-color:#0c5;">Correct Answer</span> ${r.correct}</div>
       </div>
     `;
     rev.appendChild(sec);
@@ -418,17 +375,11 @@ function finishQuiz(){
   document.getElementById('result').classList.remove('hidden');
 }
 
-function escapeHTML(s){
-  return (s||'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-}
-
 /* ------------------ PDF ------------------ */
 function openPDF(){
   if(!lastResults.length) return;
-  const title = 'Unit 2 — Fill-in-the-Blank Report';
-  const now = new Date();
-  const stamp = now.toLocaleString();
-
+  const title = 'Unit 2 — Self-Grade Report';
+  const stamp = new Date().toLocaleString();
   const rows = lastResults.map(r=>`
     <tr>
       <td>${r.idx}</td>
@@ -436,7 +387,6 @@ function openPDF(){
       <td>${escapeHTML(r.q)}</td>
       <td>${escapeHTML(r.student)||'<em>[blank]</em>'}</td>
       <td>${escapeHTML(r.correct)}</td>
-      <td style="font-weight:700; color:${r.right?'#0a7b3e':'#b00020'}">${r.right?'✔':'✖'}</td>
     </tr>
   `).join('');
 
@@ -457,7 +407,7 @@ function openPDF(){
   <div class="small">Generated: ${stamp}</div>
   <table>
     <thead>
-      <tr><th>#</th><th>Chap</th><th>Question</th><th>Student Answer</th><th>Correct Answer</th><th>✓/✖</th></tr>
+      <tr><th>#</th><th>Chap</th><th>Question</th><th>Student Answer</th><th>Correct Answer</th></tr>
     </thead>
     <tbody>${rows}</tbody>
   </table>
@@ -480,7 +430,7 @@ document.getElementById('retry').addEventListener('click', ()=>{
 document.getElementById('restart').addEventListener('click', ()=>location.reload());
 document.getElementById('answerBox').addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ nextQ(); } });
 
-}); // end DOMContentLoaded
+}); // DOMContentLoaded
 </script>
 </body>
 </html>
