@@ -48,6 +48,7 @@
     <h1>Unit 2 Fill-in-the-Blank — Chapters 6–11</h1>
     <p class="note">Type your answers. After Submit, you’ll see your answer next to the correct answer for easy self-grading. You can also download/print a PDF report.</p>
 
+    <!-- START SCREEN -->
     <section id="start" class="card grid">
       <div class="grid grid-2">
         <div>
@@ -70,18 +71,22 @@
       <button id="begin">Start Quiz</button>
     </section>
 
+    <!-- QUIZ SCREEN -->
     <section id="quiz" class="card hidden">
       <div id="hud" class="footer">
         <span id="progress" class="pill">Q 1 / N</span>
         <span id="chapterTag" class="pill">Chapter</span>
       </div>
       <div class="sep"></div>
+
       <div id="qtext" style="font-size:18px; font-weight:600; line-height:1.35"></div>
+
       <div class="row" style="margin-top:12px">
         <label for="answerBox">Your answer</label>
         <input id="answerBox" type="text" placeholder="Type your answer here…" autocomplete="off" />
         <div class="mini">Tip: spelling doesn’t have to be perfect — close matches count.</div>
       </div>
+
       <div class="footer">
         <button id="prev">◀ Prev</button>
         <div style="display:flex; gap:8px">
@@ -91,6 +96,7 @@
       </div>
     </section>
 
+    <!-- RESULT / REVIEW SCREEN -->
     <section id="result" class="card hidden">
       <h2 style="margin:0 0 8px">Results</h2>
       <div id="scoreline" class="pill"></div>
@@ -107,9 +113,8 @@
   </div>
 
 <script>
-/********************
-  ORIGINAL BANK (answers now used as expected text)
-********************/
+document.addEventListener('DOMContentLoaded', () => {
+/* ------------------ QUESTION BANK ------------------ */
 const BANK = [
   {id:1,chapter:6,set:'ch6',q:'Define public opinion.',choices:[
     'The sum of individual attitudes about government and politics','The media narrative set by elites','A formal vote in Congress','A court’s interpretation of the law'],answer:0},
@@ -306,55 +311,48 @@ const BANK = [
     'Representation, lawmaking, oversight, and budgeting','Only campaigning','Only diplomacy','Only adjudication'],answer:0},
 ];
 
-/******************** BUILD SETS ********************/
+/* ------------------ BUILD SETS ------------------ */
 const SET_MAP = {
   ch67: BANK.filter(q=>q.chapter===6 || q.chapter===7),
   ch89: BANK.filter(q=>q.chapter===8 || q.chapter===9),
   ch1011: BANK.filter(q=>q.chapter===10 || q.chapter===11),
-  unit2: [...BANK] // later sliced to 50
+  unit2: [...BANK]
 };
 
-/******************** STATE ********************/
+/* ------------------ STATE ------------------ */
 let current = { list:[], answers:[], idx:0 };
+let lastResults = [];
 
-/******************** UTILS ********************/
+/* ------------------ UTILS ------------------ */
 function shuffle(arr){ for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]} return arr; }
 function normalize(s){ return (s||'').toLowerCase().replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim(); }
-// Levenshtein
-function lev(a,b){ const m=a.length,n=b.length,dp=Array.from({length:m+1},()=>Array(n+1).fill(0));
+function lev(a,b){
+  const m=a.length,n=b.length,dp=Array.from({length:m+1},()=>Array(n+1).fill(0));
   for(let i=0;i<=m;i++) dp[i][0]=i; for(let j=0;j<=n;j++) dp[0][j]=j;
-  for(let i=1;i<=m;i++){ for(let j=1;j<=n;j++){ const c=a[i-1]===b[j-1]?0:1;
-    dp[i][j]=Math.min(dp[i-1][j]+1, dp[i][j-1]+1, dp[i-1][j-1]+c);} } return dp[m][n]; }
+  for(let i=1;i<=m;i++){ for(let j=1;j<=n;j++){ const cost=a[i-1]===b[j-1]?0:1;
+    dp[i][j]=Math.min(dp[i-1][j]+1, dp[i][j-1]+1, dp[i-1][j-1]+cost); } }
+  return dp[m][n];
+}
 function jaccardTokens(a,b){
   const A=new Set(normalize(a).split(' ').filter(Boolean));
   const B=new Set(normalize(b).split(' ').filter(Boolean));
   if(!A.size || !B.size) return 0;
-  const inter=[...A].filter(x=>B.has(x)).length; const uni=new Set([...A,...B]).size; return inter/uni;
+  const inter=[...A].filter(x=>B.has(x)).length;
+  const uni = new Set([...A,...B]).size;
+  return inter/uni;
 }
 function closeMatch(student, correct){
   const s=normalize(student), c=normalize(correct);
-  if(!s) return false; if(s===c) return true;
-  const d=lev(s,c), ratio=1-d/Math.max(s.length,c.length); if(ratio>=0.86) return true;
+  if(!s) return false;
+  if(s===c) return true;
+  const d=lev(s,c), ratio = 1 - d/Math.max(s.length,c.length);
+  if(ratio>=0.86) return true;
   if(jaccardTokens(s,c)>=0.70) return true;
   if(s.includes(c) || c.includes(s)) return true;
   return false;
 }
 
-/******************** QUIZ FLOW ********************/
-function startQuiz(){
-  const mode = document.getElementById('mode').value;
-  const order = document.getElementById('shuffle').value;
-  let items = [...SET_MAP[mode]];
-  if(mode==='unit2') items = shuffle(items).slice(0,50);
-  if(order==='shuf') shuffle(items);
-  current.list = items;
-  current.answers = new Array(items.length).fill('');
-  current.idx = 0;
-  document.getElementById('start').classList.add('hidden');
-  document.getElementById('result').classList.add('hidden');
-  document.getElementById('quiz').classList.remove('hidden');
-  renderQuestion();
-}
+/* ------------------ FLOW ------------------ */
 function renderQuestion(){
   const q = current.list[current.idx];
   document.getElementById('progress').textContent = `Q ${current.idx+1} / ${current.list.length}`;
@@ -364,13 +362,27 @@ function renderQuestion(){
   box.value = current.answers[current.idx] || '';
   box.focus();
 }
-function saveInput(){ const val = document.getElementById('answerBox').value; current.answers[current.idx] = val; }
+function saveInput(){
+  const val = document.getElementById('answerBox').value;
+  current.answers[current.idx] = val;
+}
 function nextQ(){ saveInput(); if(current.idx < current.list.length-1){ current.idx++; renderQuestion(); } else { finishQuiz(); } }
 function prevQ(){ saveInput(); if(current.idx>0){ current.idx--; renderQuestion(); } }
 function clearInput(){ document.getElementById('answerBox').value=''; current.answers[current.idx]=''; }
 
-/******************** FINISH & REPORT ********************/
-let lastResults = [];
+function startQuiz(){
+  const mode = document.getElementById('mode').value;
+  const order = document.getElementById('shuffle').value;
+  let items = [...SET_MAP[mode]];
+  if(mode==='unit2') items = shuffle(items).slice(0,50);
+  if(order==='shuf') shuffle(items);
+  current = { list:items, answers:new Array(items.length).fill(''), idx:0 };
+  document.getElementById('start').classList.add('hidden');
+  document.getElementById('result').classList.add('hidden');
+  document.getElementById('quiz').classList.remove('hidden');
+  renderQuestion();
+}
+
 function finishQuiz(){
   saveInput();
   const results = current.list.map((q,i)=>{
@@ -405,11 +417,12 @@ function finishQuiz(){
   });
   document.getElementById('result').classList.remove('hidden');
 }
+
 function escapeHTML(s){
   return (s||'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
 
-/******************** PDF (print-ready window) ********************/
+/* ------------------ PDF ------------------ */
 function openPDF(){
   if(!lastResults.length) return;
   const title = 'Unit 2 — Fill-in-the-Blank Report';
@@ -433,7 +446,6 @@ function openPDF(){
 <style>
   body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial; padding:24px}
   h1{margin:0 0 4px}
-  .sub{color:#444; margin:0 0 16px}
   table{border-collapse:collapse; width:100%; font-size:14px}
   th,td{border:1px solid #ccc; padding:8px; vertical-align:top}
   th{background:#f2f2f2; text-align:left}
@@ -450,3 +462,25 @@ function openPDF(){
     <tbody>${rows}</tbody>
   </table>
 </body></html>`;
+  const win = window.open('', '_blank');
+  if(!win) return alert('Please allow pop-ups to generate the PDF.');
+  win.document.open(); win.document.write(html); win.document.close();
+}
+
+/* ------------------ EVENTS ------------------ */
+document.getElementById('begin').addEventListener('click', startQuiz);
+document.getElementById('next').addEventListener('click', nextQ);
+document.getElementById('prev').addEventListener('click', prevQ);
+document.getElementById('clear').addEventListener('click', clearInput);
+document.getElementById('pdf').addEventListener('click', openPDF);
+document.getElementById('retry').addEventListener('click', ()=>{
+  document.getElementById('result').classList.add('hidden');
+  document.getElementById('start').classList.remove('hidden');
+});
+document.getElementById('restart').addEventListener('click', ()=>location.reload());
+document.getElementById('answerBox').addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ nextQ(); } });
+
+}); // end DOMContentLoaded
+</script>
+</body>
+</html>
