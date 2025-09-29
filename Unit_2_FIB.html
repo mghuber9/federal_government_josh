@@ -40,10 +40,7 @@
   .status{font-weight:700; padding:2px 8px; border-radius:999px; display:inline-block}
   .status.ok{background:#0b3; color:#eaffef}
   .status.bad{background:#b10; color:#ffecec}
-  /* Print styles for the report window */
-  @media print {
-    body{background:#fff; color:#000}
-  }
+  @media print { body{background:#fff; color:#000} }
 </style>
 </head>
 <body>
@@ -51,7 +48,6 @@
     <h1>Unit 2 Fill-in-the-Blank — Chapters 6–11</h1>
     <p class="note">Type your answers. After Submit, you’ll see your answer next to the correct answer for easy self-grading. You can also download/print a PDF report.</p>
 
-    <!-- START SCREEN -->
     <section id="start" class="card grid">
       <div class="grid grid-2">
         <div>
@@ -74,22 +70,18 @@
       <button id="begin">Start Quiz</button>
     </section>
 
-    <!-- QUIZ SCREEN -->
     <section id="quiz" class="card hidden">
       <div id="hud" class="footer">
         <span id="progress" class="pill">Q 1 / N</span>
         <span id="chapterTag" class="pill">Chapter</span>
       </div>
       <div class="sep"></div>
-
       <div id="qtext" style="font-size:18px; font-weight:600; line-height:1.35"></div>
-
       <div class="row" style="margin-top:12px">
         <label for="answerBox">Your answer</label>
         <input id="answerBox" type="text" placeholder="Type your answer here…" autocomplete="off" />
         <div class="mini">Tip: spelling doesn’t have to be perfect — close matches count.</div>
       </div>
-
       <div class="footer">
         <button id="prev">◀ Prev</button>
         <div style="display:flex; gap:8px">
@@ -99,7 +91,6 @@
       </div>
     </section>
 
-    <!-- RESULT / REVIEW SCREEN -->
     <section id="result" class="card hidden">
       <h2 style="margin:0 0 8px">Results</h2>
       <div id="scoreline" class="pill"></div>
@@ -118,7 +109,6 @@
 <script>
 /********************
   ORIGINAL BANK (answers now used as expected text)
-  Each item: { id, chapter, set, q, choices:[a,b,c,d], answer:index0..3 }
 ********************/
 const BANK = [
   {id:1,chapter:6,set:'ch6',q:'Define public opinion.',choices:[
@@ -316,9 +306,7 @@ const BANK = [
     'Representation, lawmaking, oversight, and budgeting','Only campaigning','Only diplomacy','Only adjudication'],answer:0},
 ];
 
-/********************
-  BUILD SETS
-********************/
+/******************** BUILD SETS ********************/
 const SET_MAP = {
   ch67: BANK.filter(q=>q.chapter===6 || q.chapter===7),
   ch89: BANK.filter(q=>q.chapter===8 || q.chapter===9),
@@ -326,64 +314,33 @@ const SET_MAP = {
   unit2: [...BANK] // later sliced to 50
 };
 
-/********************
-  STATE
-********************/
+/******************** STATE ********************/
 let current = { list:[], answers:[], idx:0 };
 
-/********************
-  UTILS: shuffle, normalize, edit distance & match
-********************/
-function shuffle(arr){
-  for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]}
-  return arr;
-}
-function normalize(s){
-  return (s||'').toLowerCase().replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();
-}
-// Levenshtein distance
-function lev(a,b){
-  const m=a.length,n=b.length;
-  const dp=Array.from({length:m+1},()=>Array(n+1).fill(0));
-  for(let i=0;i<=m;i++) dp[i][0]=i;
-  for(let j=0;j<=n;j++) dp[0][j]=j;
-  for(let i=1;i<=m;i++){
-    for(let j=1;j<=n;j++){
-      const cost=a[i-1]===b[j-1]?0:1;
-      dp[i][j]=Math.min(
-        dp[i-1][j]+1,      // del
-        dp[i][j-1]+1,      // ins
-        dp[i-1][j-1]+cost  // sub
-      );
-    }
-  }
-  return dp[m][n];
-}
+/******************** UTILS ********************/
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]} return arr; }
+function normalize(s){ return (s||'').toLowerCase().replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim(); }
+// Levenshtein
+function lev(a,b){ const m=a.length,n=b.length,dp=Array.from({length:m+1},()=>Array(n+1).fill(0));
+  for(let i=0;i<=m;i++) dp[i][0]=i; for(let j=0;j<=n;j++) dp[0][j]=j;
+  for(let i=1;i<=m;i++){ for(let j=1;j<=n;j++){ const c=a[i-1]===b[j-1]?0:1;
+    dp[i][j]=Math.min(dp[i-1][j]+1, dp[i][j-1]+1, dp[i-1][j-1]+c);} } return dp[m][n]; }
 function jaccardTokens(a,b){
   const A=new Set(normalize(a).split(' ').filter(Boolean));
   const B=new Set(normalize(b).split(' ').filter(Boolean));
   if(!A.size || !B.size) return 0;
-  const inter=[...A].filter(x=>B.has(x)).length;
-  const uni = new Set([...A,...B]).size;
-  return inter/uni;
+  const inter=[...A].filter(x=>B.has(x)).length; const uni=new Set([...A,...B]).size; return inter/uni;
 }
 function closeMatch(student, correct){
   const s=normalize(student), c=normalize(correct);
-  if(!s) return false;
-  if(s===c) return true;
-  // Allow small typos relative to length
-  const d=lev(s,c), ratio = 1 - d/Math.max(s.length,c.length);
-  if(ratio>=0.86) return true;
-  // Token overlap helps for phrasey answers
+  if(!s) return false; if(s===c) return true;
+  const d=lev(s,c), ratio=1-d/Math.max(s.length,c.length); if(ratio>=0.86) return true;
   if(jaccardTokens(s,c)>=0.70) return true;
-  // Containment (student contains key phrase or vice-versa)
   if(s.includes(c) || c.includes(s)) return true;
   return false;
 }
 
-/********************
-  QUIZ FLOW
-********************/
+/******************** QUIZ FLOW ********************/
 function startQuiz(){
   const mode = document.getElementById('mode').value;
   const order = document.getElementById('shuffle').value;
@@ -398,7 +355,6 @@ function startQuiz(){
   document.getElementById('quiz').classList.remove('hidden');
   renderQuestion();
 }
-
 function renderQuestion(){
   const q = current.list[current.idx];
   document.getElementById('progress').textContent = `Q ${current.idx+1} / ${current.list.length}`;
@@ -408,23 +364,12 @@ function renderQuestion(){
   box.value = current.answers[current.idx] || '';
   box.focus();
 }
-
-function saveInput(){
-  const val = document.getElementById('answerBox').value;
-  current.answers[current.idx] = val;
-}
-
-function nextQ(){
-  saveInput();
-  if(current.idx < current.list.length-1){ current.idx++; renderQuestion(); }
-  else { finishQuiz(); }
-}
+function saveInput(){ const val = document.getElementById('answerBox').value; current.answers[current.idx] = val; }
+function nextQ(){ saveInput(); if(current.idx < current.list.length-1){ current.idx++; renderQuestion(); } else { finishQuiz(); } }
 function prevQ(){ saveInput(); if(current.idx>0){ current.idx--; renderQuestion(); } }
 function clearInput(){ document.getElementById('answerBox').value=''; current.answers[current.idx]=''; }
 
-/********************
-  FINISH & REPORT
-********************/
+/******************** FINISH & REPORT ********************/
 let lastResults = [];
 function finishQuiz(){
   saveInput();
@@ -460,16 +405,11 @@ function finishQuiz(){
   });
   document.getElementById('result').classList.remove('hidden');
 }
-
 function escapeHTML(s){
-  return (s||'').replace(/[&<>"']/g, m=>({
-    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-  }[m]));
+  return (s||'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
 
-/********************
-  PDF (print-ready window)
-********************/
+/******************** PDF (print-ready window) ********************/
 function openPDF(){
   if(!lastResults.length) return;
   const title = 'Unit 2 — Fill-in-the-Blank Report';
@@ -491,50 +431,4 @@ function openPDF(){
 <!DOCTYPE html><html><head><meta charset="utf-8">
 <title>${title}</title>
 <style>
-  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial; padding:24px}
-  h1{margin:0 0 4px}
-  .sub{color:#444; margin:0 0 16px}
-  table{border-collapse:collapse; width:100%; font-size:14px}
-  th,td{border:1px solid #ccc; padding:8px; vertical-align:top}
-  th{background:#f2f2f2; text-align:left}
-  .small{font-size:12px; color:#555; margin-bottom:16px}
-</style>
-</head><body>
-  <h1>${title}</h1>
-  <div class="small">Generated: ${stamp}</div>
-  <table>
-    <thead>
-      <tr><th>#</th><th>Chap</th><th>Question</th><th>Student Answer</th><th>Correct Answer</th><th>✓/✖</th></tr>
-    </thead>
-    <tbody>${rows}</tbody>
-  </table>
-  <script>window.addEventListener('load', ()=>window.print(), {once:true});</script>
-</body></html>`;
-  const win = window.open('', '_blank');
-  win.document.open();
-  win.document.write(html);
-  win.document.close();
-}
-
-/********************
-  EVENTS
-********************/
-document.getElementById('begin').addEventListener('click', startQuiz);
-['next','prev','clear','pdf','retry','restart'].forEach(id=>{
-  const el = document.getElementById(id);
-  if(!el) return;
-  el.addEventListener('click', ()=>{
-    if(id==='next') nextQ();
-    else if(id==='prev') prevQ();
-    else if(id==='clear') clearInput();
-    else if(id==='pdf') openPDF();
-    else if(id==='retry'){ document.getElementById('result').classList.add('hidden'); document.getElementById('start').classList.remove('hidden'); }
-    else if(id==='restart'){ location.reload(); }
-  });
-});
-document.getElementById('answerBox').addEventListener('keydown', (e)=>{
-  if(e.key==='Enter'){ nextQ(); }
-});
-</script>
-</body>
-</html>
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial; padding:24px
