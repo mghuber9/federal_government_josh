@@ -35,7 +35,7 @@
 </head>
 <body>
   <div class="wrap">
-    <h1>Unit 2 Multiple‑Choice Quiz — Chapters 6–11</h1>
+    <h1>Unit 2 Multiple-Choice Quiz — Chapters 6–11</h1>
     <p class="note">Pick a set to practice. At the end, you'll see only the questions you missed — with the correct answers.</p>
 
     <!-- START SCREEN -->
@@ -96,7 +96,7 @@
 /********************
   QUESTION BANK
   Each item: { id, chapter, set: 'ch6'..'ch11', q, choices:[a,b,c,d], answer: index0..3 }
-********************/ 
+********************/
 const BANK = [
   // ---- Chapter 6 (Public Opinion) ----
   {id:1, chapter:6, set:'ch6', q:'Define public opinion.', choices:[
@@ -192,7 +192,7 @@ const BANK = [
   {id:30, chapter:8, set:'ch8', q:'What is a political party?', choices:[
     'An organization that seeks to win office to influence policy', 'A PAC that cannot endorse candidates', 'A social club', 'A branch of government'], answer:0},
   {id:31, chapter:8, set:'ch8', q:'Which best describes U.S. party history?', choices:[
-    'Periodic realignments and evolving coalitions', 'Unbroken one‑party rule', 'No third parties ever', 'Parties banned by the Constitution'], answer:0},
+    'Periodic realignments and evolving coalitions', 'Unbroken one-party rule', 'No third parties ever', 'Parties banned by the Constitution'], answer:0},
   {id:32, chapter:8, set:'ch8', q:'Realignment is…', choices:[
     'A durable shift in party coalitions and issue bases', 'Switching a single vote', 'Redrawing district lines', 'Changing committee chairs'], answer:0},
   {id:33, chapter:8, set:'ch8', q:'Dealignment is…', choices:[
@@ -201,8 +201,8 @@ const BANK = [
     'Opposition to Jacksonian Democrats', 'Support for direct democracy only', 'Promotion of monarchy', 'Isolationism'], answer:0},
   {id:35, chapter:8, set:'ch8', q:'Ticket splitting means…', choices:[
     'Voting for candidates of different parties on the same ballot', 'Casting multiple ballots', 'Spoiling ballots intentionally', 'Only voting in primaries'], answer:0},
-  {id:36, chapter:8, set:'ch8', q:'Why a two‑party system in the U.S.?', choices:[
-    'Single‑member districts with plurality (winner‑take‑all) rules', 'Mandatory coalition governments', 'Proportional representation nationwide', 'Constitutional ban on third parties'], answer:0},
+  {id:36, chapter:8, set:'ch8', q:'Why a two-party system in the U.S.?', choices:[
+    'Single-member districts with plurality (winner-take-all) rules', 'Mandatory coalition governments', 'Proportional representation nationwide', 'Constitutional ban on third parties'], answer:0},
   {id:37, chapter:8, set:'ch8', q:'Proportional representation allocates seats by…', choices:[
     'Party vote share', 'Geographic land area', 'Population density', 'Court seniority'], answer:0},
   {id:38, chapter:8, set:'ch8', q:'The “gender gap” refers to…', choices:[
@@ -218,8 +218,8 @@ const BANK = [
   {id:43, chapter:8, set:'ch8', q:'Democratic vs. Republican philosophies typically differ most on…', choices:[
     'Scope of government and regulation levels', 'The number of states', 'The size of the Senate', 'Judicial salaries'], answer:0},
   {id:44, chapter:8, set:'ch8', q:'Party decline is associated with…', choices:[
-    'Candidate‑centered campaigns and media changes', 'Stronger party machines', 'More patronage', 'Closed conventions only'], answer:0},
-  {id:45, chapter:8, set:'ch8', q:'Third‑party political impact includes…', choices:[
+    'Candidate-centered campaigns and media changes', 'Stronger party machines', 'More patronage', 'Closed conventions only'], answer:0},
+  {id:45, chapter:8, set:'ch8', q:'Third-party political impact includes…', choices:[
     'Spoiler effects and agenda setting for major parties', 'Control of all committees', 'Writing the Constitution', 'Running courts'], answer:0},
   {id:46, chapter:8, set:'ch8', q:'A core party function is…', choices:[
     'Recruiting candidates and organizing elections', 'Passing statutes directly', 'Conducting judicial review', 'Census counting'], answer:0},
@@ -232,24 +232,24 @@ const BANK = [
   {id:49, chapter:9, set:'ch9', q:'An interest group is…', choices:[
     'An organization seeking to influence public policy', 'A political party', 'A court', 'A bureaucracy'], answer:0},
   {id:50, chapter:9, set:'ch9', q:'Types of interest groups include…', choices:[
-    'Economic, public interest, single‑issue, and governmental', 'Only economic', 'Only public interest', 'Only foreign'], answer:0},
+    'Economic, public interest, single-issue, and governmental', 'Only economic', 'Only public interest', 'Only foreign'], answer:0},
   {id:51, chapter:9, set:'ch9', q:'A collective good is…', choices:[
-    'A benefit that cannot be withheld from non‑contributors', 'A private club benefit', 'Personal income', 'A party office'], answer:0},
+    'A benefit that cannot be withheld from non-contributors', 'A private club benefit', 'Personal income', 'A party office'], answer:0},
   {id:52, chapter:9, set:'ch9', q:'The free rider problem occurs when…', choices:[
     'People benefit without contributing to the cost', 'Voters skip primaries', 'Judges recuse themselves', 'Members split tickets'], answer:0},
   {id:53, chapter:9, set:'ch9', q:'Lobbying is…', choices:[
     'Direct interaction with public officials to influence decisions', 'Only campaign donations', 'Court litigation only', 'Media endorsements only'], answer:0},
   {id:54, chapter:9, set:'ch9', q:'Amicus curiae briefs are…', choices:[
-    '“Friend of the court” briefs submitted by non‑parties', 'Executive orders', 'Treaties', 'Floor amendments'], answer:0},
+    '“Friend of the court” briefs submitted by non-parties', 'Executive orders', 'Treaties', 'Floor amendments'], answer:0},
   {id:55, chapter:9, set:'ch9', q:'The iron triangle links…', choices:[
     'Congressional committees, bureaucracies, and interest groups', 'Courts, voters, and parties', 'States, cities, and counties', 'Media, parties, and polls'], answer:0},
   {id:56, chapter:9, set:'ch9', q:'Issue networks are…', choices:[
-    'Fluid coalitions of actors around a policy area', 'Permanent party machines', 'Only three‑way alliances', 'Court panels'], answer:0},
+    'Fluid coalitions of actors around a policy area', 'Permanent party machines', 'Only three-way alliances', 'Court panels'], answer:0},
   {id:57, chapter:9, set:'ch9', q:'PACs and Super PACs differ in that…', choices:[
     'Super PACs can spend unlimited independent expenditures; PACs give limited direct contributions', 'PACs spend unlimited independently', 'Super PACs give unlimited directly to candidates', 'Both are identical under law'], answer:0},
   {id:58, chapter:9, set:'ch9', q:'Inside lobbying refers to…', choices:[
     'Direct contact with policymakers', 'Public campaigns only', 'Ballot initiatives', 'Court appeals'], answer:0},
-  {id:59, chapter:9, set:'ch9', q:'Interest‑group effectiveness depends on…', choices:[
+  {id:59, chapter:9, set:'ch9', q:'Interest-group effectiveness depends on…', choices:[
     'Resources, access, and salience of issues', 'Number of TV ads only', 'Court size', 'Population size only'], answer:0},
   {id:60, chapter:9, set:'ch9', q:'Parties vs. interest groups: key difference is…', choices:[
     'Parties seek to win office; groups seek to influence policy', 'Groups run primaries', 'Parties file amicus briefs only', 'Groups administer elections'], answer:0},
@@ -258,15 +258,15 @@ const BANK = [
   {id:62, chapter:9, set:'ch9', q:'A strength of interest groups can be…', choices:[
     'Expertise and information for policymakers', 'Guaranteed majority support', 'Complete neutrality', 'Total absence of bias'], answer:0},
   {id:63, chapter:9, set:'ch9', q:'A common criticism/weakness is…', choices:[
-    'Unequal influence favoring well‑funded groups', 'Too much equality of access', 'No lobbying disclosure', 'No constitutional basis'], answer:0},
+    'Unequal influence favoring well-funded groups', 'Too much equality of access', 'No lobbying disclosure', 'No constitutional basis'], answer:0},
 
   // ---- Chapter 10 (Media) ----
   {id:64, chapter:10, set:'ch10', q:'The news media are…', choices:[
     'Organizations that gather and disseminate information to the public', 'Congressional committees', 'Interest groups only', 'Polling firms only'], answer:0},
   {id:65, chapter:10, set:'ch10', q:'A partisan press is…', choices:[
-    'Media that openly support a political party or viewpoint', 'Objective reporting only', 'State‑owned media', 'Tabloid crime coverage only'], answer:0},
+    'Media that openly support a political party or viewpoint', 'Objective reporting only', 'State-owned media', 'Tabloid crime coverage only'], answer:0},
   {id:66, chapter:10, set:'ch10', q:'Yellow journalism is characterized by…', choices:[
-    'Sensationalism and exaggerated stories to boost sales', 'Strict neutrality', 'Peer‑reviewed analysis', 'Public broadcasting rules'], answer:0},
+    'Sensationalism and exaggerated stories to boost sales', 'Strict neutrality', 'Peer-reviewed analysis', 'Public broadcasting rules'], answer:0},
   {id:67, chapter:10, set:'ch10', q:'Objective journalism aspires to…', choices:[
     'Fairness, balance, and factual accuracy', 'Advocacy only', 'Satire only', 'Partisan persuasion'], answer:0},
   {id:68, chapter:10, set:'ch10', q:'A gatekeeper in media is…', choices:[
@@ -286,9 +286,9 @@ const BANK = [
 
   // ---- Chapter 11 (Congress) ----
   {id:75, chapter:11, set:'ch11', q:'House service requirements include…', choices:[
-    '25 years old, 7 years a citizen, resident of state', '35 years old, natural‑born citizen', '30 years old, 9 years a citizen', 'No age requirement'], answer:0},
+    '25 years old, 7 years a citizen, resident of state', '35 years old, natural-born citizen', '30 years old, 9 years a citizen', 'No age requirement'], answer:0},
   {id:76, chapter:11, set:'ch11', q:'Senate service requirements include…', choices:[
-    '30 years old, 9 years a citizen, resident of state', '25 years old, 7 years a citizen', 'Natural‑born citizen only', 'No residency'], answer:0},
+    '30 years old, 9 years a citizen, resident of state', '25 years old, 7 years a citizen', 'Natural-born citizen only', 'No residency'], answer:0},
   {id:77, chapter:11, set:'ch11', q:'Terms of office: House vs. Senate?', choices:[
     'House 2 years; Senate 6 years (staggered thirds)', 'Both 4 years', 'House 6; Senate 2', 'Both 2 years'], answer:0},
   {id:78, chapter:11, set:'ch11', q:'Apportionment is…', choices:[
@@ -298,7 +298,7 @@ const BANK = [
   {id:80, chapter:11, set:'ch11', q:'Gerrymandering is…', choices:[
     'Drawing districts to advantage a party or group', 'The census', 'Bicameralism', 'Logrolling'], answer:0},
   {id:81, chapter:11, set:'ch11', q:'A primary election is…', choices:[
-    'An intra‑party contest to choose nominees', 'The general election', 'A referendum', 'A recall'], answer:0},
+    'An intra-party contest to choose nominees', 'The general election', 'A referendum', 'A recall'], answer:0},
   {id:82, chapter:11, set:'ch11', q:'Presiding officers: House and Senate are…', choices:[
     'Speaker of the House; Vice President (President of the Senate)', 'Majority Leaders only', 'Chief Justice; Speaker', 'President Pro Tempore; Speaker'], answer:0},
   {id:83, chapter:11, set:'ch11', q:'Party leadership in Congress includes…', choices:[
@@ -310,7 +310,7 @@ const BANK = [
   {id:86, chapter:11, set:'ch11', q:'Functions of Congress include…', choices:[
     'Lawmaking, representation, oversight, and budgeting', 'Electing judges', 'Conducting polls', 'Drawing districts'], answer:0},
   {id:87, chapter:11, set:'ch11', q:'Trustee theory means representatives…', choices:[
-    'Use their own judgment for constituents’ good', 'Always follow constituent preferences', 'Follow party only', 'Follow interest‑group polls'], answer:0},
+    'Use their own judgment for constituents’ good', 'Always follow constituent preferences', 'Follow party only', 'Follow interest-group polls'], answer:0},
   {id:88, chapter:11, set:'ch11', q:'Delegate theory means representatives…', choices:[
     'Mirror constituents’ preferences directly', 'Use own judgment', 'Follow party only', 'Follow donors only'], answer:0},
   {id:89, chapter:11, set:'ch11', q:'A filibuster is…', choices:[
@@ -338,21 +338,44 @@ const SET_MAP = {
 };
 
 /********************
+  UTILS
+********************/
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+  return arr;
+}
+
+// Shuffle the choices for a single question and remap the answer index
+function withShuffledChoices(q){
+  const order = q.choices.map((_, i) => i);
+  shuffle(order);
+  const shuffledChoices = order.map(i => q.choices[i]);
+  const newAnswer = order.indexOf(q.answer);
+  return { ...q, choices: shuffledChoices, answer: newAnswer };
+}
+
+/********************
   STATE
 ********************/
 let current = { list:[], answers:[], idx:0 };
 
-function shuffle(arr){
-  for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]}
-  return arr;
-}
-
+/********************
+  FLOW
+********************/
 function startQuiz(){
   const mode = document.getElementById('mode').value;
   const order = document.getElementById('shuffle').value;
   let items = [...SET_MAP[mode]];
   if(mode==='unit2') items = shuffle(items).slice(0,50);
+
   if(order==='shuf') shuffle(items);
+
+  // Shuffle choices once per question for this quiz run
+  items = items.map(q => withShuffledChoices(q));
+
   current.list = items;
   current.answers = new Array(items.length).fill(null);
   current.idx = 0;
@@ -370,7 +393,6 @@ function renderQuestion(){
   const box = document.getElementById('choices');
   box.innerHTML = '';
   q.choices.forEach((c,i)=>{
-    const id = `c_${i}`;
     const div = document.createElement('label');
     div.className = 'choice';
     div.innerHTML = `<input type="radio" name="choice" value="${i}" ${current.answers[current.idx]===i?'checked':''}> ${c}`;
@@ -392,16 +414,15 @@ function prevQ(){ saveSelection(); if(current.idx>0){ current.idx--; renderQuest
 function clearSel(){ current.answers[current.idx]=null; renderQuestion(); }
 
 function finishQuiz(){
-  // compute score
   const results = current.list.map((q,i)=>({q, chosen: current.answers[i]}));
   const missed = results.filter(r=>r.chosen!==r.q.answer);
   const correct = results.length - missed.length;
+
   document.getElementById('quiz').classList.add('hidden');
   const scoreline = document.getElementById('scoreline');
   scoreline.textContent = `Score: ${correct} / ${results.length}  (${Math.round(100*correct/results.length)}%)`;
   scoreline.className = 'pill ' + (missed.length? 'bad':'ok');
 
-  // clear and show ONLY missed with correct answers
   const rev = document.getElementById('review');
   rev.innerHTML = '';
   if(missed.length===0){
