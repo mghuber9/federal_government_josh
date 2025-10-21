@@ -162,7 +162,30 @@ const BANK = [
   {chapter:16,set:'ch16',q:'What is Medicare?',choices:['Social insurance—health coverage for retirees—funded by payroll taxes','Medicaid expansion','CHIP only','Private exchange plan only'],answer:0},
   {chapter:16,set:'ch16',q:'What is Medicaid?',choices:['Public assistance—government-paid health insurance—for low-income people','Medicare for retirees','Social Security Disability','Private employer insurance'],answer:0},
 
-  // ===== Ch. 17 (8) =====
+  // ===== Ch. 17 (10) =====
+  // --- Added to address syllabus goals: Homeland Security + Post-9/11 foreign policy
+{chapter:17, set:'ch17',
+ q:'What is the primary mission of the Department of Homeland Security (DHS)?',
+ choices:[
+  'Coordinate domestic security by preventing and responding to terrorism and major hazards within the U.S.',
+  'Conduct foreign intelligence operations abroad',
+  'Set and enforce monetary policy for the U.S. economy',
+  'Adjudicate federal crimes through the court system'
+ ],
+ answer:0
+},
+
+{chapter:17, set:'ch17',
+ q:'Which best describes a key shift in U.S. foreign policy after 9/11?',
+ choices:[
+  'Greater emphasis on counterterrorism and preemptive action, alongside the creation of DHS',
+  'A return to strict isolationism and reduced global engagement',
+  'Exclusive reliance on soft power and multilateral treaties',
+  'Large-scale demobilization of the U.S. military and intelligence community'
+ ],
+ answer:0
+},
+
   {chapter:17,set:'ch17',q:'What is soft power?',choices:['Influence via culture, diplomacy, aid, and persuasion rather than military force','Naval blockade','Air strikes','Troop surge'],answer:0},
   {chapter:17,set:'ch17',q:'What are tariffs?',choices:['Taxes on imports used to raise revenue or protect domestic industries','Export subsidies only','Interest-rate caps','Immigration quotas'],answer:0},
   {chapter:17,set:'ch17',q:'What is isolationism?',choices:['Non-involvement in international alliances and conflicts','Collective security','Alliance leadership','Forward deployment'],answer:0},
@@ -181,7 +204,7 @@ const SETS = {
   ch17: BANK.filter(x=>x.set==='ch17'),
   unit3: [...BANK]
 };
-const SET_LABELS = { ch12:'Ch. 12 (8)', ch13:'Ch. 13 (14)', ch15:'Ch. 15 (12)', ch16:'Ch. 16 (8)', ch17:'Ch. 17 (8)', unit3:'Unit 3 (50 random)' };
+const SET_LABELS = { ch12:'Ch. 12 (8)', ch13:'Ch. 13 (14)', ch15:'Ch. 15 (12)', ch16:'Ch. 16 (8)', ch17:'Ch. 17 (10)', unit3:'Unit 3 (50 random)' };
 
 // ---------- State ----------
 let state = { list:[], idx:0, setKey:'unit3', misses:[], timer:null, seconds:0, missedOnly:false };
