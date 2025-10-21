@@ -109,7 +109,7 @@ function fmtTime(s){ const m=Math.floor(s/60).toString().padStart(2,'0'); const 
 function setBest(key, seconds){ const prev = Number(localStorage.getItem(key)||Infinity); if(seconds < prev){ localStorage.setItem(key, String(seconds)); } }
 function getBest(key){ const v = localStorage.getItem(key); return v? fmtTime(Number(v)) : '—'; }
 
-// ---------- Question Bank (50 total) ----------
+// ---------- Question Bank (52 total) ----------
 // Each item: {chapter, set:'ch12'|'ch13'|'ch15'|'ch16'|'ch17', q:'stem', choices:[...], answer:index}
 const BANK = [
   // ===== Ch. 12 (8) =====
