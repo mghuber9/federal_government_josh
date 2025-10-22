@@ -133,23 +133,76 @@
   </div>
 
 <script>
-/**
- * IMPORTANT: Paste your vocab BANK from "Unit 3 Vocab.html" below, in the exact format:
- * const BANK = [ {chapter:12,set:'ch12', term:'...', def:'...'}, ... ];
- * If BANK is already defined globally (same page), this script will reuse it.
- */
+// =================== DATA ===================
+// Try to load a saved BANK from localStorage first
+/* removed custom BANK paste/loader per request */
+
+// Embedded default BANK (no trailing commas)
 if(typeof window.BANK === 'undefined'){
   window.BANK = [
-    // SAMPLE ONLY — replace with the real BANK from your Vocab file
-    {chapter:12,set:'ch12', term:'Whig theory', def:'A 19th-century weak-presidency view: mainly execute Congress’s will'},
-    {chapter:13,set:'ch13', term:'Bureaucracy', def:'Organization with hierarchical authority, job specialization, and rules'},
-    {chapter:15,set:'ch15', term:'Fiscal policy', def:'Government taxing and spending choices to steer the economy'},
-    {chapter:16,set:'ch16', term:'Means test', def:'Eligibility requirement proving low income/resources'},
-    {chapter:17,set:'ch17', term:'Soft power', def:'Influence via culture, diplomacy, aid, persuasion rather than force'}
+    // ch12 (8)
+    {chapter:12, set:'ch12', term:'Requirements to be president', def:'To be president, one must be at least 35 years old, a natural-born U.S. citizen, and a resident of the United States for at least 14 years.'},
+    {chapter:12, set:'ch12', term:'Whig theory', def:'A 19th-century “weak presidency” view: the president mainly administers and executes Congress’s will, not lead policy.'},
+    {chapter:12, set:'ch12', term:'Invisible primary', def:'The pre-voting phase in which candidates compete in fundraising, polls, and debates to prove viability.'},
+    {chapter:12, set:'ch12', term:'Unit rule', def:'Most states award all electoral votes to the statewide popular-vote winner (Maine and Nebraska are exceptions).'},
+    {chapter:12, set:'ch12', term:'Electoral votes to win', def:'270 electoral votes (a majority of 538).'},
+    {chapter:12, set:'ch12', term:'Cabinet', def:'Heads of the 15 executive departments (State, Treasury, Defense, etc.), appointed by the president and confirmed by the Senate.'},
+    {chapter:12, set:'ch12', term:'Parliamentary system', def:'System in which the prime minister leads the cabinet and typically commands a legislative majority.'},
+    {chapter:12, set:'ch12', term:'Richard Neustadt', def:'Presidency scholar who argued presidential power is the power to persuade; unilateral tools can signal weakness.'},
+
+    // ch13 (14)
+    {chapter:13, set:'ch13', term:'Bureaucracy', def:'Organization with hierarchical authority, job specialization, and formalized rules.'},
+    {chapter:13, set:'ch13', term:'Deepwater Horizon', def:'A BP offshore platform that exploded in 2010, causing a massive Gulf of Mexico oil spill.'},
+    {chapter:13, set:'ch13', term:'Government corporation', def:'An agency run like a business that charges for services and may receive federal funds (e.g., Amtrak).'},
+    {chapter:13, set:'ch13', term:'Regulatory agencies', def:'Agencies that issue rules and enforce compliance for specific economic activities.'},
+    {chapter:13, set:'ch13', term:'Independent agencies', def:'Agencies resembling cabinet departments but with narrower missions (e.g., CIA, NASA).'},
+    {chapter:13, set:'ch13', term:'Presidential commissions', def:'Advisory bodies to the president; some are permanent.'},
+    {chapter:13, set:'ch13', term:'Merit system', def:'Hiring and promotion based on exams or specialized training (civil service).'},
+    {chapter:13, set:'ch13', term:'Spoils system', def:'Awarding government jobs to political supporters of the winning party.'},
+    {chapter:13, set:'ch13', term:'Patronage', def:'Filling offices with supporters of the winning party.'},
+    {chapter:13, set:'ch13', term:'Pendleton Act (1883)', def:'Established a federal civil-service merit system.'},
+    {chapter:13, set:'ch13', term:'Federal budget process', def:'The president proposes; Congress authorizes and appropriates; agencies spend under oversight.'},
+    {chapter:13, set:'ch13', term:'Clientele groups', def:'Beneficiaries of an agency’s programs who support/defend the agency.'},
+    {chapter:13, set:'ch13', term:'GAO', def:'Government Accountability Office—audits spending and checks implementation of laws.'},
+    {chapter:13, set:'ch13', term:'Whistleblowing', def:'Employees reporting misconduct; protected from retaliation by law.'},
+
+    // ch15 (12)
+    {chapter:15, set:'ch15', term:'Laissez-faire economics', def:'View that private firms should freely make production decisions; markets guided by the “invisible hand.”'},
+    {chapter:15, set:'ch15', term:'Adam Smith', def:'Economist who argued for laissez-faire and the “invisible hand” (1776).'},
+    {chapter:15, set:'ch15', term:'Deregulation', def:'Rolling back rules to improve efficiency (can create risks if excessive).'},
+    {chapter:15, set:'ch15', term:'Rachel Carson', def:'Author of Silent Spring (1962), spurring environmental policy reforms.'},
+    {chapter:15, set:'ch15', term:'Fiscal policy', def:'Government taxing and spending choices to steer the economy.'},
+    {chapter:15, set:'ch15', term:'Monetary policy', def:'Managing money supply and interest rates via the Federal Reserve.'},
+    {chapter:15, set:'ch15', term:'John Maynard Keynes', def:'Economist who advocated increased government spending in downturns.'},
+    {chapter:15, set:'ch15', term:'Budget deficit', def:'When annual federal spending exceeds revenues.'},
+    {chapter:15, set:'ch15', term:'National debt', def:'Total amount the federal government owes to creditors.'},
+    {chapter:15, set:'ch15', term:'Federal Reserve Act (1913)', def:'Created the Federal Reserve System and its Board of Governors.'},
+    {chapter:15, set:'ch15', term:'Inflation', def:'A sustained rise in the general price level.'},
+    {chapter:15, set:'ch15', term:'Janet Yellen', def:'Economist who served as Chair of the Federal Reserve (2014–2018).'},
+
+    // ch16 (8)
+    {chapter:16, set:'ch16', term:'Progressive tax', def:'A tax with higher marginal rates as income rises.'},
+    {chapter:16, set:'ch16', term:'Regressive tax', def:'A tax that takes a larger share from low-income than high-income payers.'},
+    {chapter:16, set:'ch16', term:'Poverty line', def:'Official threshold for poverty (historically: thrifty food budget × 3).'},
+    {chapter:16, set:'ch16', term:'AFDC', def:'Aid to Families with Dependent Children; cash assistance replaced by TANF in 1996.'},
+    {chapter:16, set:'ch16', term:'Means test', def:'An eligibility test requiring proof of low income/resources.'},
+    {chapter:16, set:'ch16', term:'Entitlement program', def:'Program (e.g., Social Security, Medicare) that legally guarantees benefits to eligible individuals.'},
+    {chapter:16, set:'ch16', term:'Medicare', def:'Social insurance—health coverage for retirees—funded by payroll taxes (distinct from Medicaid).'},
+    {chapter:16, set:'ch16', term:'Medicaid', def:'Public assistance—government-paid health insurance—for low-income individuals and families.'},
+
+    // ch17 (8)
+    {chapter:17, set:'ch17', term:'Soft power', def:'Influence through culture, diplomacy, aid, and persuasion rather than military force.'},
+    {chapter:17, set:'ch17', term:'Tariffs', def:'Taxes on imports used to raise revenue or protect domestic industries.'},
+    {chapter:17, set:'ch17', term:'Isolationism', def:'Foreign policy of non-involvement in international alliances and conflicts.'},
+    {chapter:17, set:'ch17', term:'Preemptive war doctrine', def:'Striking a potential adversary first when an attack is believed to be imminent.'},
+    {chapter:17, set:'ch17', term:'Bipolar world structure', def:'An international system dominated by two superpowers (e.g., U.S. and USSR during the Cold War).'},
+    {chapter:17, set:'ch17', term:'Cold War', def:'Period of geopolitical tension (c. 1947–1991) between the U.S.-led West and the Soviet bloc.'},
+    {chapter:17, set:'ch17', term:'Containment', def:'U.S. strategy to prevent the spread of Soviet influence/communism.'},
+    {chapter:17, set:'ch17', term:'MAD', def:'Mutually Assured Destruction—nuclear deterrence concept where each side can inflict unacceptable damage.'}
   ];
 }
 
-// ---------- Utilities ----------
+// =================== UTILITIES ===================
 function shuffle(array){
   // Fisher–Yates
   const a = [...array];
@@ -160,17 +213,20 @@ function shuffle(array){
   return a;
 }
 
-const SETS = {
-  ch12: BANK.filter(x=>x.set==='ch12'),
-  ch13: BANK.filter(x=>x.set==='ch13'),
-  ch15: BANK.filter(x=>x.set==='ch15'),
-  ch16: BANK.filter(x=>x.set==='ch16'),
-  ch17: BANK.filter(x=>x.set==='ch17'),
-  unit3: [...BANK]
-};
+function rebuildSets(){
+  window.SETS = {
+    ch12: BANK.filter(x=>x.set==='ch12'),
+    ch13: BANK.filter(x=>x.set==='ch13'),
+    ch15: BANK.filter(x=>x.set==='ch15'),
+    ch16: BANK.filter(x=>x.set==='ch16'),
+    ch17: BANK.filter(x=>x.set==='ch17'),
+    unit3: [...BANK]
+  };
+}
+rebuildSets();
 const SET_LABELS = { ch12:'Ch. 12', ch13:'Ch. 13', ch15:'Ch. 15', ch16:'Ch. 16', ch17:'Ch. 17', unit3:'Unit 3 (random)' };
 
-// ---------- State ----------
+// =================== STATE ===================
 let state = { pairs:[], left:[], right:[], center:[], timer:null, seconds:0, setKey:'unit3', mode:'t2d', missedOnly:false, misses:[] };
 function bestKey(){ return `best_vocab_match_${state.setKey}_${state.mode}`; }
 function fmtTime(s){ const m=Math.floor(s/60).toString().padStart(2,'0'); const ss=(s%60).toString().padStart(2,'0'); return `${m}:${ss}`; }
@@ -192,7 +248,7 @@ function startRound(fromMissed=false){
   let items = fromMissed ? state.misses.map(m=>({chapter:m.chapter, term:m.prompt, def:m.answer})) : [...SETS[state.setKey]];
   // Determine size
   let size = sizeSel==='auto' ? (state.setKey==='unit3' ? Math.min(50, items.length) : items.length) : Number(sizeSel);
-  if(state.setKey==='unit3'){ items = shuffle(items).slice(0, size); } else { items = items.slice(0, Math.min(size, items.length)); }
+  if(state.setKey==='unit3') items = shuffle(items).slice(0, size); else items = items.slice(0, Math.min(size, items.length));
 
   const pairs = buildPairs(items, state.mode);
   state.pairs = pairs;
@@ -212,6 +268,12 @@ function startRound(fromMissed=false){
   document.getElementById('best').textContent = 'Best: ' + getBest(bestKey());
 
   renderAll();
+
+  // Chapter size sanity check banner (console only)
+  const counts = { ch12: SETS.ch12.length, ch13: SETS.ch13.length, ch15: SETS.ch15.length, ch16: SETS.ch16.length, ch17: SETS.ch17.length };
+  const warn = Object.entries(counts).filter(([k,v])=> v<=1).map(([k,v])=> `${k} has only ${v} item`);
+  if(warn.length) console.warn('Small BANK warning:', warn.join('; '));
+
   startTimer();
 }
 
@@ -244,7 +306,7 @@ function renderCenter(){
       addAnswerDragHandlers(inner);
       content.innerHTML = ''; content.appendChild(inner);
     } else {
-      content.innerHTML = `<span class="placeholder">Drop answer here</span>`;
+      content.innerHTML = '<span class="placeholder">Drop answer here</span>';
     }
     slot.appendChild(content);
     addSlotHandlers(slot);
@@ -327,8 +389,8 @@ function renumberRight(){ [...document.querySelectorAll('#right .answer .num')].
 function finish(){
   stopTimer(); const total = state.center.length; let correct = 0; state.misses = [];
   state.center.forEach((ans, i)=>{
-    const left = state.left[i]; const correctAnswer = state.pairs[i].answer; const ok = !!ans && ans.key===i;
-    if(ok) correct++; else state.misses.push({chapter:left.chapter, prompt:left.text, answer: correctAnswer});
+    const left = state.left[i]; const ok = !!ans && ans.key===i;
+    if(ok) correct++; else state.misses.push({chapter:left.chapter, prompt:left.text, answer: state.pairs[i].answer});
   });
   document.getElementById('quiz').classList.add('hidden'); document.getElementById('result').classList.remove('hidden');
   if(!state.missedOnly){ setBest(bestKey(), state.seconds); }
@@ -389,6 +451,10 @@ window.addEventListener('resize', debounce(()=> requestAnimationFrame(equalizeHe
 
     // Test 3: SETS are arrays
     console.assert(Array.isArray(SETS.unit3), 'SETS.unit3 is array');
+
+    // Test 4: SETS count sum equals BANK length
+    const sum = SETS.ch12.length + SETS.ch13.length + SETS.ch15.length + SETS.ch16.length + SETS.ch17.length;
+    console.assert(sum === BANK.length, 'SETS chapter totals should equal BANK length');
   }catch(e){ console.warn('Self-tests warning:', e); }
 })();
 
