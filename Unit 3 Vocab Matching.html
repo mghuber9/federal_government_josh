@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Unit 3 — Vocab Matching (Three-Column Drag & Drop)</title>
+<style>
+  :root{ --bg:#0b1220; --panel:#101a2c; --ink:#e6edf3; --muted:#9fb0c6; --accent:#4fd1c5; --tile:#0f2034; --tile-border:rgba(255,255,255,.12); }
+  *{box-sizing:border-box}
+  body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial; color:var(--ink); background:radial-gradient(1100px 700px at 20% -10%, #13233d 0%, var(--bg) 60%);} 
+  .wrap{max-width:1100px; margin:0 auto; padding:24px}
+  h1{margin:0 0 6px; font-size:clamp(22px,3vw,32px)}
+  p,label{color:var(--muted)}
+  .card{background:var(--panel); border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:18px; box-shadow:0 6px 18px rgba(0,0,0,.25)}
+  .grid{display:grid; gap:12px}
+  .grid-2{grid-template-columns:repeat(3,minmax(0,1fr))}
+  select,button{appearance:none; border:1px solid rgba(255,255,255,.12); background:#0f2034; color:#e6edf3; padding:10px 12px; border-radius:12px; font-size:16px}
+  button{cursor:pointer; background:linear-gradient(135deg,#1f3a5b,#17314f); border:1px solid rgba(79,209,197,.45)}
+  button:hover{filter:brightness(1.08)}
+  .hidden{display:none}
+  .pill{display:inline-block; padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.12); background:#10243a; color:#a7c6ff; font-size:12px}
+  .hud{display:flex; gap:8px; align-items:center; justify-content:space-between; flex-wrap:wrap}
+  .sep{height:1px; background:rgba(255,255,255,.08); margin:12px 0}
+
+  .columns{display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px}
+  @media (max-width:980px){ .columns{grid-template-columns:1fr} }
+  .col-title{font-size:12px; letter-spacing:.04em; text-transform:uppercase; color:#a7c6ff; margin-bottom:8px}
+  .left, .center, .right{display:grid; gap:10px}
+  .prompt, .slot, .answer{border:1px solid var(--tile-border); background:var(--tile); border-radius:12px; padding:12px; min-height:64px; display:flex; gap:10px; align-items:center}
+  .prompt{position:relative}
+  .slot{justify-content:space-between}
+  .slot.empty{opacity:.7}
+  .placeholder{font-style:italic; color:var(--muted)}
+  .num{flex:0 0 auto; width:28px; height:28px; border-radius:50%; background:#112a46; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; border:1px solid rgba(255,255,255,.12)}
+  .text{flex:1 1 auto; font-size:clamp(15px,2vw,17px); line-height:1.35}
+  .ghost{opacity:.6}
+  .drag-over{outline:2px dashed var(--accent)}
+  .answer{cursor:grab}
+  .answer:active{cursor:grabbing}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Unit 3 — Vocab Matching</h1>
+    <p class="muted">Drag from <strong>Unused Answers</strong> (right) into the <strong>Answer Slots</strong> (center). Move between slots or back to Unused. Finish to review misses, then retry missed only.</p>
+
+    <!-- START -->
+    <section id="start" class="card grid">
+      <div class="grid grid-2">
+        <div>
+          <label for="section">Set</label>
+          <select id="section">
+            <option value="ch12">Ch. 12 (all)</option>
+            <option value="ch13">Ch. 13 (all)</option>
+            <option value="ch15">Ch. 15 (all)</option>
+            <option value="ch16">Ch. 16 (all)</option>
+            <option value="ch17">Ch. 17 (all)</option>
+            <option value="unit3" selected>Unit 3 (random)</option>
+          </select>
+        </div>
+        <div>
+          <label for="mode">Mode</label>
+          <select id="mode">
+            <option value="t2d" selected>Term → Definition</option>
+            <option value="d2t">Definition → Term</option>
+          </select>
+        </div>
+        <div>
+          <label for="size">Items</label>
+          <select id="size">
+            <option value="auto" selected>Auto</option>
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="30">30</option>
+            <option value="50">50</option>
+          </select>
+        </div>
+      </div>
+      <div class="hud">
+        <div class="pill">Fill the center column by dragging answers from the right</div>
+        <button id="begin">Start Round</button>
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="quiz" class="card hidden">
+      <div class="hud">
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+          <span class="pill" id="setTag">Set</span>
+          <span class="pill" id="modeTag">Mode</span>
+          <span class="pill" id="progress">Filled 0 / 0</span>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+          <span class="pill" id="timer">00:00</span>
+          <span class="pill" id="best">Best: —</span>
+          <button id="finish">Finish & Review</button>
+        </div>
+      </div>
+      <div class="sep"></div>
+
+      <div class="columns">
+        <div>
+          <div class="col-title">Prompts</div>
+          <div class="left" id="left"></div>
+        </div>
+        <div>
+          <div class="col-title">Answer Slots</div>
+          <div class="center" id="center"></div>
+        </div>
+        <div>
+          <div class="col-title">Unused Answers</div>
+          <div class="right" id="right"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULT -->
+    <section id="result" class="card hidden">
+      <h2 style="margin:0 0 6px">Round Complete</h2>
+      <div class="hud" style="margin-bottom:6px">
+        <span class="pill" id="scoreline">Score</span>
+        <span class="pill" id="timeline">Time</span>
+        <span class="pill" id="bestline">Best</span>
+      </div>
+      <div class="sep"></div>
+      <div id="review"></div>
+      <div class="hud">
+        <button id="retry">New Round</button>
+        <button id="retryMissed">Retry Missed Only</button>
+        <button id="restart">Back to Start</button>
+      </div>
+    </section>
+  </div>
+
+<script>
+/**
+ * IMPORTANT: Paste your vocab BANK from "Unit 3 Vocab.html" below, in the exact format:
+ * const BANK = [ {chapter:12,set:'ch12', term:'...', def:'...'}, ... ];
+ * If BANK is already defined globally (same page), this script will reuse it.
+ */
+if(typeof window.BANK === 'undefined'){
+  window.BANK = [
+    // SAMPLE ONLY — replace with the real BANK from your Vocab file
+    {chapter:12,set:'ch12', term:'Whig theory', def:'A 19th-century weak-presidency view: mainly execute Congress’s will'},
+    {chapter:13,set:'ch13', term:'Bureaucracy', def:'Organization with hierarchical authority, job specialization, and rules'},
+    {chapter:15,set:'ch15', term:'Fiscal policy', def:'Government taxing and spending choices to steer the economy'},
+    {chapter:16,set:'ch16', term:'Means test', def:'Eligibility requirement proving low income/resources'},
+    {chapter:17,set:'ch17', term:'Soft power', def:'Influence via culture, diplomacy, aid, persuasion rather than force'}
+  ];
+}
+
+// ---------- Utilities ----------
+function shuffle(array){
+  // Fisher–Yates
+  const a = [...array];
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+const SETS = {
+  ch12: BANK.filter(x=>x.set==='ch12'),
+  ch13: BANK.filter(x=>x.set==='ch13'),
+  ch15: BANK.filter(x=>x.set==='ch15'),
+  ch16: BANK.filter(x=>x.set==='ch16'),
+  ch17: BANK.filter(x=>x.set==='ch17'),
+  unit3: [...BANK]
+};
+const SET_LABELS = { ch12:'Ch. 12', ch13:'Ch. 13', ch15:'Ch. 15', ch16:'Ch. 16', ch17:'Ch. 17', unit3:'Unit 3 (random)' };
+
+// ---------- State ----------
+let state = { pairs:[], left:[], right:[], center:[], timer:null, seconds:0, setKey:'unit3', mode:'t2d', missedOnly:false, misses:[] };
+function bestKey(){ return `best_vocab_match_${state.setKey}_${state.mode}`; }
+function fmtTime(s){ const m=Math.floor(s/60).toString().padStart(2,'0'); const ss=(s%60).toString().padStart(2,'0'); return `${m}:${ss}`; }
+function startTimer(){ if(state.timer) clearInterval(state.timer); state.timer = setInterval(()=>{ state.seconds++; document.getElementById('timer').textContent = fmtTime(state.seconds); },1000); }
+function stopTimer(){ if(state.timer){ clearInterval(state.timer); state.timer=null; } }
+function setBest(key, seconds){ const prev = Number(localStorage.getItem(key)||Infinity); if(seconds < prev){ localStorage.setItem(key, String(seconds)); } }
+function getBest(key){ const v = localStorage.getItem(key); return v? fmtTime(Number(v)) : '—'; }
+
+function buildPairs(items, mode){
+  return items.map((x,i)=> mode==='t2d' ? ({id:i, chapter:x.chapter, prompt:x.term, answer:x.def})
+                                       : ({id:i, chapter:x.chapter, prompt:x.def,  answer:x.term}));
+}
+
+function startRound(fromMissed=false){
+  state.setKey = document.getElementById('section').value;
+  state.mode   = document.getElementById('mode').value;
+  const sizeSel = document.getElementById('size').value;
+
+  let items = fromMissed ? state.misses.map(m=>({chapter:m.chapter, term:m.prompt, def:m.answer})) : [...SETS[state.setKey]];
+  // Determine size
+  let size = sizeSel==='auto' ? (state.setKey==='unit3' ? Math.min(50, items.length) : items.length) : Number(sizeSel);
+  if(state.setKey==='unit3'){ items = shuffle(items).slice(0, size); } else { items = items.slice(0, Math.min(size, items.length)); }
+
+  const pairs = buildPairs(items, state.mode);
+  state.pairs = pairs;
+  state.left = pairs.map((p,i)=>({key:i, text:p.prompt, chapter:p.chapter}));
+  const answers = pairs.map((p,i)=>({key:i, text:p.answer}));
+  state.right = shuffle(answers);
+  state.center = new Array(pairs.length).fill(null);
+  state.missedOnly = fromMissed;
+  state.misses = [];
+  state.seconds = 0;
+
+  document.getElementById('start').classList.add('hidden');
+  document.getElementById('result').classList.add('hidden');
+  document.getElementById('quiz').classList.remove('hidden');
+  document.getElementById('setTag').textContent  = SET_LABELS[state.setKey];
+  document.getElementById('modeTag').textContent = (state.mode==='t2d' ? 'Term → Def' : 'Def → Term');
+  document.getElementById('best').textContent = 'Best: ' + getBest(bestKey());
+
+  renderAll();
+  startTimer();
+}
+
+function renderAll(){ renderLeft(); renderCenter(); renderRight(); updateProgress(); requestAnimationFrame(equalizeHeights); }
+
+function renderLeft(){
+  const L = document.getElementById('left'); L.innerHTML='';
+  state.left.forEach((item, idx)=>{
+    const div = document.createElement('div'); div.className='prompt';
+    const num = document.createElement('div'); num.className='num'; num.textContent=idx+1; div.appendChild(num);
+    const tx = document.createElement('div'); tx.className='text'; tx.textContent=item.text; div.appendChild(tx);
+    L.appendChild(div);
+  });
+}
+
+function renderCenter(){
+  const C = document.getElementById('center'); C.innerHTML='';
+  state.center.forEach((ans, idx)=>{
+    const slot = document.createElement('div'); slot.className='slot' + (ans? '' : ' empty');
+    slot.dataset.slot = idx;
+    const badge = document.createElement('div'); badge.className='num'; badge.textContent = idx+1; slot.appendChild(badge);
+    const content = document.createElement('div'); content.className='text';
+    if(ans){
+      const inner = document.createElement('div');
+      inner.className='answer';
+      inner.setAttribute('draggable','true');
+      inner.dataset.key = ans.key; inner.dataset.origin = 'center';
+      const num = document.createElement('div'); num.className='num'; num.textContent = '⇄'; inner.appendChild(num);
+      const tx = document.createElement('div'); tx.className='text'; tx.textContent = ans.text; inner.appendChild(tx);
+      addAnswerDragHandlers(inner);
+      content.innerHTML = ''; content.appendChild(inner);
+    } else {
+      content.innerHTML = `<span class="placeholder">Drop answer here</span>`;
+    }
+    slot.appendChild(content);
+    addSlotHandlers(slot);
+    C.appendChild(slot);
+  });
+}
+
+function renderRight(){
+  const R = document.getElementById('right'); R.innerHTML='';
+  state.right.forEach((item, idx)=>{
+    const div = createAnswerNode(item, 'right', idx);
+    R.appendChild(div);
+  });
+}
+
+function createAnswerNode(item, origin, idx){
+  const div = document.createElement('div');
+  div.className='answer'; div.setAttribute('draggable','true');
+  div.dataset.key = item.key; div.dataset.origin = origin;
+  const num = document.createElement('div'); num.className='num'; num.textContent = origin==='right' ? String.fromCharCode(65+idx) : '⇄';
+  const tx = document.createElement('div'); tx.className='text'; tx.textContent = item.text;
+  div.appendChild(num); div.appendChild(tx);
+  addAnswerDragHandlers(div);
+  return div;
+}
+
+function updateProgress(){
+  const total = state.center.length;
+  const filled = state.center.filter(Boolean).length;
+  document.getElementById('progress').textContent = `Filled ${filled} / ${total}`;
+}
+
+// ---- Drag & Drop ----
+let dragData = null; // {type:'answer', from:'right'|'center', key:number, fromIndex?:number, fromSlot?:number}
+function addAnswerDragHandlers(node){
+  node.addEventListener('dragstart', (e)=>{
+    const key = Number(node.dataset.key); const origin = node.dataset.origin;
+    dragData = {type:'answer', from:origin, key};
+    if(origin==='right'){
+      const idx = [...node.parentNode.children].indexOf(node); dragData.fromIndex = idx;
+    } else if(origin==='center'){
+      const slotIndex = state.center.findIndex(a=>a && a.key===key); dragData.fromSlot = slotIndex;
+    }
+    node.classList.add('ghost'); e.dataTransfer.effectAllowed='move';
+  });
+  node.addEventListener('dragend', ()=>{ node.classList.remove('ghost'); renumberRight(); requestAnimationFrame(equalizeHeights); });
+}
+function addSlotHandlers(slot){
+  slot.addEventListener('dragover', (e)=>{ e.preventDefault(); slot.classList.add('drag-over'); });
+  slot.addEventListener('dragleave', ()=> slot.classList.remove('drag-over'));
+  slot.addEventListener('drop', (e)=>{
+    e.preventDefault(); slot.classList.remove('drag-over');
+    if(!dragData || dragData.type!=='answer') return;
+    const targetSlot = Number(slot.dataset.slot);
+    if(dragData.from==='right'){
+      const answerObj = state.right.splice(dragData.fromIndex,1)[0];
+      if(state.center[targetSlot]){ const displaced = state.center[targetSlot]; state.center[targetSlot] = answerObj; state.right.push(displaced); }
+      else { state.center[targetSlot] = answerObj; }
+    } else if(dragData.from==='center'){
+      const fromSlot = dragData.fromSlot; const temp = state.center[targetSlot];
+      state.center[targetSlot] = state.center[fromSlot]; state.center[fromSlot] = temp || null;
+    }
+    renderCenter(); renderRight(); updateProgress(); requestAnimationFrame(equalizeHeights);
+  });
+}
+// drop back to Unused Answers
+const rightBox = document.getElementById('right');
+rightBox.addEventListener('dragover', (e)=>{ e.preventDefault(); rightBox.classList.add('drag-over'); });
+rightBox.addEventListener('dragleave', ()=> rightBox.classList.remove('drag-over'));
+rightBox.addEventListener('drop', (e)=>{
+  e.preventDefault(); rightBox.classList.remove('drag-over');
+  if(!dragData || dragData.type!=='answer') return;
+  if(dragData.from==='center'){
+    const fromSlot = dragData.fromSlot; const moved = state.center[fromSlot];
+    if(moved){ state.center[fromSlot] = null; state.right.push(moved); renderCenter(); renderRight(); updateProgress(); requestAnimationFrame(equalizeHeights); }
+  }
+});
+function renumberRight(){ [...document.querySelectorAll('#right .answer .num')].forEach((n,i)=>{ n.textContent = String.fromCharCode(65+i); }); }
+
+function finish(){
+  stopTimer(); const total = state.center.length; let correct = 0; state.misses = [];
+  state.center.forEach((ans, i)=>{
+    const left = state.left[i]; const correctAnswer = state.pairs[i].answer; const ok = !!ans && ans.key===i;
+    if(ok) correct++; else state.misses.push({chapter:left.chapter, prompt:left.text, answer: correctAnswer});
+  });
+  document.getElementById('quiz').classList.add('hidden'); document.getElementById('result').classList.remove('hidden');
+  if(!state.missedOnly){ setBest(bestKey(), state.seconds); }
+  document.getElementById('scoreline').textContent = `Score: ${correct} / ${total} (${Math.round(correct/total*100)}%)`;
+  document.getElementById('timeline').textContent = `Time: ${fmtTime(state.seconds)}`;
+  document.getElementById('bestline').textContent = `Best: ${getBest(bestKey())}`;
+  const rev = document.getElementById('review'); rev.innerHTML='';
+  if(state.misses.length===0){ rev.innerHTML = '<p class="muted">Perfect! No missed items to review.</p>'; }
+  else {
+    const list = document.createElement('div'); list.className='grid'; list.style.gridTemplateColumns='1fr'; list.style.gap='10px';
+    state.center.forEach((ans,i)=>{
+      const ok = !!ans && ans.key===i; if(ok) return;
+      const row = document.createElement('div'); row.className='card'; row.style.padding='12px';
+      row.innerHTML = `<div style="font-weight:700; margin-bottom:6px">Missed · Ch. ${state.left[i].chapter}</div>`+
+                      `<div style="margin-bottom:6px">${state.left[i].text}</div>`+
+                      `<div style="display:flex; gap:8px; flex-wrap:wrap">`+
+                      `<span class=\"pill\">Your answer: ${ans? ans.text : '—'}</span>`+
+                      `<span class=\"pill\">Correct: ${state.pairs[i].answer}</span>`+
+                      `</div>`;
+      list.appendChild(row);
+    });
+    rev.appendChild(list);
+  }
+}
+
+function startRoundMissed(){ if(!state.misses || state.misses.length===0){ alert('No missed items to retry.'); return; } startRound(true); }
+
+// nav
+ document.getElementById('begin').addEventListener('click', ()=> startRound(false));
+ document.getElementById('retry').addEventListener('click', ()=> startRound(false));
+ document.getElementById('retryMissed').addEventListener('click', startRoundMissed);
+ document.getElementById('restart').addEventListener('click', ()=>{ document.getElementById('result').classList.add('hidden'); document.getElementById('start').classList.remove('hidden'); });
+ document.getElementById('finish').addEventListener('click', finish);
+
+// Equalize heights per render/resize
+function equalizeHeights(){ const all=[...document.querySelectorAll('.left .prompt'),...document.querySelectorAll('.center .slot'),...document.querySelectorAll('.right .answer')]; if(!all.length) return; all.forEach(n=>n.style.height='auto'); let max=0; all.forEach(n=> max=Math.max(max,n.offsetHeight)); all.forEach(n=> n.style.height=max+'px'); }
+function debounce(fn, ms){ let t; return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn.apply(this,args), ms); }; }
+window.addEventListener('resize', debounce(()=> requestAnimationFrame(equalizeHeights), 100));
+
+// Auto-scroll while dragging
+(function setupAutoScroll(){ const EDGE=80,SPEED=24; let ticking=false; document.addEventListener('dragover',(e)=>{ const y=e.clientY,h=window.innerHeight; let dy=0; if(y<EDGE) dy=-SPEED; else if(h-y<EDGE) dy=SPEED; if(dy!==0 && !ticking){ ticking=true; requestAnimationFrame(()=>{ window.scrollBy(0,dy); ticking=false; }); } }); })();
+
+// --------- Self-tests (non-blocking) ---------
+(function selfTests(){
+  try{
+    // Test 1: shuffle returns same multiset
+    const src = [1,2,3,4,5,6,7,8,9];
+    const out = shuffle(src);
+    console.assert(src.length===out.length, 'shuffle: length preserved');
+    console.assert([...src].sort().join(',') === [...out].sort().join(','), 'shuffle: elements preserved');
+
+    // Test 2: buildPairs structure
+    const sample = [{chapter:12, term:'t', def:'d'}];
+    const p1 = buildPairs(sample, 't2d')[0];
+    const p2 = buildPairs(sample, 'd2t')[0];
+    console.assert(p1.prompt==='t' && p1.answer==='d', 'buildPairs t2d');
+    console.assert(p2.prompt==='d' && p2.answer==='t', 'buildPairs d2t');
+
+    // Test 3: SETS are arrays
+    console.assert(Array.isArray(SETS.unit3), 'SETS.unit3 is array');
+  }catch(e){ console.warn('Self-tests warning:', e); }
+})();
+
+// Basic sanity (will pass once real BANK is pasted)
+console.assert(Array.isArray(BANK), 'BANK array must exist');
+</script>
+</body>
+</html>
