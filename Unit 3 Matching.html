@@ -64,7 +64,6 @@
             <option value="ch13">Ch. 13 (all)</option>
             <option value="ch15">Ch. 15 (all)</option>
             <option value="ch16">Ch. 16 (all)</option>
-            <option value="ch17">Ch. 17 (all)</option>
             <option value="unit3" selected>Unit 3 (random 20)</option>
           </select>
         </div>
@@ -232,8 +231,14 @@ const SETS = {
   ch15: BANK.filter(x=>x.set==='ch15'),
   ch16: BANK.filter(x=>x.set==='ch16'),
   ch17: BANK.filter(x=>x.set==='ch17'),
-  unit3: [...BANK]
+  unit3: [
+    ...BANK.filter(x => x.set === 'ch12'),
+    ...BANK.filter(x => x.set === 'ch13'),
+    ...BANK.filter(x => x.set === 'ch15'),
+    ...BANK.filter(x => x.set === 'ch16')
+  ]
 };
+
 const SET_LABELS = { ch12:'Ch. 12', ch13:'Ch. 13', ch15:'Ch. 15', ch16:'Ch. 16', ch17:'Ch. 17', unit3:'Unit 3 (random 20)' };
 
 // ---------- State ----------
