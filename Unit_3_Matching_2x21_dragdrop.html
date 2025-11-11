@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Unit 3 — Matching (2 × 21 Drag & Drop)</title>
+<style>
+  :root{
+    --bg:#0b1220; --panel:#101a2c; --ink:#e6edf3; --muted:#9fb0c6; --accent:#4fd1c5;
+    --ok:#22c55e; --bad:#ef4444; --tile:#0f2034; --tile-border:rgba(255,255,255,.12);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;
+    color:var(--ink);
+    background:radial-gradient(1100px 700px at 20% -10%, #13233d 0%, var(--bg) 60%);
+  }
+  .wrap{max-width:1200px; margin:0 auto; padding:24px}
+  h1{margin:0 0 6px; font-size:clamp(22px,3vw,32px)}
+  p,label{color:var(--muted)}
+  .card{
+    background:var(--panel);
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:16px;
+    padding:18px;
+    box-shadow:0 6px 18px rgba(0,0,0,.25);
+    margin-bottom:18px;
+  }
+  .sep{height:1px; background:rgba(255,255,255,.08); margin:12px 0}
+  .pill{
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.12);
+    background:#10243a;
+    color:#a7c6ff;
+    font-size:12px;
+  }
+  .hud{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+  }
+
+  /* Matching layout: 3 inner columns (Prompts / Slots / Answers) */
+  .columns{
+    display:grid;
+    grid-template-columns:1.1fr 1fr 1.1fr;
+    gap:12px;
+  }
+  @media (max-width:980px){
+    .columns{grid-template-columns:1fr}
+  }
+
+  .col-title{
+    font-size:11px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:#a7c6ff;
+    margin-bottom:6px;
+  }
+  .left, .center, .right{display:flex; flex-direction:column; gap:8px}
+
+  .prompt, .slot, .answer{
+    border:1px solid var(--tile-border);
+    background:var(--tile);
+    border-radius:10px;
+    padding:7px 8px;
+    display:flex;
+    align-items:flex-start;
+    gap:6px;
+    min-height:46px;
+  }
+
+  .prompt{cursor:default}
+  .slot{justify-content:space-between}
+  .slot.empty{opacity:.72}
+
+  .answer{
+    cursor:grab;
+  }
+  .answer:active{
+    cursor:grabbing;
+  }
+
+  .num{
+    flex:0 0 auto;
+    min-width:22px;
+    height:22px;
+    border-radius:999px;
+    background:#112a46;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:700;
+    font-size:12px;
+    border:1px solid rgba(255,255,255,.18);
+  }
+  .text{
+    flex:1 1 auto;
+    font-size:clamp(13px,1.6vw,15px);
+    line-height:1.3;
+  }
+  .placeholder{
+    font-style:italic;
+    color:var(--muted);
+    font-size:13px;
+  }
+
+  .drag-over{
+    outline:2px dashed var(--accent);
+  }
+
+  .slot.correct{
+    background:#0e2b22;
+    border-color:#1f8a67;
+  }
+  .slot.wrong{
+    background:#3a0f16;
+    border-color:#ff6b6b;
+  }
+
+  button{
+    appearance:none;
+    border:1px solid rgba(79,209,197,.45);
+    background:linear-gradient(135deg,#1f3a5b,#17314f);
+    color:var(--ink);
+    padding:8px 12px;
+    border-radius:12px;
+    font-size:14px;
+    cursor:pointer;
+  }
+  button:hover{filter:brightness(1.08)}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Unit 3 — Matching (2 × 21 Drag & Drop)</h1>
+    <p class="muted">
+      Two separate matching sets (Group A and Group B). Each has
+      <strong>21 questions</strong> and <strong>21 scrambled answers</strong>.
+      Drag answers from the <strong>Unused Answers</strong> column into the
+      <strong>Answer Slots</strong>. You can drag answers between slots or back
+      to Unused. Use <strong>Check Answers</strong> to see which ones are right.
+    </p>
+
+    <!-- GROUP A -->
+    <section class="card">
+      <div class="hud" style="margin-bottom:6px">
+        <span class="pill">Group A · Items 1–21</span>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+          <span class="pill" id="scoreA">Score: —</span>
+          <button id="checkA">Check Answers (A)</button>
+          <button id="resetA">Reset Group A</button>
+        </div>
+      </div>
+      <div class="sep"></div>
+      <div class="columns">
+        <div>
+          <div class="col-title">Questions (1–21)</div>
+          <div class="left" id="leftA"></div>
+        </div>
+        <div>
+          <div class="col-title">Answer Slots</div>
+          <div class="center" id="centerA"></div>
+        </div>
+        <div>
+          <div class="col-title">Unused Answers (A–U)</div>
+          <div class="right" id="rightA"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GROUP B -->
+    <section class="card">
+      <div class="hud" style="margin-bottom:6px">
+        <span class="pill">Group B · Items 22–42</span>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+          <span class="pill" id="scoreB">Score: —</span>
+          <button id="checkB">Check Answers (B)</button>
+          <button id="resetB">Reset Group B</button>
+        </div>
+      </div>
+      <div class="sep"></div>
+      <div class="columns">
+        <div>
+          <div class="col-title">Questions (22–42)</div>
+          <div class="left" id="leftB"></div>
+        </div>
+        <div>
+          <div class="col-title">Answer Slots</div>
+          <div class="center" id="centerB"></div>
+        </div>
+        <div>
+          <div class="col-title">Unused Answers (A–U)</div>
+          <div class="right" id="rightB"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+<script>
+// ---------- Helpers ----------
+function shuffle(a){
+  const r = [...a];
+  for(let i=r.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [r[i],r[j]] = [r[j],r[i]];
+  }
+  return r;
+}
+
+// ---------- Question Bank (42, reworded) ----------
+const BANK = [
+  // Ch. 12
+  {
+    chapter:12,
+    q:`Which statement correctly describes the formal qualifications to become U.S. president?`,
+    choices:[
+      `At least 35 years old, natural-born citizen, and a U.S. resident for a minimum of 14 years`,
+      `Must hold a hereditary title of nobility granted by another country`,
+      `Must have lived in the same state for at least 20 continuous years`,
+      `Must have prior active-duty military service at the rank of officer`
+    ],
+    answer:0
+  },
+  {
+    chapter:12,
+    q:`In the nineteenth-century "Whig" view of the presidency, how was the office supposed to operate?`,
+    choices:[
+      `The president should mainly carry out the decisions of Congress rather than try to lead national policy`,
+      `The president should routinely overpower Congress and dictate all major policy choices`,
+      `The Supreme Court should serve as the primary national policymaker instead of elected branches`,
+      `Political parties in the states should collectively control every important executive decision`
+    ],
+    answer:0
+  },
+  {
+    chapter:12,
+    q:`In presidential campaigns, what is meant by the "invisible primary"?`,
+    choices:[
+      `The early phase of fundraising, polling, and media activity before votes are cast to show that a candidate is viable`,
+      `A confidential internal party vote in which party leaders secretly choose the nominee`,
+      `The formal meeting of the Electoral College when electors cast their ballots`,
+      `The first binding primary election held in New Hampshire`
+    ],
+    answer:0
+  },
+  {
+    chapter:12,
+    q:`Most states follow a "unit rule" in the Electoral College. What does this rule do?`,
+    choices:[
+      `The candidate who wins the statewide popular vote typically receives all of that state's electoral votes`,
+      `Electoral votes are divided strictly in proportion to each candidate's share of the statewide vote`,
+      `Each congressional district always awards one electoral vote to the national popular-vote winner`,
+      `The House of Representatives distributes electoral votes equally among all the states`
+    ],
+    answer:0
+  },
+  {
+    chapter:12,
+    q:`How many electoral votes must a presidential candidate earn to win the election?`,
+    choices:[
+      `270 electoral votes`,
+      `269 electoral votes`,
+      `300 electoral votes`,
+      `All 538 electoral votes`
+    ],
+    answer:0
+  },
+  {
+    chapter:12,
+    q:`In the U.S. government, what is the president's Cabinet?`,
+    choices:[
+      `The heads of the 15 executive departments, selected by the president and confirmed by the Senate`,
+      `The justices of the United States Supreme Court who advise the president on law`,
+      `The leaders of the majority and minority parties in both chambers of Congress`,
+      `The governors of the 50 states meeting to coordinate federal policy`
+    ],
+    answer:0
+  },
+  {
+    chapter:12,
+    q:`Which description best fits a parliamentary system of government?`,
+    choices:[
+      `The prime minister leads the cabinet and usually governs with the support of a majority in the legislature`,
+      `A president is chosen separately from the legislature for a fixed term`,
+      `All laws are made directly by citizens through frequent national referendums`,
+      `State governments retain nearly all power and there is no meaningful national government`
+    ],
+    answer:0
+  },
+  {
+    chapter:12,
+    q:`Why is political scientist Richard Neustadt important in the study of the presidency?`,
+    choices:[
+      `He argued that presidential power rests largely on the ability to persuade others, not just on formal powers`,
+      `He designed the modern Electoral College system used to pick presidents`,
+      `He served as Speaker of the House during the New Deal era`,
+      `He wrote the first federal budget law that created today's executive agencies`
+    ],
+    answer:0
+  },
+
+  // Ch. 13
+  {
+    chapter:13,
+    q:`In public administration, what is a bureaucracy?`,
+    choices:[
+      `An organization with a clear hierarchy, specialized jobs, and formal rules and procedures`,
+      `A legislative body made up of two separate chambers`,
+      `A nationwide network of federal and state courts`,
+      `A local political party machine that runs elections`
+    ],
+    answer:0
+  },
+  {
+    chapter:13,
+    q:`Deepwater Horizon refers to which of the following?`,
+    choices:[
+      `A BP offshore drilling platform that exploded in 2010, causing a massive oil spill in the Gulf of Mexico`,
+      `A landmark Supreme Court case involving environmental regulations`,
+      `A hurricane that struck the Gulf Coast in 2005`,
+      `A major international agreement on climate change`
+    ],
+    answer:0
+  },
+  {
+    chapter:13,
+    q:`What is a "government corporation" such as Amtrak?`,
+    choices:[
+      `An agency that sells services to the public, operates like a business, and may also receive federal funding`,
+      `A private nonprofit organization that cooperates with the government but is not part of it`,
+      `A cabinet-level department responsible for national defense`,
+      `A permanent committee in Congress that oversees the bureaucracy`
+    ],
+    answer:0
+  },
+  {
+    chapter:13,
+    q:`Regulatory agencies are primarily responsible for what function?`,
+    choices:[
+      `Issuing rules and enforcing them in specific economic or social policy areas`,
+      `Running national election campaigns for members of Congress`,
+      `Negotiating treaties with foreign governments on behalf of states`,
+      `Choosing federal judges for appointment to the courts`
+    ],
+    answer:0
+  },
+  {
+    chapter:13,
+    q:`Independent agencies like NASA or the CIA are best described in which way?`,
+    choices:[
+      `They are federal bodies outside the cabinet departments with narrower, specialized missions`,
+      `They are subcommittees within the House and Senate that handle routine procedural matters`,
+      `They are temporary advisory boards that dissolve after issuing a report`,
+      `They are private companies contracted to provide services to the military`
+    ],
+    answer:0
+  },
+  {
+    chapter:13,
+    q:`What are presidential commissions?`,
+    choices:[
+      `Advisory groups created to give the president recommendations; some are temporary and others are permanent`,
+      `Standing legislative committees required by the Constitution for each chamber of Congress`,
+      `Party organizations that nominate candidates at national conventions`,
+      `State constitutional conventions called to rewrite state governing documents`
+    ],
+    answer:0
+  },
+  {
+    chapter:13,
+    q:`Under the merit system, how are most federal civil service jobs filled?`,
+    choices:[
+      `Through competitive examinations or professional qualifications rather than through political favoritism`,
+      `By seniority within a political party organization at the local level`,
+      `By personal appointment from members of Congress in each district`,
+      `By random lottery among all adult citizens who apply`
+    ],
+    answer:0
+  },
+  {
+    chapter:13,
+    q:`The "spoils system" in U.S. history involved which practice?`,
+    choices:[
+      `Granting government jobs to supporters of the winning party as a reward for their loyalty`,
+      `Selecting federal judges solely on the basis of legal scholarship and experience`,
+      `Requiring all civil service employees to pass a standardized exam`,
+      `Firing political opponents from office only when they committed serious crimes`
+    ],
+    answer:0
+  },
+  {
+    chapter:13,
+    q:`In the context of government employment, what is patronage?`,
+    choices:[
+      `Using public jobs, contracts, or other benefits to reward political allies and party supporters`,
+      `Hiring only applicants with the highest scores on a national civil service test`,
+      `Limiting presidential appointments to people who already work in the bureaucracy`,
+      `Requiring that all federal employees be elected by the public`
+    ],
+    answer:0
+  },
+  {
+    chapter:13,
+    q:`What was the main effect of the Pendleton Act of 1883?`,
+    choices:[
+      `It created a federal civil service based on merit and protected many workers from being removed for political reasons`,
+      `It established the Social Security retirement program for older Americans`,
+      `It set strict limits on individual campaign contributions to candidates`,
+      `It created the Environmental Protection Agency to enforce pollution standards`
+    ],
+    answer:0
+  },
+  {
+    chapter:13,
+    q:`Which statement accurately summarizes the federal budget process?`,
+    choices:[
+      `The president proposes a budget, Congress passes laws authorizing and appropriating funds, and agencies spend the money under oversight`,
+      `The Supreme Court drafts the budget and sends it directly to federal agencies for implementation`,
+      `State legislatures approve the federal budget through a national referendum each year`,
+      `Only the president decides what to spend and can bypass Congress on all budget matters`
+    ],
+    answer:0
+  },
+  {
+    chapter:13,
+    q:`Who are an agency's "clientele groups"?`,
+    choices:[
+      `Individuals or organizations that benefit from the agency's programs and therefore tend to support and defend it`,
+      `Opposition parties that seek to cut the agency's funding and powers`,
+      `Foreign governments that negotiate with the agency on trade policy`,
+      `Judges who review the agency's decisions in federal court`
+    ],
+    answer:0
+  },
+  {
+    chapter:13,
+    q:`What is the role of the Government Accountability Office (GAO)?`,
+    choices:[
+      `It audits how federal funds are spent and evaluates whether programs are working as Congress intended`,
+      `It sets federal tax rates and collects income taxes from individuals`,
+      `It writes and passes all major federal spending bills`,
+      `It prosecutes members of Congress who violate ethics rules`
+    ],
+    answer:0
+  },
+  {
+    chapter:13,
+    q:`Whistleblowing occurs when federal employees do which of the following?`,
+    choices:[
+      `Report waste, fraud, or abuse inside an agency and receive legal protection from retaliation`,
+      `Secretly lobby Congress for larger agency budgets`,
+      `Refuse to testify before congressional committees about agency practices`,
+      `Switch to working for a private company that the agency regulates`
+    ],
+    answer:0
+  },
+
+  // Ch. 15
+  {
+    chapter:15,
+    q:`Laissez-faire economics is based on which idea?`,
+    choices:[
+      `Private firms should make their own production and pricing decisions with minimal government interference, letting markets work through the "invisible hand"`,
+      `Government should tightly control all prices and wages to avoid instability in markets`,
+      `Economic activity should be planned by a single central authority that owns all major industries`,
+      `Trade should be restricted so that a country always exports more than it imports`
+    ],
+    answer:0
+  },
+  {
+    chapter:15,
+    q:`Adam Smith is best known in economics for which contribution?`,
+    choices:[
+      `He defended free markets and the "invisible hand" in his 1776 work on laissez-faire capitalism`,
+      `He introduced the theory that government stimulus spending is the only solution to every recession`,
+      `He designed the modern system of central planning used in command economies`,
+      `He wrote the U.S. Constitution's commerce clause that regulates trade between states`
+    ],
+    answer:0
+  },
+  {
+    chapter:15,
+    q:`What is meant by deregulation in economic policy?`,
+    choices:[
+      `Reducing or removing government rules on businesses in hopes of increasing efficiency, even though it can increase certain risks`,
+      `Creating new federal agencies to oversee every sector of the economy`,
+      `Requiring government approval for every business decision made by large firms`,
+      `Nationalizing all major industries under direct government ownership`
+    ],
+    answer:0
+  },
+  {
+    chapter:15,
+    q:`Rachel Carson is historically significant because she...`,
+    choices:[
+      `Wrote "Silent Spring," which helped spark modern environmental awareness and policy reforms in the 1960s`,
+      `Served as the first administrator of the Environmental Protection Agency`,
+      `Authored The Federalist Papers in support of the new Constitution`,
+      `Was a Supreme Court justice who ruled on key pollution cases`
+    ],
+    answer:0
+  },
+  {
+    chapter:15,
+    q:`Fiscal policy refers to the government's decisions about what?`,
+    choices:[
+      `How much to tax and how much to spend in order to influence the overall level of economic activity`,
+      `How many dollars to print and release into circulation each year`,
+      `How to interpret constitutional limits on commerce and taxation`,
+      `How to set individual interest rates for private bank loans`
+    ],
+    answer:0
+  },
+  {
+    chapter:15,
+    q:`Monetary policy mainly involves what type of government action?`,
+    choices:[
+      `Adjusting the money supply and interest rates, usually through the Federal Reserve System`,
+      `Setting federal income tax brackets for households and corporations`,
+      `Deciding which social programs to fund in each state budget`,
+      `Determining how much the government will spend on military equipment`
+    ],
+    answer:0
+  },
+  {
+    chapter:15,
+    q:`John Maynard Keynes argued which of the following about economic downturns?`,
+    choices:[
+      `Government should increase spending and possibly reduce taxes to boost total demand during recessions`,
+      `Government should always cut spending sharply during recessions to balance the budget`,
+      `Private charity alone is sufficient to solve unemployment problems in a modern economy`,
+      `Only the central bank, not elected officials, should ever respond to a recession`
+    ],
+    answer:0
+  },
+  {
+    chapter:15,
+    q:`What is a federal budget deficit?`,
+    choices:[
+      `The amount by which government spending in a given year exceeds government revenue in that same year`,
+      `The total amount of money the government owes to all creditors over time`,
+      `The difference between exports and imports in international trade`,
+      `A situation in which tax revenues exceed government spending for the year`
+    ],
+    answer:0
+  },
+  {
+    chapter:15,
+    q:`The national debt is defined as...`,
+    choices:[
+      `The total amount the federal government owes to all holders of U.S. government securities`,
+      `The shortfall between spending and revenue for the current fiscal year only`,
+      `The sum of all state and local government debts combined with household debts`,
+      `The estimated cost of every federal program proposed for the next decade`
+    ],
+    answer:0
+  },
+  {
+    chapter:15,
+    q:`The Federal Reserve Act of 1913 did which of the following?`,
+    choices:[
+      `Established the Federal Reserve System and its Board of Governors to oversee the nation's money and banking system`,
+      `Created the Social Security program for retired workers and their families`,
+      `Banned the private ownership of gold within the United States`,
+      `Set up the Securities and Exchange Commission to regulate the stock market`
+    ],
+    answer:0
+  },
+  {
+    chapter:15,
+    q:`Economists use the term inflation to describe what?`,
+    choices:[
+      `A sustained overall increase in the average level of prices across the economy`,
+      `A one-time rise in the price of a single product, such as gasoline`,
+      `A period when many prices are falling rapidly for most goods and services`,
+      `A situation in which all prices remain completely unchanged over many years`
+    ],
+    answer:0
+  },
+  {
+    chapter:15,
+    q:`In the context of economic policy, who is Janet Yellen?`,
+    choices:[
+      `An economist who served as Chair of the Federal Reserve from 2014 to 2018`,
+      `The current Chief Justice of the United States Supreme Court`,
+      `The long-time leader of the majority party in the Senate`,
+      `The first person to head both the FBI and the CIA at the same time`
+    ],
+    answer:0
+  },
+
+  // Ch. 16
+  {
+    chapter:16,
+    q:`Which statement best describes a progressive tax?`,
+    choices:[
+      `As income rises, the tax rate increases so higher earners pay a larger share of their income`,
+      `Everyone pays the exact same dollar amount in taxes regardless of income`,
+      `All taxpayers pay the same percentage of income no matter how much they earn`,
+      `Low-income taxpayers pay no taxes while high-income taxpayers pay only a sales tax`
+    ],
+    answer:0
+  },
+  {
+    chapter:16,
+    q:`What is a regressive tax?`,
+    choices:[
+      `A tax that takes a larger percentage of income from low-income people than from those with higher incomes`,
+      `A tax with higher marginal rates on higher levels of income`,
+      `A tax that charges the same percentage of income to everyone`,
+      `A tax applied only to very wealthy estates when a person dies`
+    ],
+    answer:0
+  },
+  {
+    chapter:16,
+    q:`In U.S. policy, what is the "poverty line"?`,
+    choices:[
+      `An official income threshold for poverty, historically based on the cost of a basic food plan multiplied by three`,
+      `The average income of all workers in the labor force in a given year`,
+      `The income level that separates the middle class from the upper class`,
+      `The point at which unemployment benefits automatically begin for a worker`
+    ],
+    answer:0
+  },
+  {
+    chapter:16,
+    q:`AFDC, which ended in the 1990s, was a program that...`,
+    choices:[
+      `Provided cash assistance to low-income families with dependent children before it was replaced by TANF in 1996`,
+      `Offered health insurance to nearly all retired workers aged 65 and older`,
+      `Guaranteed unemployment insurance benefits to everyone who lost a job`,
+      `Paid college tuition for all students who maintained a high grade point average`
+    ],
+    answer:0
+  },
+  {
+    chapter:16,
+    q:`A means test in social policy is used to do what?`,
+    choices:[
+      `Determine whether an applicant's income and assets are low enough to qualify for a benefit`,
+      `Measure how satisfied citizens are with different government programs`,
+      `Assess whether a law is constitutional under Supreme Court standards`,
+      `Identify which policy proposals are most likely to pass in Congress`
+    ],
+    answer:0
+  },
+  {
+    chapter:16,
+    q:`Which of the following defines an entitlement program?`,
+    choices:[
+      `A government program that guarantees benefits to all individuals who meet the legal eligibility rules`,
+      `A program that Congress funds only when there is a yearly budget surplus`,
+      `A short-term grant program that can be given or taken away at any time`,
+      `A voluntary charity program operated entirely by private donors`
+    ],
+    answer:0
+  },
+  {
+    chapter:16,
+    q:`What is Medicare?`,
+    choices:[
+      `A social insurance program that provides health coverage for most people age 65 and older, financed mainly by payroll taxes`,
+      `A means-tested health insurance program for low-income children only`,
+      `An optional private insurance plan for members of Congress`,
+      `A temporary emergency program that offers short-term housing assistance`
+    ],
+    answer:0
+  },
+  {
+    chapter:16,
+    q:`What is Medicaid?`,
+    choices:[
+      `A public assistance program in which government helps pay health care costs for many low-income individuals and families`,
+      `A retirement pension program that replaces lost wages for older workers`,
+      `A health insurance program limited to active-duty members of the military`,
+      `A federal grant program that pays only for college tuition`
+    ],
+    answer:0
+  }
+];
+
+// Split into two groups of 21
+const GROUPS = {
+  A: BANK.slice(0,21),
+  B: BANK.slice(21,42)
+};
+
+// State per group
+const state = {
+  A: {pairs:[], left:[], right:[], center:[]},
+  B: {pairs:[], left:[], right:[], center:[]}
+};
+
+// ---------- Build group data ----------
+function buildPairs(items){
+  return items.map((x,i)=>({
+    id:i,
+    prompt:x.q,
+    answer:x.choices[x.answer]
+  }));
+}
+
+function initGroup(g){
+  const items = GROUPS[g];
+  const pairs = buildPairs(items);
+  state[g].pairs = pairs;
+  state[g].left = pairs.map((p,i)=>({key:i, text:p.prompt, chapter:items[i].chapter}));
+  const answers = pairs.map((p,i)=>({key:i, text:p.answer}));
+  state[g].right = shuffle(answers);
+  state[g].center = new Array(pairs.length).fill(null);
+  renderGroup(g);
+  updateScore(g);
+}
+
+// ---------- Rendering ----------
+function renderGroup(g){
+  renderLeft(g);
+  renderCenter(g);
+  renderRight(g);
+}
+
+function renderLeft(g){
+  const leftEl = document.getElementById('left'+g);
+  leftEl.innerHTML = '';
+  state[g].left.forEach((item, idx)=>{
+    const div = document.createElement('div');
+    div.className = 'prompt';
+    const num = document.createElement('div');
+    num.className = 'num';
+    // Numbering: Group A 1–21, Group B 22–42
+    const base = (g === 'A') ? 1 : 22;
+    num.textContent = base + idx;
+    const tx = document.createElement('div');
+    tx.className = 'text';
+    tx.textContent = item.text;
+    div.appendChild(num);
+    div.appendChild(tx);
+    leftEl.appendChild(div);
+  });
+}
+
+function renderCenter(g){
+  const centerEl = document.getElementById('center'+g);
+  centerEl.innerHTML = '';
+  const st = state[g];
+  st.center.forEach((ans, idx)=>{
+    const slot = document.createElement('div');
+    slot.className = 'slot' + (ans ? '' : ' empty');
+    slot.dataset.group = g;
+    slot.dataset.slot = idx;
+
+    const num = document.createElement('div');
+    num.className = 'num';
+    // Show same numbers as left
+    const base = (g === 'A') ? 1 : 22;
+    num.textContent = base + idx;
+    slot.appendChild(num);
+
+    const content = document.createElement('div');
+    content.className = 'text';
+    if(ans){
+      const inner = document.createElement('div');
+      inner.className = 'answer';
+      inner.setAttribute('draggable','true');
+      inner.dataset.group = g;
+      inner.dataset.origin = 'center';
+      inner.dataset.key = ans.key;
+      const badge = document.createElement('div');
+      badge.className = 'num';
+      badge.textContent = '⇄';
+      const tx = document.createElement('div');
+      tx.className = 'text';
+      tx.textContent = ans.text;
+      inner.appendChild(badge);
+      inner.appendChild(tx);
+      addAnswerDragHandlers(inner);
+      content.textContent = '';
+      content.appendChild(inner);
+    } else {
+      content.innerHTML = '<span class="placeholder">Drop answer here</span>';
+    }
+    slot.appendChild(content);
+    addSlotHandlers(slot);
+    centerEl.appendChild(slot);
+  });
+}
+
+function renderRight(g){
+  const rightEl = document.getElementById('right'+g);
+  rightEl.innerHTML = '';
+  const st = state[g];
+  st.right.forEach((item, idx)=>{
+    const div = document.createElement('div');
+    div.className = 'answer';
+    div.setAttribute('draggable','true');
+    div.dataset.group = g;
+    div.dataset.origin = 'right';
+    div.dataset.key = item.key;
+    const badge = document.createElement('div');
+    badge.className = 'num';
+    // Letters A–U
+    badge.textContent = String.fromCharCode(65 + idx);
+    const tx = document.createElement('div');
+    tx.className = 'text';
+    tx.textContent = item.text;
+    div.appendChild(badge);
+    div.appendChild(tx);
+    addAnswerDragHandlers(div);
+    rightEl.appendChild(div);
+  });
+}
+
+// ---------- Drag & Drop ----------
+let dragData = null; // {group, from:'right'|'center', key, fromIndex?, fromSlot?}
+
+function addAnswerDragHandlers(node){
+  node.addEventListener('dragstart', (e)=>{
+    const group = node.dataset.group;
+    const origin = node.dataset.origin;
+    const key = Number(node.dataset.key);
+    dragData = {group, from:origin, key};
+
+    if(origin === 'right'){
+      const rightEl = document.getElementById('right'+group);
+      const idx = [...rightEl.children].indexOf(node);
+      dragData.fromIndex = idx;
+    } else if(origin === 'center'){
+      const st = state[group];
+      const slotIndex = st.center.findIndex(a=>a && a.key === key);
+      dragData.fromSlot = slotIndex;
+    }
+    e.dataTransfer.effectAllowed = 'move';
+    node.classList.add('dragging');
+  });
+
+  node.addEventListener('dragend', ()=>{
+    const group = node.dataset.group;
+    node.classList.remove('dragging');
+    renumberRight(group);
+  });
+}
+
+function addSlotHandlers(slot){
+  slot.addEventListener('dragover', (e)=>{
+    e.preventDefault();
+    slot.classList.add('drag-over');
+  });
+  slot.addEventListener('dragleave', ()=>{
+    slot.classList.remove('drag-over');
+  });
+  slot.addEventListener('drop', (e)=>{
+    e.preventDefault();
+    slot.classList.remove('drag-over');
+    if(!dragData) return;
+    const g = slot.dataset.group;
+    if(dragData.group !== g) return; // don't mix groups
+
+    const targetSlot = Number(slot.dataset.slot);
+    const st = state[g];
+
+    if(dragData.from === 'right'){
+      const answerObj = st.right.splice(dragData.fromIndex,1)[0];
+      if(st.center[targetSlot]){
+        // swap: existing center answer goes back to right
+        const displaced = st.center[targetSlot];
+        st.center[targetSlot] = answerObj;
+        st.right.push(displaced);
+      } else {
+        st.center[targetSlot] = answerObj;
+      }
+    } else if(dragData.from === 'center'){
+      const fromSlot = dragData.fromSlot;
+      if(fromSlot === targetSlot) return;
+      const temp = st.center[targetSlot];
+      st.center[targetSlot] = st.center[fromSlot];
+      st.center[fromSlot] = temp;
+    }
+
+    renderGroup(g);
+    updateScore(g,false); // don't re-grade yet
+    dragData = null;
+  });
+}
+
+// Allow dropping back into right column to "return" an answer
+['A','B'].forEach(g=>{
+  const rightEl = document.getElementById('right'+g);
+  rightEl.addEventListener('dragover', (e)=>{
+    e.preventDefault();
+    rightEl.classList.add('drag-over');
+  });
+  rightEl.addEventListener('dragleave', ()=>{
+    rightEl.classList.remove('drag-over');
+  });
+  rightEl.addEventListener('drop', (e)=>{
+    e.preventDefault();
+    rightEl.classList.remove('drag-over');
+    if(!dragData) return;
+    if(dragData.group !== g) return;
+    const st = state[g];
+
+    if(dragData.from === 'center'){
+      const fromSlot = dragData.fromSlot;
+      const moved = st.center[fromSlot];
+      if(moved){
+        st.center[fromSlot] = null;
+        st.right.push(moved);
+      }
+    }
+    renderGroup(g);
+    updateScore(g,false);
+    dragData = null;
+  });
+});
+
+function renumberRight(g){
+  const rightEl = document.getElementById('right'+g);
+  [...rightEl.querySelectorAll('.answer .num')].forEach((badge, idx)=>{
+    badge.textContent = String.fromCharCode(65 + idx);
+  });
+}
+
+// ---------- Scoring ----------
+function checkGroup(g){
+  const st = state[g];
+  let correct = 0;
+  const total = st.center.length;
+
+  // clear old markings
+  document.querySelectorAll('.slot[data-group="'+g+'"]').forEach(s=>{
+    s.classList.remove('correct','wrong');
+  });
+
+  st.center.forEach((ans, idx)=>{
+    const slot = document.querySelector('.slot[data-group="'+g+'"][data-slot="'+idx+'"]');
+    if(!slot) return;
+    if(ans && ans.key === idx){
+      slot.classList.add('correct');
+      correct++;
+    } else if(ans){
+      slot.classList.add('wrong');
+    }
+  });
+
+  updateScore(g,true,correct,total);
+}
+
+function updateScore(g,afterCheck=false,correct=0,total=0){
+  const scoreEl = document.getElementById('score'+g);
+  if(!afterCheck){
+    scoreEl.textContent = 'Score: —';
+    return;
+  }
+  const pct = total ? Math.round(correct/total*100) : 0;
+  scoreEl.textContent = `Score: ${correct} / ${total} (${pct}%)`;
+}
+
+// ---------- Init & buttons ----------
+initGroup('A');
+initGroup('B');
+
+document.getElementById('checkA').addEventListener('click', ()=>checkGroup('A'));
+document.getElementById('checkB').addEventListener('click', ()=>checkGroup('B'));
+
+document.getElementById('resetA').addEventListener('click', ()=>{
+  initGroup('A');
+});
+document.getElementById('resetB').addEventListener('click', ()=>{
+  initGroup('B');
+});
+</script>
+</body>
+</html>
