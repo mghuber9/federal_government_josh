@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Unit 3 — Matching (Three-Column Drag & Drop)</title>
+<style>
+  :root{
+    --bg:#0b1220; --panel:#101a2c; --ink:#e6edf3; --muted:#9fb0c6; --accent:#4fd1c5;
+    --ok:#22c55e; --bad:#ef4444; --tile:#0f2034; --tile-border:rgba(255,255,255,.12);
+  }
+  *{box-sizing:border-box}
+  body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial; color:var(--ink); background:radial-gradient(1100px 700px at 20% -10%, #13233d 0%, var(--bg) 60%);} 
+  .wrap{max-width:1100px; margin:0 auto; padding:24px}
+  h1{margin:0 0 6px; font-size:clamp(22px,3vw,32px)}
+  p,label{color:var(--muted)}
+  .card{background:var(--panel); border:1px solid rgba(255,255,255,.06); border-radius:16px; padding:18px; box-shadow:0 6px 18px rgba(0,0,0,.25)}
+  .grid{display:grid; gap:12px}
+  .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  select,button{appearance:none; border:1px solid rgba(255,255,255,.12); background:#0f2034; color:var(--ink); padding:10px 12px; border-radius:12px; font-size:16px}
+  button{cursor:pointer; background:linear-gradient(135deg,#1f3a5b,#17314f); border:1px solid rgba(79,209,197,.45)}
+  button:hover{filter:brightness(1.08)}
+  .hidden{display:none}
+  .pill{display:inline-block; padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.12); background:#10243a; color:#a7c6ff; font-size:12px}
+  .hud{display:flex; gap:8px; align-items:center; justify-content:space-between; flex-wrap:wrap}
+  .sep{height:1px; background:rgba(255,255,255,.08); margin:12px 0}
+
+  /* Three-column layout */
+  .columns{display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px}
+  @media (max-width:980px){ .columns{grid-template-columns:1fr} }
+
+  .col-title{font-size:12px; letter-spacing:.04em; text-transform:uppercase; color:#a7c6ff; margin-bottom:8px}
+  .left, .center, .right{display:grid; gap:10px}
+  .prompt, .slot, .answer{border:1px solid var(--tile-border); background:var(--tile); border-radius:12px; padding:12px; min-height:64px; display:flex; gap:10px; align-items:center}
+  .prompt{position:relative}
+  .slot{justify-content:space-between}
+  .slot.empty{opacity:.7}
+  .placeholder{font-style:italic; color:var(--muted)}
+  .num{flex:0 0 auto; width:28px; height:28px; border-radius:50%; background:#112a46; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; border:1px solid rgba(255,255,255,.12)}
+  .text{flex:1 1 auto; font-size:clamp(15px,2vw,17px); line-height:1.35}
+  .ghost{opacity:.6}
+  .drag-over{outline:2px dashed var(--accent)}
+  .badge{font-size:12px; color:#a7c6ff}
+  .correct{background:#0e2b22; border-color:#1f8a67}
+  .wrong{background:#3a0f16; border-color:#ff6b6b}
+  .answer{cursor:grab}
+  .answer:active{cursor:grabbing}
+  /* Equal heights across columns */
+  .sameHeight{height:var(--rowH,auto)}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Matching — Unit 3 (Ch. 12–16)</h1>
+    <p class="muted">Drag from <strong>Unused Answers</strong> (right) into the <strong>Answer Slots</strong> (center). You can also drag a placed answer to a different slot or back to Unused. Finish to review only missed items, then optionally retry just those.</p>
+
+    <!-- START -->
+    <section id="start" class="card grid">
+      <div class="grid grid-2">
+        <div>
+          <label for="section">Set</label>
+          <select id="section">
+            <option value="ch12">Ch. 12 (all)</option>
+            <option value="ch13">Ch. 13 (all)</option>
+            <option value="ch15">Ch. 15 (all)</option>
+            <option value="ch16">Ch. 16 (all)</option>
+            <option value="unit3" selected>Unit 3 (two sets of 21)</option>
+          </select>
+        </div>
+        <div>
+          <label for="size">Items</label>
+          <select id="size">
+            <option value="auto" selected>Auto</option>
+            <option value="6">6</option>
+            <option value="10">10</option>
+            <option value="14">14</option>
+            <option value="20">20</option>
+          </select>
+        </div>
+      </div>
+      <div class="hud">
+        <div class="pill">Fill the center column by dragging answers from the right</div>
+        <button id="begin">Start Round</button>
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="quiz" class="card hidden">
+      <div class="hud">
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+          <span class="pill" id="setTag">Set</span>
+          <span class="pill" id="progress">Filled 0 / 0</span>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+          <span class="pill" id="timer">00:00</span>
+          <span class="pill" id="best">Best: —</span>
+          <button id="finish">Finish & Review</button>
+        </div>
+      </div>
+      <div class="sep"></div>
+
+      <div class="columns">
+        <div>
+          <div class="col-title">Prompts</div>
+          <div class="left" id="left"></div>
+        </div>
+        <div>
+          <div class="col-title">Answer Slots</div>
+          <div class="center" id="center"></div>
+        </div>
+        <div>
+          <div class="col-title">Unused Answers</div>
+          <div class="right" id="right"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULT -->
+    <section id="result" class="card hidden">
+      <h2 style="margin:0 0 6px">Round Complete</h2>
+      <div class="hud" style="margin-bottom:6px">
+        <span class="pill" id="scoreline">Score</span>
+        <span class="pill" id="timeline">Time</span>
+        <span class="pill" id="bestline">Best</span>
+      </div>
+      <div class="sep"></div>
+      <div id="review"></div>
+      <div class="hud">
+        <button id="retry">New Round</button>
+        <button id="retryMissed">Retry Missed Only</button>
+        <button id="restart">Back to Start</button>
+      </div>
+    </section>
+  </div>
+
+<script>
+
+function shuffle(a){ const r=[...a]; for(let i=r.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [r[i],r[j]]=[r[j],r[i]]; } return r; }
+function fmtTime(s){ const m=Math.floor(s/60).toString().padStart(2,'0'); const ss=(s%60).toString().padStart(2,'0'); return `${m}:${ss}`; }
+
+// ---------- Question Bank (unchanged) ----------
+// ---------- Question Bank ----------
+const BANK = [
+  // ===== Ch. 12 (8, reworded) =====
+  {
+    chapter:12,set:'ch12',
+    q:'Which statement correctly describes the formal qualifications to become U.S. president?',
+    choices:[
+      'At least 35 years old, natural-born citizen, && a U.S. resident for a minimum of 14 years',
+      'Must hold a hereditary title of nobility granted by another country',
+      'Must have lived in the same state for at least 20 continuous years',
+      'Must have prior active-duty military service at the rank of officer'
+    ],
+    answer:0
+  },
+  {
+    chapter:12,set:'ch12',
+    q:'In the nineteenth-century "Whig" view of the presidency, how was the office supposed to operate?',
+    choices:[
+      'The president should mainly carry out the decisions of Congress rather than try to lead national policy',
+      'The president should routinely overpower Congress && dictate all major policy choices',
+      'The Supreme Court should serve as the primary national policymaker instead of elected branches',
+      'Political parties in the states should collectively control every important executive decision'
+    ],
+    answer:0
+  },
+  {
+    chapter:12,set:'ch12',
+    q:'In presidential campaigns, what is meant by the "invisible primary"?',
+    choices:[
+      'The early phase of fundraising, polling, && media activity before votes are cast to show that a candidate is viable',
+      'A confidential internal party vote in which party leaders secretly choose the nominee',
+      'The formal meeting of the Electoral College when electors cast their ballots',
+      'The first binding primary election held in New Hampshire'
+    ],
+    answer:0
+  },
+  {
+    chapter:12,set:'ch12',
+    q:'Most states follow a "unit rule" in the Electoral College. What does this rule do?',
+    choices:[
+      'The candidate who wins the statewide popular vote typically receives all of that state\'s electoral votes',
+      'Electoral votes are divided strictly in proportion to each candidate\'s share of the statewide vote',
+      'Each congressional district always awards one electoral vote to the national popular-vote winner',
+      'The House of Representatives distributes electoral votes equally among all the states'
+    ],
+    answer:0
+  },
+  {
+    chapter:12,set:'ch12',
+    q:'How many electoral votes must a presidential candidate earn to win the election?',
+    choices:[
+      '270 electoral votes',
+      '269 electoral votes',
+      '300 electoral votes',
+      'All 538 electoral votes'
+    ],
+    answer:0
+  },
+  {
+    chapter:12,set:'ch12',
+    q:'In the U.S. government, what is the president\'s Cabinet?',
+    choices:[
+      'The heads of the 15 executive departments, selected by the president && confirmed by the Senate',
+      'The justices of the United States Supreme Court who advise the president on law',
+      'The leaders of the majority && minority parties in both chambers of Congress',
+      'The governors of the 50 states meeting to coordinate federal policy'
+    ],
+    answer:0
+  },
+  {
+    chapter:12,set:'ch12',
+    q:'Which description best fits a parliamentary system of government?',
+    choices:[
+      'The prime minister leads the cabinet && usually governs with the support of a majority in the legislature',
+      'A president is chosen separately from the legislature for a fixed term',
+      'All laws are made directly by citizens through frequent national referendums',
+      'State governments retain nearly all power && there is no meaningful national government'
+    ],
+    answer:0
+  },
+  {
+    chapter:12,set:'ch12',
+    q:'Why is political scientist Richard Neustadt important in the study of the presidency?',
+    choices:[
+      'He argued that presidential power rests largely on the ability to persuade others, not just on formal powers',
+      'He designed the modern Electoral College system used to pick presidents',
+      'He served as Speaker of the House during the New Deal era',
+      'He wrote the first federal budget law that created today\'s executive agencies'
+    ],
+    answer:0
+  },
+
+  // ===== Ch. 13 (14, reworded) =====
+  {
+    chapter:13,set:'ch13',
+    q:'In public administration, what is a bureaucracy?',
+    choices:[
+      'An organization with a clear hierarchy, specialized jobs, && formal rules && procedures',
+      'A legislative body made up of two separate chambers',
+      'A nationwide network of federal && state courts',
+      'A local political party machine that runs elections'
+    ],
+    answer:0
+  },
+  {
+    chapter:13,set:'ch13',
+    q:'Deepwater Horizon refers to which of the following?',
+    choices:[
+      'A BP offshore drilling platform that exploded in 2010, causing a massive oil spill in the Gulf of Mexico',
+      'A landmark Supreme Court case involving environmental regulations',
+      'A hurricane that struck the Gulf Coast in 2005',
+      'A major international agreement on climate change'
+    ],
+    answer:0
+  },
+  {
+    chapter:13,set:'ch13',
+    q:'What is a "government corporation" such as Amtrak?',
+    choices:[
+      'An agency that sells services to the public, operates like a business, && may also receive federal funding',
+      'A private nonprofit organization that cooperates with the government but is not part of it',
+      'A cabinet-level department responsible for national defense',
+      'A permanent committee in Congress that oversees the bureaucracy'
+    ],
+    answer:0
+  },
+  {
+    chapter:13,set:'ch13',
+    q:'Regulatory agencies are primarily responsible for what function?',
+    choices:[
+      'Issuing rules && enforcing them in specific economic or social policy areas',
+      'Running national election campaigns for members of Congress',
+      'Negotiating treaties with foreign governments on behalf of states',
+      'Choosing federal judges for appointment to the courts'
+    ],
+    answer:0
+  },
+  {
+    chapter:13,set:'ch13',
+    q:'Independent agencies like NASA or the CIA are best described in which way?',
+    choices:[
+      'They are federal bodies outside the cabinet departments with narrower, specialized missions',
+      'They are subcommittees within the House && Senate that handle routine procedural matters',
+      'They are temporary advisory boards that dissolve after issuing a report',
+      'They are private companies contracted to provide services to the military'
+    ],
+    answer:0
+  },
+  {
+    chapter:13,set:'ch13',
+    q:'What are presidential commissions?',
+    choices:[
+      'Advisory groups created to give the president recommendations; some are temporary && others are permanent',
+      'Standing legislative committees required by the Constitution for each chamber of Congress',
+      'Party organizations that nominate candidates at national conventions',
+      'State constitutional conventions called to rewrite state governing documents'
+    ],
+    answer:0
+  },
+  {
+    chapter:13,set:'ch13',
+    q:'Under the merit system, how are most federal civil service jobs filled?',
+    choices:[
+      'Through competitive examinations or professional qualifications rather than through political favoritism',
+      'By seniority within a political party organization at the local level',
+      'By personal appointment from members of Congress in each district',
+      'By random lottery among all adult citizens who apply'
+    ],
+    answer:0
+  },
+  {
+    chapter:13,set:'ch13',
+    q:'The "spoils system" in U.S. history involved which practice?',
+    choices:[
+      'Granting government jobs to supporters of the winning party as a reward for their loyalty',
+      'Selecting federal judges solely on the basis of legal scholarship && experience',
+      'Requiring all civil service employees to pass a standardized exam',
+      'Firing political opponents from office only when they committed serious crimes'
+    ],
+    answer:0
+  },
+  {
+    chapter:13,set:'ch13',
+    q:'In the context of government employment, what is patronage?',
+    choices:[
+      'Using public jobs, contracts, or other benefits to reward political allies && party supporters',
+      'Hiring only applicants with the highest scores on a national civil service test',
+      'Limiting presidential appointments to people who already work in the bureaucracy',
+      'Requiring that all federal employees be elected by the public'
+    ],
+    answer:0
+  },
+  {
+    chapter:13,set:'ch13',
+    q:'What was the main effect of the Pendleton Act of 1883?',
+    choices:[
+      'It created a federal civil service based on merit && protected many workers from being removed for political reasons',
+      'It established the Social Security retirement program for older Americans',
+      'It set strict limits on individual campaign contributions to candidates',
+      'It created the Environmental Protection Agency to enforce pollution standards'
+    ],
+    answer:0
+  },
+  {
+    chapter:13,set:'ch13',
+    q:'Which statement accurately summarizes the federal budget process?',
+    choices:[
+      'The president proposes a budget, Congress passes laws authorizing && appropriating funds, && agencies spend the money under oversight',
+      'The Supreme Court drafts the budget && sends it directly to federal agencies for implementation',
+      'State legislatures approve the federal budget through a national referendum each year',
+      'Only the president decides what to spend && can bypass Congress on all budget matters'
+    ],
+    answer:0
+  },
+  {
+    chapter:13,set:'ch13',
+    q:'Who are an agency\'s "clientele groups"?',
+    choices:[
+      'Individuals or organizations that benefit from the agency\'s programs && therefore tend to support && defend it',
+      'Opposition parties that seek to cut the agency\'s funding && powers',
+      'Foreign governments that negotiate with the agency on trade policy',
+      'Judges who review the agency\'s decisions in federal court'
+    ],
+    answer:0
+  },
+  {
+    chapter:13,set:'ch13',
+    q:'What is the role of the Government Accountability Office (GAO)?',
+    choices:[
+      'It audits how federal funds are spent && evaluates whether programs are working as Congress intended',
+      'It sets federal tax rates && collects income taxes from individuals',
+      'It writes && passes all major federal spending bills',
+      'It prosecutes members of Congress who violate ethics rules'
+    ],
+    answer:0
+  },
+  {
+    chapter:13,set:'ch13',
+    q:'Whistleblowing occurs when federal employees do which of the following?',
+    choices:[
+      'Report waste, fraud, or abuse inside an agency && receive legal protection from retaliation',
+      'Secretly lobby Congress for larger agency budgets',
+      'Refuse to testify before congressional committees about agency practices',
+      'Switch to working for a private company that the agency regulates'
+    ],
+    answer:0
+  },
+
+  // ===== Ch. 15 (12, reworded) =====
+  {
+    chapter:15,set:'ch15',
+    q:'Laissez-faire economics is based on which idea?',
+    choices:[
+      'Private firms should make their own production && pricing decisions with minimal government interference, letting markets work through the "invisible hand"',
+      'Government should tightly control all prices && wages to avoid instability in markets',
+      'Economic activity should be planned by a single central authority that owns all major industries',
+      'Trade should be restricted so that a country always exports more than it imports'
+    ],
+    answer:0
+  },
+  {
+    chapter:15,set:'ch15',
+    q:'Adam Smith is best known in economics for which contribution?',
+    choices:[
+      'He defended free markets && the "invisible hand" in his 1776 work on laissez-faire capitalism',
+      'He introduced the theory that government stimulus spending is the only solution to every recession',
+      'He designed the modern system of central planning used in command economies',
+      'He wrote the U.S. Constitution\'s commerce clause that regulates trade between states'
+    ],
+    answer:0
+  },
+  {
+    chapter:15,set:'ch15',
+    q:'What is meant by deregulation in economic policy?',
+    choices:[
+      'Reducing or removing government rules on businesses in hopes of increasing efficiency, even though it can increase certain risks',
+      'Creating new federal agencies to oversee every sector of the economy',
+      'Requiring government approval for every business decision made by large firms',
+      'Nationalizing all major industries under direct government ownership'
+    ],
+    answer:0
+  },
+  {
+    chapter:15,set:'ch15',
+    q:'Rachel Carson is historically significant because she...',
+    choices:[
+      'Wrote "Silent Spring," which helped spark modern environmental awareness && policy reforms in the 1960s',
+      'Served as the first administrator of the Environmental Protection Agency',
+      'Authored The Federalist Papers in support of the new Constitution',
+      'Was a Supreme Court justice who ruled on key pollution cases'
+    ],
+    answer:0
+  },
+  {
+    chapter:15,set:'ch15',
+    q:'Fiscal policy refers to the government\'s decisions about what?',
+    choices:[
+      'How much to tax && how much to spend in order to influence the overall level of economic activity',
+      'How many dollars to print && release into circulation each year',
+      'How to interpret constitutional limits on commerce && taxation',
+      'How to set individual interest rates for private bank loans'
+    ],
+    answer:0
+  },
+  {
+    chapter:15,set:'ch15',
+    q:'Monetary policy mainly involves what type of government action?',
+    choices:[
+      'Adjusting the money supply && interest rates, usually through the Federal Reserve System',
+      'Setting federal income tax brackets for households && corporations',
+      'Deciding which social programs to fund in each state budget',
+      'Determining how much the government will spend on military equipment'
+    ],
+    answer:0
+  },
+  {
+    chapter:15,set:'ch15',
+    q:'John Maynard Keynes argued which of the following about economic downturns?',
+    choices:[
+      'Government should increase spending && possibly reduce taxes to boost total demand during recessions',
+      'Government should always cut spending sharply during recessions to balance the budget',
+      'Private charity alone is sufficient to solve unemployment problems in a modern economy',
+      'Only the central bank, not elected officials, should ever respond to a recession'
+    ],
+    answer:0
+  },
+  {
+    chapter:15,set:'ch15',
+    q:'What is a federal budget deficit?',
+    choices:[
+      'The amount by which government spending in a given year exceeds government revenue in that same year',
+      'The total amount of money the government owes to all creditors over time',
+      'The difference between exports && imports in international trade',
+      'A situation in which tax revenues exceed government spending for the year'
+    ],
+    answer:0
+  },
+  {
+    chapter:15,set:'ch15',
+    q:'The national debt is defined as...',
+    choices:[
+      'The total amount the federal government owes to all holders of U.S. government securities',
+      'The shortfall between spending && revenue for the current fiscal year only',
+      'The sum of all state && local government debts combined with household debts',
+      'The estimated cost of every federal program proposed for the next decade'
+    ],
+    answer:0
+  },
+  {
+    chapter:15,set:'ch15',
+    q:'The Federal Reserve Act of 1913 did which of the following?',
+    choices:[
+      'Established the Federal Reserve System && its Board of Governors to oversee the nation\'s money && banking system',
+      'Created the Social Security program for retired workers && their families',
+      'Banned the private ownership of gold within the United States',
+      'Set up the Securities && Exchange Commission to regulate the stock market'
+    ],
+    answer:0
+  },
+  {
+    chapter:15,set:'ch15',
+    q:'Economists use the term inflation to describe what?',
+    choices:[
+      'A sustained overall increase in the average level of prices across the economy',
+      'A one-time rise in the price of a single product, such as gasoline',
+      'A period when many prices are falling rapidly for most goods && services',
+      'A situation in which all prices remain completely unchanged over many years'
+    ],
+    answer:0
+  },
+  {
+    chapter:15,set:'ch15',
+    q:'In the context of economic policy, who is Janet Yellen?',
+    choices:[
+      'An economist who served as Chair of the Federal Reserve from 2014 to 2018',
+      'The current Chief Justice of the United States Supreme Court',
+      'The long-time leader of the majority party in the Senate',
+      'The first person to head both the FBI && the CIA at the same time'
+    ],
+    answer:0
+  },
+
+  // ===== Ch. 16 (8, reworded) =====
+  {
+    chapter:16,set:'ch16',
+    q:'Which statement best describes a progressive tax?',
+    choices:[
+      'As income rises, the tax rate increases so higher earners pay a larger share of their income',
+      'Everyone pays the exact same dollar amount in taxes regardless of income',
+      'All taxpayers pay the same percentage of income no matter how much they earn',
+      'Low-income taxpayers pay no taxes while high-income taxpayers pay only a sales tax'
+    ],
+    answer:0
+  },
+  {
+    chapter:16,set:'ch16',
+    q:'What is a regressive tax?',
+    choices:[
+      'A tax that takes a larger percentage of income from low-income people than from those with higher incomes',
+      'A tax with higher marginal rates on higher levels of income',
+      'A tax that charges the same percentage of income to everyone',
+      'A tax applied only to very wealthy estates when a person dies'
+    ],
+    answer:0
+  },
+  {
+    chapter:16,set:'ch16',
+    q:'In U.S. policy, what is the "poverty line"?',
+    choices:[
+      'An official income threshold for poverty, historically based on the cost of a basic food plan multiplied by three',
+      'The average income of all workers in the labor force in a given year',
+      'The income level that separates the middle class from the upper class',
+      'The point at which unemployment benefits automatically begin for a worker'
+    ],
+    answer:0
+  },
+  {
+    chapter:16,set:'ch16',
+    q:'AFDC, which ended in the 1990s, was a program that...',
+    choices:[
+      'Provided cash assistance to low-income families with dependent children before it was replaced by TANF in 1996',
+      'Offered health insurance to nearly all retired workers aged 65 && older',
+      'Guaranteed unemployment insurance benefits to everyone who lost a job',
+      'Paid college tuition for all students who maintained a high grade point average'
+    ],
+    answer:0
+  },
+  {
+    chapter:16,set:'ch16',
+    q:'A means test in social policy is used to do what?',
+    choices:[
+      'Determine whether an applicant\'s income && assets are low enough to qualify for a benefit',
+      'Measure how satisfied citizens are with different government programs',
+      'Assess whether a law is constitutional under Supreme Court standards',
+      'Identify which policy proposals are most likely to pass in Congress'
+    ],
+    answer:0
+  },
+  {
+    chapter:16,set:'ch16',
+    q:'Which of the following defines an entitlement program?',
+    choices:[
+      'A government program that guarantees benefits to all individuals who meet the legal eligibility rules',
+      'A program that Congress funds only when there is a yearly budget surplus',
+      'A short-term grant program that can be given or taken away at any time',
+      'A voluntary charity program operated entirely by private donors'
+    ],
+    answer:0
+  },
+  {
+    chapter:16,set:'ch16',
+    q:'What is Medicare?',
+    choices:[
+      'A social insurance program that provides health coverage for most people age 65 && older, financed mainly by payroll taxes',
+      'A means-tested health insurance program for low-income children only',
+      'An optional private insurance plan for members of Congress',
+      'A temporary emergency program that offers short-term housing assistance'
+    ],
+    answer:0
+  },
+  {
+    chapter:16,set:'ch16',
+    q:'What is Medicaid?',
+    choices:[
+      'A public assistance program in which government helps pay health care costs for many low-income individuals && families',
+      'A retirement pension program that replaces lost wages for older workers',
+      'A health insurance program limited to active-duty members of the military',
+      'A federal grant program that pays only for college tuition'
+    ],
+    answer:0
+  },
+
+  // ===== Ch. 17 (10, original) =====
+  {chapter:17, set:'ch17',
+   q:'What is the primary mission of the Department of Homeland Security (DHS)?',
+   choices:[
+    'Coordinate domestic security by preventing && responding to terrorism && major hazards within the U.S.',
+    'Conduct foreign intelligence operations abroad',
+    'Set && enforce monetary policy for the U.S. economy',
+    'Adjudicate federal crimes through the court system'
+   ],
+   answer:0
+  },
+
+  {chapter:17, set:'ch17',
+   q:'Which best describes a key shift in U.S. foreign policy after 9/11?',
+   choices:[
+    'Greater emphasis on counterterrorism && preemptive action, alongside the creation of DHS',
+    'A return to strict isolationism && reduced global engagement',
+    'Exclusive reliance on soft power && multilateral treaties',
+    'Large-scale demobilization of the U.S. military && intelligence community'
+   ],
+   answer:0
+  },
+
+  {chapter:17,set:'ch17',q:'What is soft power?',choices:['Influence via culture, diplomacy, aid, && persuasion rather than military force','Naval blockade','Air strikes','Troop surge'],answer:0},
+  {chapter:17,set:'ch17',q:'What are tariffs?',choices:['Taxes on imports used to raise revenue or protect domestic industries','Export subsidies only','Interest-rate caps','Immigration quotas'],answer:0},
+  {chapter:17,set:'ch17',q:'What is isolationism?',choices:['Non-involvement in international alliances && conflicts','Collective security','Alliance leadership','Forward deployment'],answer:0},
+  {chapter:17,set:'ch17',q:'What is the preemptive war doctrine?',choices:['Striking a potential adversary first when an attack is believed imminent','Deterrence only','Appeasement','Containment only'],answer:0},
+  {chapter:17,set:'ch17',q:'A bipolar world structure refers to…',choices:['An international system dominated by two superpowers','A multipolar system','A unipolar world','A purely non-aligned world'],answer:0},
+  {chapter:17,set:'ch17',q:'What was the Cold War?',choices:['Period of geopolitical tension (c. 1947–1991) between the U.S.-led West && the Soviet bloc','World War II','Only the Korean War','Only the Vietnam War'],answer:0},
+  {chapter:17,set:'ch17',q:'What was containment?',choices:['U.S. strategy to prevent the spread of Soviet influence/communism','Appeasement of adversaries','Rollback of democracy','Economic autarky'],answer:0},
+  {chapter:17,set:'ch17',q:'What is MAD (Mutually Assured Destruction)?',choices:['Nuclear deterrence concept where each side can inflict unacceptable damage','Massive arms reductions','A mutual defense treaty','Minimum credible deterrence'],answer:0}
+];
+
+const SETS = {
+  ch12: BANK.filter(x=>x.set==='ch12'),
+  ch13: BANK.filter(x=>x.set==='ch13'),
+  ch15: BANK.filter(x=>x.set==='ch15'),
+  ch16: BANK.filter(x=>x.set==='ch16'),
+  ch17: BANK.filter(x=>x.set==='ch17'),
+  unit3: [
+    ...BANK.filter(x => x.set === 'ch12'),
+    ...BANK.filter(x => x.set === 'ch13'),
+    ...BANK.filter(x => x.set === 'ch15'),
+    ...BANK.filter(x => x.set === 'ch16')
+  ]
+};
+
+
+
+// ---------- Two-Block capable engine ----------
+const SET_LABELS = { ch12:'Ch. 12', ch13:'Ch. 13', ch15:'Ch. 15', ch16:'Ch. 16', ch17:'Ch. 17', unit3:'Unit 3 (two sets of 21)' };
+
+class BlockMatcher{
+  constructor(rootEl, pairs, label){
+    this.root = rootEl;
+    this.pairs = pairs.map((p,i)=>({ id:i, chapter:p.chapter, prompt:p.q, answer:p.choices[p.answer] }));
+    this.left = this.pairs.map((p,i)=>({key:i, text:p.prompt, chapter:p.chapter}));
+    const answers = this.pairs.map((p,i)=>({key:i, text:p.answer}));
+    this.right = shuffle(answers);
+    this.center = new Array(this.pairs.length).fill(null);
+    this.seconds = 0;
+    this.timer = null;
+    this.label = label;
+    this.dragData = null;
+    this.render();
+    this.startTimer();
+  }
+  qs(sel){ return this.root.querySelector(sel); }
+  qsa(sel){ return Array.from(this.root.querySelectorAll(sel)); }
+  startTimer(){
+    this.stopTimer();
+    this.timer = setInterval(()=>{ this.seconds++; const t=this.qs('.pill.timer'); if(t) t.textContent = fmtTime(this.seconds); },1000);
+  }
+  stopTimer(){ if(this.timer){ clearInterval(this.timer); this.timer=null; } }
+  render(){
+    this.root.innerHTML = `
+      <div class="hud" style="margin-bottom:6px">
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+          <span class="pill">${this.label}</span>
+          <span class="pill progress">Filled 0 / ${this.center.length}</span>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+          <span class="pill timer">00:00</span>
+          <button class="finish">Finish & Review</button>
+        </div>
+      </div>
+      <div class="sep"></div>
+      <div class="columns">
+        <div>
+          <div class="col-title">Prompts</div>
+          <div class="left"></div>
+        </div>
+        <div>
+          <div class="col-title">Answer Slots</div>
+          <div class="center"></div>
+        </div>
+        <div>
+          <div class="col-title">Unused Answers</div>
+          <div class="right"></div>
+        </div>
+      </div>
+      <div class="sep"></div>
+      <div class="review card hidden" style="padding:12px"></div>
+    `;
+    this.renderLeft();
+    this.renderCenter();
+    this.renderRight();
+    this.updateProgress();
+    this.equalizeHeights();
+    this.qs('button.finish').addEventListener('click', ()=> this.finish());
+  }
+  renderLeft(){
+    const L = this.qs('.left'); L.innerHTML='';
+    this.left.forEach((item, idx)=>{
+      const div = document.createElement('div'); div.className='prompt sameHeight';
+      const num = document.createElement('div'); num.className='num'; num.textContent=idx+1; div.appendChild(num);
+      const tx = document.createElement('div'); tx.className='text'; tx.textContent=item.text; div.appendChild(tx);
+      L.appendChild(div);
+    });
+  }
+  renderCenter(){
+    const C = this.qs('.center'); C.innerHTML='';
+    this.center.forEach((ans, idx)=>{
+      const slot = document.createElement('div'); slot.className='slot sameHeight' + (ans? '' : ' empty');
+      slot.dataset.slot = idx;
+      const badge = document.createElement('div'); badge.className='num'; badge.textContent = idx+1; slot.appendChild(badge);
+      const content = document.createElement('div'); content.className='text';
+      if(ans){
+        const inner = document.createElement('div');
+        inner.className='answer sameHeight';
+        inner.setAttribute('draggable','true');
+        inner.dataset.key = ans.key;
+        inner.dataset.origin = 'center';
+        const num = document.createElement('div'); num.className='num'; num.textContent = '⇄'; inner.appendChild(num);
+        const tx = document.createElement('div'); tx.className='text'; tx.textContent = ans.text; inner.appendChild(tx);
+        this.addAnswerDragHandlers(inner);
+        content.innerHTML = '';
+        content.appendChild(inner);
+      } else {
+        content.innerHTML = `<span class="placeholder">Drop answer here</span>`;
+      }
+      slot.appendChild(content);
+      this.addSlotHandlers(slot);
+      C.appendChild(slot);
+    });
+  }
+  renderRight(){
+    const R = this.qs('.right'); R.innerHTML='';
+    this.right.forEach((item, idx)=>{
+      const div = this.createAnswerNode(item, 'right', idx);
+      div.classList.add('sameHeight');
+      R.appendChild(div);
+    });
+  }
+  createAnswerNode(item, origin, idx){
+    const div = document.createElement('div');
+    div.className='answer';
+    div.setAttribute('draggable','true');
+    div.dataset.key = item.key;
+    div.dataset.origin = origin;
+    const num = document.createElement('div'); num.className='num'; num.textContent = origin==='right' ? String.fromCharCode(65+idx) : '⇄';
+    const tx = document.createElement('div'); tx.className='text'; tx.textContent = item.text;
+    div.appendChild(num); div.appendChild(tx);
+    this.addAnswerDragHandlers(div);
+    return div;
+  }
+  updateProgress(){
+    const total = this.center.length;
+    const filled = this.center.filter(Boolean).length;
+    const p = this.qs('.pill.progress'); if(p) p.textContent = `Filled ${filled} / ${total}`;
+  }
+  addAnswerDragHandlers(node){
+    node.addEventListener('dragstart', (e)=>{
+      const key = Number(node.dataset.key);
+      const origin = node.dataset.origin;
+      this.dragData = {type:'answer', from:origin, key};
+      if(origin==='right'){
+        const idx = [...node.parentNode.children].indexOf(node);
+        this.dragData.fromIndex = idx;
+      } else if(origin==='center'){
+        const slotIndex = this.center.findIndex(a=>a && a.key===key);
+        this.dragData.fromSlot = slotIndex;
+      }
+      node.classList.add('ghost');
+      e.dataTransfer.effectAllowed='move';
+    });
+    node.addEventListener('dragend', ()=>{ node.classList.remove('ghost'); this.renumberRight(); this.equalizeHeights(); });
+  }
+  addSlotHandlers(slot){
+    slot.addEventListener('dragover', (e)=>{ e.preventDefault(); slot.classList.add('drag-over'); });
+    slot.addEventListener('dragleave', ()=> slot.classList.remove('drag-over'));
+    slot.addEventListener('drop', (e)=>{
+      e.preventDefault(); slot.classList.remove('drag-over');
+      if(!this.dragData || this.dragData.type!=='answer') return;
+      const targetSlot = Number(slot.dataset.slot);
+
+      if(this.dragData.from==='right'){
+        const answerObj = this.right.splice(this.dragData.fromIndex,1)[0];
+        if(this.center[targetSlot]){
+          const displaced = this.center[targetSlot];
+          this.center[targetSlot] = answerObj;
+          this.right.splice(this.dragData.fromIndex,0,displaced);
+        } else {
+          this.center[targetSlot] = answerObj;
+        }
+      } else if(this.dragData.from==='center'){
+        const fromSlot = this.dragData.fromSlot;
+        const temp = this.center[targetSlot];
+        this.center[targetSlot] = this.center[fromSlot];
+        this.center[fromSlot] = temp || null;
+      }
+      this.renderCenter();
+      this.renderRight();
+      this.updateProgress();
+      this.equalizeHeights();
+    });
+    const rightBox = this.qs('.right');
+    if(!rightBox._dropBound){
+      rightBox._dropBound = true;
+    }
+  }
+  renumberRight(){
+    this.qsa('.right .answer .num').forEach((n,i)=>{ n.textContent = String.fromCharCode(65+i); });
+  }
+  
+finish(){
+    this.stopTimer();
+    const misses = [];
+    let correct = 0;
+    this.center.forEach((ans, i)=>{
+      const ok = !!ans && ans.key===i;
+      if(ok) correct++; else misses.push({chapter:this.left[i].chapter, prompt:this.left[i].text, answer: this.pairs[i].answer});
+    });
+    const total = this.center.length;
+    const review = this.qs('.review');
+
+    // Hide the working UI (leave only the review visible)
+    const huds = this.root.querySelectorAll('.hud');
+    const cols = this.root.querySelectorAll('.columns');
+    const seps = this.root.querySelectorAll('.sep');
+    huds.forEach(n=> n.style.display = 'none');
+    cols.forEach(n=> n.style.display = 'none');
+    seps.forEach(n=> n.style.display = 'none');
+
+    review.classList.remove('hidden');
+    review.innerHTML = `<div class="hud" style="margin-bottom:6px">
+        <span class="pill">Score: ${correct} / ${total} (${Math.round(correct/total*100)}%)</span>
+        <span class="pill">Time: ${fmtTime(this.seconds)}</span>
+      </div>` +
+      (misses.length===0 ? '<p class="muted">Perfect! No missed items.</p>' :
+        misses.map(m=>`
+          <div class="card" style="padding:12px; margin:8px 0">
+            <div style="font-weight:700; margin-bottom:6px">Missed · Ch. ${m.chapter}</div>
+            <div style="margin-bottom:6px">${m.prompt}</div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap">
+              <span class="pill">Correct: ${m.answer}</span>
+            </div>
+          </div>
+        `).join('')
+      );
+    this.equalizeHeights();
+  }
+
+  equalizeHeights(){
+    const all = [
+      ...this.qsa('.left .prompt'),
+      ...this.qsa('.center .slot'),
+      ...this.qsa('.right .answer')
+    ];
+    if(!all.length) return;
+    all.forEach(n=>{ n.style.height='auto'; });
+    let max = 0;
+    all.forEach(n=>{ max = Math.max(max, n.offsetHeight); });
+    all.forEach(n=>{ n.style.height = max + 'px'; });
+  }
+}
+
+// ---------- App wiring ----------
+(function(){
+  const start = document.getElementById('start');
+  const quiz = document.getElementById('quiz');
+  const result = document.getElementById('result');
+  quiz.innerHTML = `
+    <div class="hud">
+      <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+        <span class="pill" id="setTag">Set</span>
+      </div>
+      <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+        <button id="finishAll" class="hidden">Finish All</button>
+      </div>
+    </div>
+    <div class="sep"></div>
+    <div id="blocks" class="grid" style="grid-template-columns:1fr; gap:22px"></div>
+  `;
+
+  function startRound(){
+    const setKey = document.getElementById('section').value;
+    const sizeSel = document.getElementById('size').value;
+    document.getElementById('setTag').textContent = SET_LABELS[setKey] || 'Set';
+    start.classList.add('hidden');
+    result.classList.add('hidden');
+    quiz.classList.remove('hidden');
+    const blocksHost = document.getElementById('blocks');
+    blocksHost.innerHTML = '';
+
+    if(setKey === 'unit3'){
+      let items = [...SETS['unit3']];
+      items = shuffle(items);
+      const first21 = items.slice(0,21);
+      const second21 = shuffle(items.slice(21));
+      const blockA = document.createElement('section'); blockA.className='card'; blockA.style.padding='14px';
+      const headerA = document.createElement('div'); headerA.style.cssText='font-weight:700; margin-bottom:8px;'; headerA.textContent='Set 1 of 2';
+      blockA.appendChild(headerA);
+      const bodyA = document.createElement('div'); blockA.appendChild(bodyA);
+      blocksHost.appendChild(blockA);
+
+      const blockB = document.createElement('section'); blockB.className='card'; blockB.style.padding='14px';
+      const headerB = document.createElement('div'); headerB.style.cssText='font-weight:700; margin-bottom:8px;'; headerB.textContent='Set 2 of 2';
+      blockB.appendChild(headerB);
+      const bodyB = document.createElement('div'); blockB.appendChild(bodyB);
+      blocksHost.appendChild(blockB);
+
+      new BlockMatcher(bodyA, first21, 'Unit 3 · 21 items');
+      new BlockMatcher(bodyB, second21, 'Unit 3 · 21 items');
+      document.getElementById('finishAll').classList.add('hidden');
+    } else {
+      let items = [...SETS[setKey]];
+      let size = sizeSel==='auto' ? items.length : Math.min(Number(sizeSel), items.length);
+      items = items.slice(0, size);
+      const block = document.createElement('section'); block.className='card'; block.style.padding='14px';
+      const header = document.createElement('div'); header.style.cssText='font-weight:700; margin-bottom:8px;'; header.textContent= (SET_LABELS[setKey]||'Set');
+      block.appendChild(header);
+      const body = document.createElement('div'); block.appendChild(body);
+      blocksHost.appendChild(block);
+      new BlockMatcher(body, items, (SET_LABELS[setKey]||'Set') + ` · ${items.length} items`);
+      document.getElementById('finishAll').classList.add('hidden');
+    }
+    window.scrollTo({top:0, behavior:'instant'});
+  }
+
+  document.getElementById('begin').addEventListener('click', startRound);
+  document.getElementById('retry').addEventListener('click', startRound);
+  document.getElementById('restart').addEventListener('click', ()=>{
+    quiz.classList.add('hidden');
+    result.classList.add('hidden');
+    start.classList.remove('hidden');
+  });
+
+  (function setupAutoScroll(){
+    const EDGE = 80, SPEED = 24;
+    let ticking = false;
+    document.addEventListener('dragover', (e)=>{
+      const y = e.clientY, h = window.innerHeight;
+      let dy = 0;
+      if(y < EDGE) dy = -SPEED;
+      else if(h - y < EDGE) dy = SPEED;
+      if(dy !== 0 && !ticking){
+        ticking = true;
+      }
+    });
+  })();
+})();
+
+(function selfCheck(){
+  try{
+    console.assert(Array.isArray(BANK) && BANK.length >= 1, 'BANK should have items');
+    console.assert(BANK.length >= 40, 'BANK expected at least 40 items, got ' + BANK.length);
+    console.log('%cSelf-check passed','color:#4fd1c5');
+  }catch(e){ console.warn('Self-check failed', e); }
+})();
+
+</script>
+</body>
+</html>
