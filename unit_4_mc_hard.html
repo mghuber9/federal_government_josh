@@ -211,7 +211,7 @@
       <div id="questions"></div>
     </section>
 
-    <!-- RESULT -->
+    <!-- RESULT (now with full missed-question review) -->
     <section id="result" class="card hidden">
       <h2>Round Summary</h2>
       <div class="hud" style="margin-bottom:6px">
@@ -220,7 +220,10 @@
       </div>
       <div class="sep"></div>
       <p class="muted" id="coaching"></p>
-      <div class="hud">
+
+      <div id="reviewBlock" style="margin-top:12px;"></div>
+
+      <div class="hud" style="margin-top:10px">
         <button id="retry">New Round (same settings)</button>
         <button id="restart">Back to Start</button>
       </div>
@@ -229,8 +232,8 @@
 
 <script>
 // ===== Question bank =====
-// chapter: 4 (liberties), 5 (rights), 14 (judiciary)
 const QUESTIONS = [
+  // (same questions as before – unchanged)
   // ===== Chapter 4 — Civil Liberties =====
   {
     id: '4-1',
@@ -686,13 +689,17 @@ function updateProgress(){
     `Answered ${answered} / ${total}`;
 }
 
-// ===== Check answers =====
+// ===== Updated Check Answers with full review =====
 function checkAnswers(){
   stopTimer();
 
   const total = state.roundQuestions.length;
   let correct = 0;
-  let answered = 0;
+
+  const reviewBlock = document.getElementById('reviewBlock');
+  reviewBlock.innerHTML = ''; // clear previous review
+
+  const missed = [];
 
   state.roundQuestions.forEach((q, idx)=>{
     const card = document.querySelectorAll('.q-card')[idx];
@@ -704,8 +711,6 @@ function checkAnswers(){
     inputs.forEach((input, cIdx)=>{
       if(input.checked) selectedIndex = cIdx;
     });
-
-    if(selectedIndex !== null) answered++;
 
     // reset styles
     card.classList.remove('correct','incorrect');
@@ -723,10 +728,118 @@ function checkAnswers(){
         choices[selectedIndex].classList.add('wrong');
       }
       choices[q.correct].classList.add('correct');
+
+      // store for review panel
+      missed.push({
+        index: idx,
+        q,
+        selectedIndex
+      });
     }
 
     expl.classList.remove('hidden');
   });
+
+  // Build review panel for missed questions (full blocks)
+  if(missed.length === 0){
+    const msg = document.createElement('p');
+    msg.className = 'muted';
+    msg.textContent = 'No missed questions this round. You can still scroll back up to scan the explanations if you want, but there is nothing to review here.';
+    reviewBlock.appendChild(msg);
+  } else {
+    const header = document.createElement('h3');
+    header.textContent = 'Missed Questions Review';
+    header.style.margin = '0 0 8px';
+    reviewBlock.appendChild(header);
+
+    missed.forEach(m=>{
+      const idx = m.index;
+      const q = m.q;
+      const selectedIndex = m.selectedIndex;
+
+      const reviewCard = document.createElement('div');
+      reviewCard.className = 'q-card';
+      reviewCard.style.marginBottom = '10px';
+
+      const headerRow = document.createElement('div');
+      headerRow.className = 'q-header';
+
+      const num = document.createElement('div');
+      num.className = 'q-num';
+      num.textContent = idx + 1;
+
+      const stem = document.createElement('div');
+      stem.className = 'q-stem';
+      stem.textContent = q.stem;
+
+      const badge = document.createElement('div');
+      badge.className = 'badge';
+      badge.textContent = chapterLabel(q.chapter);
+
+      headerRow.appendChild(num);
+      headerRow.appendChild(stem);
+      headerRow.appendChild(badge);
+
+      const choicesDiv = document.createElement('div');
+      choicesDiv.className = 'choices';
+
+      q.choices.forEach((choiceText, cIdx)=>{
+        const row = document.createElement('div');
+        row.className = 'choice';
+
+        // style: correct vs selected-wrong
+        if(cIdx === q.correct){
+          row.classList.add('correct');
+        }
+        if(selectedIndex !== null && cIdx === selectedIndex && selectedIndex !== q.correct){
+          row.classList.add('wrong');
+        }
+
+        const bullet = document.createElement('div');
+        bullet.style.fontSize = '13px';
+        bullet.style.marginTop = '2px';
+        bullet.textContent = String.fromCharCode(65 + cIdx) + '.';
+
+        const label = document.createElement('label');
+        label.style.cursor = 'default';
+        label.textContent = choiceText;
+
+        row.appendChild(bullet);
+        row.appendChild(label);
+
+        // tag your answer
+        if(selectedIndex !== null && cIdx === selectedIndex){
+          const tag = document.createElement('span');
+          tag.style.fontSize = '11px';
+          tag.style.marginLeft = '6px';
+          tag.style.color = '#6b7280';
+          tag.textContent = ' (your answer)';
+          label.appendChild(tag);
+        }
+
+        if(cIdx === q.correct){
+          const tag = document.createElement('span');
+          tag.style.fontSize = '11px';
+          tag.style.marginLeft = '6px';
+          tag.style.color = '#065f46';
+          tag.textContent = ' (correct)';
+          label.appendChild(tag);
+        }
+
+        choicesDiv.appendChild(row);
+      });
+
+      const expl = document.createElement('div');
+      expl.className = 'explanation';
+      expl.innerHTML = `<strong>Explanation:</strong> ${q.explanation}`;
+
+      reviewCard.appendChild(headerRow);
+      reviewCard.appendChild(choicesDiv);
+      reviewCard.appendChild(expl);
+
+      reviewBlock.appendChild(reviewCard);
+    });
+  }
 
   document.getElementById('quiz').classList.add('hidden');
   document.getElementById('result').classList.remove('hidden');
