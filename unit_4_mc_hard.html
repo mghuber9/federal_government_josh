@@ -787,13 +787,23 @@ function checkAnswers(){
         const row = document.createElement('div');
         row.className = 'choice';
 
-        // style: correct vs selected-wrong
-        if(cIdx === q.correct){
-          row.classList.add('correct');
-        }
-        if(selectedIndex !== null && cIdx === selectedIndex && selectedIndex !== q.correct){
-          row.classList.add('wrong');
-        }
+       // Style for correct answer
+if (selectedIndex === null) {
+  // Unanswered question: highlight correct in BLUE
+  if (cIdx === q.correct) {
+    row.style.background = '#dbeafe';          // light blue
+    row.style.border = '1px solid #2563eb';    // blue border
+  }
+} else {
+  // Question was answered
+  if (cIdx === q.correct) {
+    row.classList.add('correct');              // green
+  }
+  if (cIdx === selectedIndex && selectedIndex !== q.correct) {
+    row.classList.add('wrong');                // red
+  }
+}
+
 
         const bullet = document.createElement('div');
         bullet.style.fontSize = '13px';
