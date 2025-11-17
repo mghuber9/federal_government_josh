@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Unit 4 — Hard-Mode Multiple Choice</title>
+<style>
+  :root{
+    --bg:#e5e7eb;
+    --panel:#f9fafb;
+    --ink:#111827;
+    --muted:#6b7280;
+    --accent:#2563eb;
+    --ok:#16a34a;
+    --bad:#dc2626;
+    --tile:#ffffff;
+    --tile-border:rgba(15,23,42,.12);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;
+    color:var(--ink);
+    background:radial-gradient(900px 600px at 15% -10%, #dbeafe 0%, var(--bg) 55%);
+  }
+  .wrap{max-width:1100px; margin:0 auto; padding:24px}
+  h1{margin:0 0 6px; font-size:clamp(22px,3vw,32px)}
+  p,label{color:var(--muted)}
+  h2{margin:0 0 8px; font-size:18px}
+  .card{
+    background:var(--panel);
+    border:1px solid rgba(15,23,42,.08);
+    border-radius:16px;
+    padding:18px;
+    box-shadow:0 6px 18px rgba(15,23,42,.08);
+  }
+  .grid{display:grid; gap:12px}
+  .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  @media (max-width:900px){.grid-2{grid-template-columns:1fr}}
+
+  select,button{
+    appearance:none;
+    border:1px solid rgba(15,23,42,.14);
+    background:#eff6ff;
+    color:var(--ink);
+    padding:10px 12px;
+    border-radius:10px;
+    font-size:15px;
+  }
+  button{
+    cursor:pointer;
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    border:1px solid rgba(37,99,235,.7);
+    color:#f9fafb;
+    font-weight:500;
+  }
+  button:hover{filter:brightness(1.05)}
+  .hidden{display:none}
+  .pill{
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid rgba(15,23,42,.12);
+    background:#e5e7eb;
+    color:#1f2937;
+    font-size:12px;
+  }
+  .hud{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+  }
+  .sep{height:1px; background:rgba(15,23,42,.08); margin:12px 0}
+
+  .q-card{
+    border-radius:14px;
+    border:1px solid var(--tile-border);
+    background:var(--tile);
+    padding:12px 14px;
+    margin-bottom:12px;
+  }
+  .q-header{
+    display:flex;
+    align-items:flex-start;
+    gap:8px;
+    margin-bottom:6px;
+  }
+  .q-num{
+    flex:0 0 auto;
+    width:28px; height:28px;
+    border-radius:999px;
+    background:#e5e7eb;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:700;
+    font-size:14px;
+    border:1px solid rgba(15,23,42,.12);
+  }
+  .q-stem{
+    flex:1 1 auto;
+    font-size:15px;
+  }
+  .badge{
+    margin-left:auto;
+    font-size:11px;
+    padding:3px 8px;
+    border-radius:999px;
+    background:#eff6ff;
+    border:1px solid rgba(37,99,235,.3);
+    color:#1d4ed8;
+  }
+  .choices{margin:4px 0 0; padding-left:32px}
+  .choice{
+    display:flex;
+    align-items:flex-start;
+    gap:6px;
+    margin:4px 0;
+    padding:4px 6px;
+    border-radius:8px;
+  }
+  .choice.correct{
+    background:#dcfce7;
+    border:1px solid rgba(22,163,74,.7);
+  }
+  .choice.wrong{
+    background:#fee2e2;
+    border:1px solid rgba(220,38,38,.7);
+  }
+  .choice input{margin-top:3px}
+  .choice label{
+    flex:1;
+    font-size:14px;
+    color:var(--ink);
+    cursor:pointer;
+  }
+  .explanation{
+    margin-top:6px;
+    padding:6px 8px;
+    border-radius:8px;
+    background:#f3f4f6;
+    font-size:13px;
+    color:#374151;
+  }
+  .explanation strong{color:#111827}
+  .q-card.correct{
+    border-color:rgba(22,163,74,.8);
+    box-shadow:0 0 0 1px rgba(22,163,74,.4);
+  }
+  .q-card.incorrect{
+    border-color:rgba(220,38,38,.8);
+    box-shadow:0 0 0 1px rgba(220,38,38,.4);
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Unit 4 — Hard-Mode Multiple Choice</h1>
+    <p class="muted">
+      These questions are meant to be harder than the regular test:
+      more scenarios, compare/contrast, and “best example” style.
+      Use this <strong>after</strong> vocab matching, when he can already read the terms comfortably.
+    </p>
+
+    <!-- START -->
+    <section id="start" class="card grid">
+      <div class="grid grid-2">
+        <div>
+          <label for="section">Question set</label>
+          <select id="section">
+            <option value="all" selected>All Unit 4 (Ch. 4 + 5 + 14)</option>
+            <option value="4">Ch. 4 — Civil Liberties only</option>
+            <option value="5">Ch. 5 — Civil Rights only</option>
+            <option value="14">Ch. 14 — Judiciary only</option>
+          </select>
+        </div>
+        <div>
+          <label for="count">Round size</label>
+          <select id="count">
+            <option value="10">10 questions</option>
+            <option value="15" selected>15 questions</option>
+            <option value="20">20 questions</option>
+          </select>
+        </div>
+      </div>
+      <div class="hud">
+        <button id="begin">Start Hard-Mode Round</button>
+        <span class="pill">
+          Don’t rush. Think: “What idea is this really testing?” before picking an answer.
+        </span>
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="quiz" class="card hidden">
+      <div class="hud">
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+          <span class="pill" id="setTag">Set</span>
+          <span class="pill" id="progress">Answered 0 / N</span>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+          <span class="pill" id="timer">00:00</span>
+          <button id="check">Check Answers</button>
+          <button id="newRound">New Round</button>
+          <button id="back">Back to Start</button>
+        </div>
+      </div>
+      <div class="sep"></div>
+      <div id="questions"></div>
+    </section>
+
+    <!-- RESULT -->
+    <section id="result" class="card hidden">
+      <h2>Round Summary</h2>
+      <div class="hud" style="margin-bottom:6px">
+        <span class="pill" id="scoreline">Score</span>
+        <span class="pill" id="timeline">Time</span>
+      </div>
+      <div class="sep"></div>
+      <p class="muted" id="coaching"></p>
+      <div class="hud">
+        <button id="retry">New Round (same settings)</button>
+        <button id="restart">Back to Start</button>
+      </div>
+    </section>
+  </div>
+
+<script>
+// ===== Question bank =====
+// chapter: 4 (liberties), 5 (rights), 14 (judiciary)
+const QUESTIONS = [
+  // ===== Chapter 4 — Civil Liberties =====
+  {
+    id: '4-1',
+    chapter: 4,
+    stem: 'A state law requires all public schools to begin the day with a short, teacher-led prayer referencing a specific religion. Parents sue, arguing it violates the First Amendment. Which clause is most directly at issue?',
+    choices: [
+      'Free Exercise Clause, because students are being punished for their religious beliefs.',
+      'Establishment Clause, because the government is promoting an official religious exercise.',
+      'Free Speech Clause, because students are not allowed to speak during the prayer.',
+      'Due Process Clause, because the prayer is not being applied fairly to all students.'
+    ],
+    correct: 1,
+    explanation: 'The government (through public schools) is organizing a religious exercise, which deals with whether the state is endorsing or establishing religion. That is an Establishment Clause question.'
+  },
+  {
+    id: '4-2',
+    chapter: 4,
+    stem: 'Police receive an anonymous tip that illegal drugs are in someone’s house. Without a warrant, they enter, find drugs, and arrest the homeowner. At trial, the defense attorney argues that the drugs may not be used as evidence. Which doctrine supports that argument?',
+    choices: [
+      'Substantive due process',
+      'The exclusionary rule',
+      'The clear and present danger test',
+      'The good-faith exception'
+    ],
+    correct: 1,
+    explanation: 'The exclusionary rule keeps evidence obtained in violation of the Fourth Amendment (such as warrantless entry without a valid exception) out of court.'
+  },
+  {
+    id: '4-3',
+    chapter: 4,
+    stem: 'A city passes a law banning political protests in all public parks because some past protests have become heated. Which test or standard is most relevant for deciding if this restriction on speech is constitutional?',
+    choices: [
+      'Lemon test',
+      'Clear and present danger test',
+      'Substantive due process',
+      'Miranda rule'
+    ],
+    correct: 1,
+    explanation: 'The clear and present danger test (and later standards) evaluate whether speech can be restricted due to serious, immediate threats to public safety. A total ban in all parks would likely go too far.'
+  },
+  {
+    id: '4-4',
+    chapter: 4,
+    stem: 'A tabloid knowingly publishes a fake story claiming a mayor takes bribes. The mayor sues. Which combination best describes what the mayor must usually prove to win?',
+    choices: [
+      'The story was offensive and the mayor is a private figure.',
+      'The story was false and the tabloid acted with actual malice.',
+      'The story was unpopular and the mayor suffered emotional distress.',
+      'The story was anonymous and the mayor requested a retraction.'
+    ],
+    correct: 1,
+    explanation: 'Public officials bringing defamation cases generally must show that the statement was false and published with actual malice—knowledge of falsity or reckless disregard for the truth.'
+  },
+  {
+    id: '4-5',
+    chapter: 4,
+    stem: 'Which scenario BEST illustrates selective incorporation?',
+    choices: [
+      'A state passes its own bill of rights to protect citizens.',
+      'The Supreme Court applies a part of the Bill of Rights to state governments through the Fourteenth Amendment.',
+      'Congress adds a new amendment directly limiting the actions of states.',
+      'A city voluntarily expands free speech protection beyond what the Constitution requires.'
+    ],
+    correct: 1,
+    explanation: 'Selective incorporation is when the Supreme Court uses the Fourteenth Amendment to apply specific protections in the Bill of Rights to the states.'
+  },
+  {
+    id: '4-6',
+    chapter: 4,
+    stem: 'During questioning, police do not inform a suspect of the right to remain silent or to have an attorney. The suspect confesses, and the prosecution uses the confession at trial. Which right is most directly involved?',
+    choices: [
+      'Right to privacy under substantive due process',
+      'Equal protection of the laws',
+      'Protection against cruel and unusual punishment',
+      'Protection against self-incrimination and the right to counsel (Miranda rights)'
+    ],
+    correct: 3,
+    explanation: 'Miranda rights protect suspects from self-incrimination and ensure access to counsel during custodial interrogation.'
+  },
+  {
+    id: '4-7',
+    chapter: 4,
+    stem: 'Which of the following most clearly involves the right to privacy recognized by the Supreme Court?',
+    choices: [
+      'A city bans all political flyers on light poles.',
+      'A state restricts access to contraception for married couples.',
+      'A school requires students to stand for the national anthem.',
+      'A city requires permits for large public parades.'
+    ],
+    correct: 1,
+    explanation: 'Cases involving contraception and certain intimate decisions are examples where the Court has recognized an implied right to privacy.'
+  },
+
+  // ===== Chapter 5 — Civil Rights =====
+  {
+    id: '5-1',
+    chapter: 5,
+    stem: 'A state creates a law that allows only citizens with grandparents born in the state to vote in primary elections. Minority groups challenge the law in court. Which constitutional principle is most directly at issue?',
+    choices: [
+      'Substantive due process',
+      'Equal Protection Clause',
+      'Establishment Clause',
+      'Free Exercise Clause'
+    ],
+    correct: 1,
+    explanation: 'The Equal Protection Clause is implicated when a law treats different groups of people differently, especially in something as fundamental as voting.'
+  },
+  {
+    id: '5-2',
+    chapter: 5,
+    stem: 'Which situation BEST illustrates de facto segregation rather than de jure segregation?',
+    choices: [
+      'A state law requires separate schools for white and Black students.',
+      'A city ordinance bans minorities from living in certain neighborhoods.',
+      'Neighborhood housing patterns and income differences lead to mostly one-race schools, even without segregation laws.',
+      'A state constitution explicitly states that different races must use different public facilities.'
+    ],
+    correct: 2,
+    explanation: 'De facto segregation occurs because of social or economic conditions, such as housing patterns, not because the law requires it.'
+  },
+  {
+    id: '5-3',
+    chapter: 5,
+    stem: 'Which development weakened the “separate but equal” doctrine from Plessy v. Ferguson?',
+    choices: [
+      'The Supreme Court upholding literacy tests for voting.',
+      'Brown v. Board of Education ruling that segregated schools are inherently unequal.',
+      'The adoption of poll taxes in Southern states.',
+      'The Supreme Court limiting affirmative action programs.'
+    ],
+    correct: 1,
+    explanation: 'Brown v. Board of Education declared that separate educational facilities are inherently unequal, directly rejecting “separate but equal” in public education.'
+  },
+  {
+    id: '5-4',
+    chapter: 5,
+    stem: 'A state university gives a small admissions plus-factor to applicants from racial groups that have been historically excluded, while still considering grades, test scores, and activities. Which policy is this?',
+    choices: [
+      'De jure segregation',
+      'Affirmative action',
+      'Substantive due process',
+      'Judicial review'
+    ],
+    correct: 1,
+    explanation: 'Affirmative action policies intentionally take race (or other characteristics) into account, usually as one factor among many, to address past discrimination.'
+  },
+  {
+    id: '5-5',
+    chapter: 5,
+    stem: 'A law treats men and women differently. Which judicial standard is MOST likely used to evaluate whether the law violates equal protection?',
+    choices: [
+      'Strict scrutiny',
+      'Intermediate scrutiny',
+      'Rational basis test',
+      'Political question doctrine'
+    ],
+    correct: 1,
+    explanation: 'Gender classifications generally receive intermediate scrutiny: the law must be substantially related to an important government interest.'
+  },
+  {
+    id: '5-6',
+    chapter: 5,
+    stem: 'Which example BEST matches the purpose of the Voting Rights Act of 1965?',
+    choices: [
+      'Eliminating poll taxes and literacy tests that blocked minority voters.',
+      'Granting women the nationwide right to vote.',
+      'Setting the voting age at 18 for all elections.',
+      'Requiring all citizens to register to vote by age 21.'
+    ],
+    correct: 0,
+    explanation: 'The Voting Rights Act of 1965 targeted practices like literacy tests and other devices used to suppress minority voting.'
+  },
+  {
+    id: '5-7',
+    chapter: 5,
+    stem: 'A company refuses to install a wheelchair ramp at its only entrance, even though many customers use wheelchairs. Which federal law is most clearly related to this situation?',
+    choices: [
+      'Civil Rights Act of 1964',
+      'Americans with Disabilities Act (ADA)',
+      'Title IX',
+      'Equal Rights Amendment'
+    ],
+    correct: 1,
+    explanation: 'The ADA requires reasonable accommodations and prohibits discrimination against people with disabilities in public accommodations and employment.'
+  },
+  {
+    id: '5-8',
+    chapter: 5,
+    stem: 'A public school consistently offers far fewer athletic opportunities to girls than to boys, despite similar interest. Which law is most relevant for a legal challenge?',
+    choices: [
+      'Title IX',
+      'Voting Rights Act of 1965',
+      'Thirteenth Amendment',
+      'Nineteenth Amendment'
+    ],
+    correct: 0,
+    explanation: 'Title IX bans sex discrimination in education programs that receive federal funds, including athletics.'
+  },
+
+  // ===== Chapter 14 — Judiciary =====
+  {
+    id: '14-1',
+    chapter: 14,
+    stem: 'Congress passes a law that seems to clearly conflict with the First Amendment. A lawsuit challenges the law, and the Supreme Court strikes it down. Which power did the Court use?',
+    choices: [
+      'Judicial review',
+      'Original jurisdiction',
+      'Judicial restraint',
+      'Federal supremacy'
+    ],
+    correct: 0,
+    explanation: 'Judicial review is the power of courts to declare laws or executive actions unconstitutional.'
+  },
+  {
+    id: '14-2',
+    chapter: 14,
+    stem: 'A case begins in a federal trial court, then is appealed to a higher federal court that reviews for legal errors but does not conduct a new trial. What kind of court is the higher court?',
+    choices: [
+      'Court exercising original jurisdiction',
+      'Court exercising appellate jurisdiction',
+      'State supreme court',
+      'Magistrate court'
+    ],
+    correct: 1,
+    explanation: 'A court with appellate jurisdiction reviews decisions of lower courts rather than hearing cases first.'
+  },
+  {
+    id: '14-3',
+    chapter: 14,
+    stem: 'Four Supreme Court justices believe an issue is important enough to be heard, even though five justices do not. Under Court practice, what happens next?',
+    choices: [
+      'The Court must deny the case because a majority is required.',
+      'The case is heard because of the “rule of four.”',
+      'The case is automatically sent to Congress instead.',
+      'The case is remanded to the lower court without explanation.'
+    ],
+    correct: 1,
+    explanation: 'Under the informal “rule of four,” if at least four justices vote to grant certiorari, the Court agrees to hear the case.'
+  },
+  {
+    id: '14-4',
+    chapter: 14,
+    stem: 'Which situation BEST illustrates judicial restraint rather than judicial activism?',
+    choices: [
+      'The Court frequently overturns state laws to expand individual rights.',
+      'The Court refuses to strike down a controversial law, saying elected officials should decide unless the law clearly violates the Constitution.',
+      'The Court reads broad new rights into the Constitution not mentioned in the text.',
+      'The Court strikes down long-standing precedents to pursue a new interpretation.'
+    ],
+    correct: 1,
+    explanation: 'Judicial restraint emphasizes deferring to elected branches and existing precedent unless a law clearly conflicts with the Constitution.'
+  },
+  {
+    id: '14-5',
+    chapter: 14,
+    stem: 'In a Supreme Court case, five justices agree on the outcome and reasoning. Two other justices agree with the outcome but write separately to explain a different reason. Which term describes the separate opinion?',
+    choices: [
+      'Majority opinion',
+      'Concurring opinion',
+      'Dissenting opinion',
+      'Per curiam opinion'
+    ],
+    correct: 1,
+    explanation: 'A concurring opinion agrees with the result but offers different or additional reasoning.'
+  },
+  {
+    id: '14-6',
+    chapter: 14,
+    stem: 'Which scenario BEST illustrates the idea of stare decisis?',
+    choices: [
+      'The Court rejects all past cases in order to start fresh.',
+      'The Court follows a previous decision in a similar case unless there is a strong reason to change it.',
+      'The Court automatically adopts whatever Congress says.',
+      'The Court refuses to hear any controversial cases.'
+    ],
+    correct: 1,
+    explanation: 'Stare decisis means “let the decision stand” and refers to following precedent when deciding new cases.'
+  },
+  {
+    id: '14-7',
+    chapter: 14,
+    stem: 'A party who lost in a federal district court believes the trial judge made legal errors. To which court will they most likely appeal?',
+    choices: [
+      'U.S. Supreme Court',
+      'U.S. Court of Appeals (Circuit court)',
+      'State Supreme Court',
+      'Local magistrate court'
+    ],
+    correct: 1,
+    explanation: 'Most appeals from U.S. district courts go to the U.S. Courts of Appeals.'
+  },
+  {
+    id: '14-8',
+    chapter: 14,
+    stem: 'Which situation BEST describes a justiciable controversy?',
+    choices: [
+      'Two friends debating politics at lunch.',
+      'A lawsuit where a business sues a city over an ordinance that has already harmed its profits.',
+      'A senator asking the Court for advice on how to vote on a bill.',
+      'A hypothetical question about a law that might be passed someday.'
+    ],
+    correct: 1,
+    explanation: 'A justiciable controversy is a real, concrete dispute appropriate for court resolution, not a hypothetical or political question.'
+  }
+];
+
+// ===== Helpers =====
+function shuffle(arr){
+  const a = [...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+function fmtTime(s){
+  const m = Math.floor(s/60).toString().padStart(2,'0');
+  const ss = (s%60).toString().padStart(2,'0');
+  return `${m}:${ss}`;
+}
+function chapterLabel(ch){
+  if(ch === 4) return 'Ch. 4 — Civil Liberties';
+  if(ch === 5) return 'Ch. 5 — Civil Rights';
+  if(ch === 14) return 'Ch. 14 — Judiciary';
+  return 'Unit 4 Mixed';
+}
+
+// ===== State =====
+let state = {
+  roundQuestions: [],
+  timer: null,
+  seconds: 0,
+  setKey: 'all'
+};
+
+function startTimer(){
+  if(state.timer) clearInterval(state.timer);
+  state.seconds = 0;
+  document.getElementById('timer').textContent = '00:00';
+  state.timer = setInterval(()=>{
+    state.seconds++;
+    document.getElementById('timer').textContent = fmtTime(state.seconds);
+  },1000);
+}
+function stopTimer(){
+  if(state.timer){
+    clearInterval(state.timer);
+    state.timer = null;
+  }
+}
+
+// ===== Build round =====
+function buildRound(){
+  const section = document.getElementById('section').value;
+  const count = Number(document.getElementById('count').value);
+  state.setKey = section;
+
+  let pool;
+  if(section === 'all'){
+    pool = [...QUESTIONS];
+  } else {
+    const ch = Number(section);
+    pool = QUESTIONS.filter(q => q.chapter === ch);
+  }
+  pool = shuffle(pool);
+  const selected = pool.slice(0, Math.min(count, pool.length));
+  state.roundQuestions = selected;
+
+  document.getElementById('start').classList.add('hidden');
+  document.getElementById('result').classList.add('hidden');
+  document.getElementById('quiz').classList.remove('hidden');
+
+  const label = section === 'all' ? 'All Unit 4 (hard mode)' : chapterLabel(Number(section));
+  document.getElementById('setTag').textContent = label;
+
+  renderQuestions();
+  updateProgress();
+  startTimer();
+}
+
+function renderQuestions(){
+  const container = document.getElementById('questions');
+  container.innerHTML = '';
+  state.roundQuestions.forEach((q, idx)=>{
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.dataset.qid = q.id;
+
+    const header = document.createElement('div');
+    header.className = 'q-header';
+
+    const num = document.createElement('div');
+    num.className = 'q-num';
+    num.textContent = idx + 1;
+
+    const stem = document.createElement('div');
+    stem.className = 'q-stem';
+    stem.textContent = q.stem;
+
+    const badge = document.createElement('div');
+    badge.className = 'badge';
+    badge.textContent = chapterLabel(q.chapter);
+
+    header.appendChild(num);
+    header.appendChild(stem);
+    header.appendChild(badge);
+
+    const choicesDiv = document.createElement('div');
+    choicesDiv.className = 'choices';
+
+    q.choices.forEach((choiceText, cIdx)=>{
+      const choice = document.createElement('div');
+      choice.className = 'choice';
+
+      const input = document.createElement('input');
+      input.type = 'radio';
+      input.name = `q_${idx}`;
+      input.id = `q_${idx}_${cIdx}`;
+      input.value = cIdx;
+
+      input.addEventListener('change', updateProgress);
+
+      const label = document.createElement('label');
+      label.setAttribute('for', input.id);
+      label.textContent = choiceText;
+
+      choice.appendChild(input);
+      choice.appendChild(label);
+      choicesDiv.appendChild(choice);
+    });
+
+    const expl = document.createElement('div');
+    expl.className = 'explanation hidden';
+    expl.id = `expl_${idx}`;
+    expl.innerHTML = `<strong>Explanation:</strong> ${q.explanation}`;
+
+    card.appendChild(header);
+    card.appendChild(choicesDiv);
+    card.appendChild(expl);
+
+    container.appendChild(card);
+  });
+}
+
+function updateProgress(){
+  const total = state.roundQuestions.length;
+  let answered = 0;
+  state.roundQuestions.forEach((q, idx)=>{
+    const inputs = document.querySelectorAll(`input[name="q_${idx}"]`);
+    if([...inputs].some(i=>i.checked)) answered++;
+  });
+  document.getElementById('progress').textContent =
+    `Answered ${answered} / ${total}`;
+}
+
+// ===== Check answers =====
+function checkAnswers(){
+  stopTimer();
+
+  const total = state.roundQuestions.length;
+  let correct = 0;
+  let answered = 0;
+
+  state.roundQuestions.forEach((q, idx)=>{
+    const card = document.querySelectorAll('.q-card')[idx];
+    const expl = document.getElementById(`expl_${idx}`);
+    const inputs = document.querySelectorAll(`input[name="q_${idx}"]`);
+    const choices = card.querySelectorAll('.choice');
+    let selectedIndex = null;
+
+    inputs.forEach((input, cIdx)=>{
+      if(input.checked) selectedIndex = cIdx;
+    });
+
+    if(selectedIndex !== null) answered++;
+
+    // reset styles
+    card.classList.remove('correct','incorrect');
+    choices.forEach(c => c.classList.remove('correct','wrong'));
+
+    if(selectedIndex === q.correct){
+      correct++;
+      card.classList.add('correct');
+      if(selectedIndex !== null){
+        choices[selectedIndex].classList.add('correct');
+      }
+    } else {
+      card.classList.add('incorrect');
+      if(selectedIndex !== null){
+        choices[selectedIndex].classList.add('wrong');
+      }
+      choices[q.correct].classList.add('correct');
+    }
+
+    expl.classList.remove('hidden');
+  });
+
+  document.getElementById('quiz').classList.add('hidden');
+  document.getElementById('result').classList.remove('hidden');
+
+  const pct = total ? Math.round(correct/total*100) : 0;
+  document.getElementById('scoreline').textContent =
+    `Score: ${correct} / ${total} (${pct}%)`;
+  document.getElementById('timeline').textContent =
+    `Time: ${fmtTime(state.seconds)}`;
+
+  const coaching = document.getElementById('coaching');
+  if(correct === total){
+    coaching.textContent = 'Nice. This is test-plus level. You’re not just ready for the exam — you’re reading like a government major.';
+  } else if(correct >= Math.ceil(total*0.7)){
+    coaching.textContent = 'Solid work. Review the missed explanations: focus on what each scenario is really pointing to (liberty, right, or court power).';
+  } else {
+    coaching.textContent = 'Good practice rep. The goal here is not the grade but pattern recognition: which concept matches which kind of scenario? Re-run a smaller set and talk through each answer out loud.';
+  }
+}
+
+// ===== Nav wiring =====
+document.getElementById('begin').addEventListener('click', buildRound);
+document.getElementById('newRound').addEventListener('click', ()=>{
+  stopTimer();
+  buildRound();
+});
+document.getElementById('back').addEventListener('click', ()=>{
+  stopTimer();
+  document.getElementById('quiz').classList.add('hidden');
+  document.getElementById('start').classList.remove('hidden');
+});
+document.getElementById('check').addEventListener('click', checkAnswers);
+document.getElementById('retry').addEventListener('click', ()=>{
+  stopTimer();
+  buildRound();
+});
+document.getElementById('restart').addEventListener('click', ()=>{
+  document.getElementById('result').classList.add('hidden');
+  document.getElementById('start').classList.remove('hidden');
+});
+</script>
+</body>
+</html>
