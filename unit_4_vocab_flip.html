@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Unit 4 — Vocab Flip Cards (Civil Liberties, Civil Rights, Judiciary)</title>
+<style>
+  :root{
+    --bg:#e5e7eb;
+    --panel:#f9fafb;
+    --ink:#111827;
+    --muted:#6b7280;
+    --accent:#2563eb;
+    --ok:#16a34a;
+    --bad:#dc2626;
+    --tile:#ffffff;
+    --tile-border:rgba(15,23,42,.12);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;
+    color:var(--ink);
+    background:radial-gradient(900px 600px at 15% -10%, #dbeafe 0%, var(--bg) 55%);
+  }
+  .wrap{max-width:980px; margin:0 auto; padding:24px}
+  h1{margin:0 0 6px; font-size:clamp(22px,3vw,32px)}
+  p,label{color:var(--muted)}
+  .card{
+    background:var(--panel);
+    border:1px solid rgba(15,23,42,.08);
+    border-radius:16px;
+    padding:18px;
+    box-shadow:0 6px 18px rgba(15,23,42,.08);
+  }
+  .grid{display:grid; gap:12px}
+  .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  @media (max-width:720px){
+    .grid-2{grid-template-columns:1fr}
+  }
+
+  select,button{
+    appearance:none;
+    border:1px solid rgba(15,23,42,.14);
+    background:#eff6ff;
+    color:var(--ink);
+    padding:10px 12px;
+    border-radius:10px;
+    font-size:15px;
+  }
+  button{
+    cursor:pointer;
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    border:1px solid rgba(37,99,235,.7);
+    color:#f9fafb;
+    font-weight:500;
+  }
+  button:hover{filter:brightness(1.05)}
+  .hidden{display:none}
+  .pill{
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid rgba(15,23,42,.12);
+    background:#e5e7eb;
+    color:#1f2937;
+    font-size:12px;
+  }
+  .hud{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+  }
+  .sep{height:1px; background:rgba(15,23,42,.08); margin:12px 0}
+
+  .big-card{
+    border-radius:18px;
+    border:1px solid var(--tile-border);
+    background:var(--tile);
+    padding:20px;
+    min-height:200px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:12px;
+  }
+  .term{
+    font-size:clamp(22px,3vw,26px);
+    font-weight:700;
+  }
+  .chapter-tag{
+    font-size:13px;
+    color:var(--muted);
+  }
+  .def{
+    font-size:clamp(16px,2.4vw,18px);
+    color:#111827;
+  }
+  .def.muted{
+    color:var(--muted);
+    font-style:italic;
+  }
+  .btn-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:10px;
+  }
+  .btn-ghost{
+    background:#ffffff;
+    color:var(--accent);
+    border-color:rgba(37,99,235,.5);
+  }
+  .btn-good{
+    background:linear-gradient(135deg,#16a34a,#15803d);
+    border-color:rgba(22,163,74,.8);
+  }
+  .btn-bad{
+    background:linear-gradient(135deg,#dc2626,#b91c1c);
+    border-color:rgba(220,38,38,.8);
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Unit 4 — Vocab Flip Cards</h1>
+    <p class="muted">
+      Use this after notes/videos and before multiple choice. Try to recall the definition,
+      then reveal it. Mark each card as <strong>Got it</strong> or <strong>Not yet</strong>.
+      You can then review only the “Not yet” cards.
+    </p>
+
+    <!-- START -->
+    <section id="start" class="card grid">
+      <div class="grid grid-2">
+        <div>
+          <label for="section">Set</label>
+          <select id="section">
+            <option value="all" selected>All Unit 4 vocab (Ch. 4 + 5 + 14)</option>
+            <option value="4">Ch. 4 — Civil Liberties only</option>
+            <option value="5">Ch. 5 — Civil Rights only</option>
+            <option value="14">Ch. 14 — Judiciary only</option>
+          </select>
+        </div>
+        <div>
+          <label for="order">Order</label>
+          <select id="order">
+            <option value="shuf" selected>Shuffle</option>
+            <option value="seq">In order</option>
+          </select>
+        </div>
+      </div>
+      <div class="hud">
+        <button id="begin">Start Cards</button>
+        <span class="pill" id="hint">Goal: recall the definition <em>before</em> flipping.</span>
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="quiz" class="card hidden">
+      <div class="hud">
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+          <span class="pill" id="setTag">Set</span>
+          <span class="pill" id="progress">Card 1 / N</span>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+          <span class="pill" id="timer">00:00</span>
+          <span class="pill" id="roundStats">Got it: 0 · Not yet: 0</span>
+        </div>
+      </div>
+      <div class="sep"></div>
+
+      <div class="big-card">
+        <div class="term" id="termText">Term</div>
+        <div class="chapter-tag" id="chapterTag">Ch. 4 — Civil Liberties</div>
+        <div class="def muted" id="defText">Try to say the definition to yourself before you reveal it.</div>
+
+        <div class="btn-row">
+          <button id="showDef" class="btn-ghost">Show definition</button>
+          <button id="gotIt" class="btn-good">Got it</button>
+          <button id="notYet" class="btn-bad">Not yet</button>
+          <button id="endEarly" class="btn-ghost">End round</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULT -->
+    <section id="result" class="card hidden">
+      <h2 style="margin:0 0 6px">Round Summary</h2>
+      <div class="hud" style="margin-bottom:6px">
+        <span class="pill" id="scoreline">Score</span>
+        <span class="pill" id="timeline">Time</span>
+      </div>
+      <div class="sep"></div>
+      <div id="reviewMsg" class="muted" style="margin-bottom:10px; font-size:14px;"></div>
+      <div class="hud">
+        <button id="retryNotYet">Review “Not yet” only</button>
+        <button id="newRound">New Round (same settings)</button>
+        <button id="restart">Back to Start</button>
+      </div>
+    </section>
+  </div>
+
+<script>
+// ===== Vocab list (same core as concept-map page) =====
+const VOCAB = [
+  // Ch. 4 — Civil Liberties
+  { term: 'Bill of Rights', chapter: 4,
+    definition: 'First ten amendments protecting individual liberties from government action.' },
+  { term: 'Civil liberties', chapter: 4,
+    definition: 'Freedoms that protect individuals from government interference.' },
+  { term: 'Selective incorporation', chapter: 4,
+    definition: 'Applying parts of the Bill of Rights to the states through the Fourteenth Amendment.' },
+  { term: 'Substantive due process', chapter: 4,
+    definition: 'Limits on what government may do to fundamental rights, regardless of procedure.' },
+  { term: 'Procedural due process', chapter: 4,
+    definition: 'Fair steps government must follow before taking life, liberty, or property.' },
+  { term: 'Establishment Clause', chapter: 4,
+    definition: 'Government may not establish or favor an official religion.' },
+  { term: 'Free Exercise Clause', chapter: 4,
+    definition: 'Protects the right to practice one’s religion within reasonable limits.' },
+  { term: 'Lemon test', chapter: 4,
+    definition: 'Three-part test to judge if a law violates the Establishment Clause.' },
+  { term: 'Fighting words', chapter: 4,
+    definition: 'Words likely to provoke immediate violence or a breach of the peace.' },
+  { term: 'Clear and present danger test', chapter: 4,
+    definition: 'Standard that once allowed limits on speech posing an immediate serious threat.' },
+  { term: 'Libel', chapter: 4,
+    definition: 'Written false statements that harm someone’s reputation.' },
+  { term: 'Slander', chapter: 4,
+    definition: 'Spoken false statements that harm someone’s reputation.' },
+  { term: 'Obscenity', chapter: 4,
+    definition: 'Sexually explicit material not protected by the First Amendment under the Miller test.' },
+  { term: 'Symbolic speech', chapter: 4,
+    definition: 'Actions that express ideas, such as flag burning.' },
+  { term: 'Exclusionary rule', chapter: 4,
+    definition: 'Illegally obtained evidence generally cannot be used in court.' },
+  { term: 'Good-faith exception', chapter: 4,
+    definition: 'Allows evidence if police reasonably relied on a warrant later found invalid.' },
+  { term: 'Miranda rights', chapter: 4,
+    definition: 'Warnings about the right to remain silent and to an attorney during police questioning.' },
+  { term: 'Right to privacy', chapter: 4,
+    definition: 'Implied constitutional right to personal autonomy in certain intimate decisions.' },
+  { term: 'Cruel and unusual punishment', chapter: 4,
+    definition: 'Excessive, barbaric, or grossly disproportionate punishments banned by the Eighth Amendment.' },
+
+  // Ch. 5 — Civil Rights
+  { term: 'Civil rights', chapter: 5,
+    definition: 'Government protections against discrimination and unequal treatment.' },
+  { term: 'Thirteenth Amendment', chapter: 5,
+    definition: 'Abolished slavery and involuntary servitude in the United States.' },
+  { term: 'Equal Protection Clause', chapter: 5,
+    definition: 'Part of the Fourteenth Amendment requiring states to treat people equally under the law.' },
+  { term: 'Fifteenth Amendment', chapter: 5,
+    definition: 'Prohibits denying the right to vote based on race, color, or previous condition of servitude.' },
+  { term: 'Nineteenth Amendment', chapter: 5,
+    definition: 'Guarantees women the right to vote.' },
+  { term: 'Jim Crow laws', chapter: 5,
+    definition: 'State and local laws that enforced racial segregation in the South.' },
+  { term: 'Black Codes', chapter: 5,
+    definition: 'Post–Civil War laws designed to limit the freedoms of formerly enslaved people.' },
+  { term: 'De jure segregation', chapter: 5,
+    definition: 'Segregation that exists because of laws or official policy.' },
+  { term: 'De facto segregation', chapter: 5,
+    definition: 'Segregation resulting from housing patterns, income, or social factors, not law.' },
+  { term: '“Separate but equal” doctrine', chapter: 5,
+    definition: 'Idea from Plessy v. Ferguson that segregation was constitutional if facilities were equal.' },
+  { term: 'Civil Rights Act of 1964', chapter: 5,
+    definition: 'Law banning discrimination in public accommodations, employment, and federally funded programs.' },
+  { term: 'Voting Rights Act of 1965', chapter: 5,
+    definition: 'Law targeting barriers like literacy tests and expanding minority voting rights.' },
+  { term: 'Poll tax', chapter: 5,
+    definition: 'Fee required to vote, used to keep poor and Black citizens from voting.' },
+  { term: 'Literacy test', chapter: 5,
+    definition: 'Reading or “understanding” tests once used to prevent many African Americans from voting.' },
+  { term: 'Affirmative action', chapter: 5,
+    definition: 'Policies that take race or gender into account to help remedy past discrimination.' },
+  { term: 'Strict scrutiny', chapter: 5,
+    definition: 'Toughest review standard; used when laws classify by race or affect fundamental rights.' },
+  { term: 'Intermediate scrutiny', chapter: 5,
+    definition: 'Standard usually used for gender classifications; law must be substantially related to an important goal.' },
+  { term: 'Rational basis test', chapter: 5,
+    definition: 'Most lenient review; law must be reasonably related to a legitimate government interest.' },
+  { term: 'Americans with Disabilities Act (ADA)', chapter: 5,
+    definition: 'Law requiring reasonable accommodations and banning discrimination against people with disabilities.' },
+  { term: 'Title IX', chapter: 5,
+    definition: 'Federal law banning sex discrimination in education programs that receive federal funds.' },
+  { term: 'Equal Rights Amendment (ERA)', chapter: 5,
+    definition: 'Proposed but unratified amendment to guarantee equality regardless of sex.' },
+  { term: 'Glass ceiling', chapter: 5,
+    definition: 'Invisible barriers preventing women and minorities from reaching top positions.' },
+
+  // Ch. 14 — Judiciary
+  { term: 'Judicial review', chapter: 14,
+    definition: 'Power of courts to declare laws or executive actions unconstitutional.' },
+  { term: 'Marbury v. Madison', chapter: 14,
+    definition: 'Supreme Court case that firmly established judicial review.' },
+  { term: 'Original jurisdiction', chapter: 14,
+    definition: 'Authority of a court to hear a case first, before any appeal.' },
+  { term: 'Appellate jurisdiction', chapter: 14,
+    definition: 'Authority of a court to review decisions from lower courts.' },
+  { term: 'Writ of certiorari', chapter: 14,
+    definition: 'Order for a lower court to send a case record up to the Supreme Court.' },
+  { term: 'Rule of four', chapter: 14,
+    definition: 'Informal rule that at least four justices must agree to hear a Supreme Court case.' },
+  { term: 'Stare decisis', chapter: 14,
+    definition: 'Doctrine of following precedent in deciding cases (“let the decision stand”).' },
+  { term: 'Majority opinion', chapter: 14,
+    definition: 'Official Court opinion that reflects the views of more than half the justices.' },
+  { term: 'Concurring opinion', chapter: 14,
+    definition: 'Opinion agreeing with the result but offering different or additional reasoning.' },
+  { term: 'Dissenting opinion', chapter: 14,
+    definition: 'Opinion written by justices who disagree with the majority’s decision.' },
+  { term: 'Judicial activism', chapter: 14,
+    definition: 'View that judges should interpret the Constitution broadly and may shape policy to protect rights.' },
+  { term: 'Judicial restraint', chapter: 14,
+    definition: 'View that judges should defer to elected branches unless a law clearly violates the Constitution.' },
+  { term: 'U.S. District Court', chapter: 14,
+    definition: 'Lowest level federal trial courts where most federal cases begin.' },
+  { term: 'U.S. Court of Appeals', chapter: 14,
+    definition: 'Intermediate federal courts that review decisions of district courts.' },
+  { term: 'Supreme Court of the United States', chapter: 14,
+    definition: 'Highest court in the federal system, with mostly appellate jurisdiction.' },
+  { term: 'Felony', chapter: 14,
+    definition: 'Serious crime usually punishable by more than one year in prison.' },
+  { term: 'Misdemeanor', chapter: 14,
+    definition: 'Less serious crime, often punishable by less than a year in jail or a fine.' },
+  { term: 'Plea bargain', chapter: 14,
+    definition: 'Agreement where the defendant pleads guilty to a lesser charge to avoid trial.' },
+  { term: 'Plaintiff', chapter: 14,
+    definition: 'Person or party who brings a civil lawsuit.' },
+  { term: 'Defendant', chapter: 14,
+    definition: 'Person or party accused of a crime or being sued.' },
+  { term: 'Statutory law', chapter: 14,
+    definition: 'Law written and passed by legislatures.' },
+  { term: 'Common law', chapter: 14,
+    definition: 'Law built up over time by judicial decisions and precedents.' },
+  { term: 'Administrative law', chapter: 14,
+    definition: 'Rules and regulations made by government agencies to implement statutes.' },
+  { term: 'Amicus curiae brief', chapter: 14,
+    definition: '“Friend of the court” brief filed by a third party to provide information or arguments.' },
+  { term: 'Justiciable controversy', chapter: 14,
+    definition: 'Real, live dispute appropriate for court resolution (not hypothetical or purely political).' },
+  { term: 'Jurisdiction', chapter: 14,
+    definition: 'A court’s authority to hear and decide a case.' }
+];
+
+// Group vocab by chapter / all
+const GROUPS = {
+  all: VOCAB,
+  4: VOCAB.filter(v => v.chapter === 4),
+  5: VOCAB.filter(v => v.chapter === 5),
+  14: VOCAB.filter(v => v.chapter === 14)
+};
+
+// ===== Helpers =====
+function shuffle(a){
+  const r = [...a];
+  for(let i=r.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [r[i],r[j]] = [r[j],r[i]];
+  }
+  return r;
+}
+function fmtTime(s){
+  const m = Math.floor(s/60).toString().padStart(2,'0');
+  const ss = (s%60).toString().padStart(2,'0');
+  return `${m}:${ss}`;
+}
+function chapterLabel(ch){
+  if(ch === 4) return 'Ch. 4 — Civil Liberties';
+  if(ch === 5) return 'Ch. 5 — Civil Rights';
+  if(ch === 14) return 'Ch. 14 — Judiciary';
+  return 'Unit 4 Mixed';
+}
+
+// ===== State =====
+let state = {
+  list: [],
+  idx: 0,
+  got: 0,
+  notYet: 0,
+  notYetList: [],
+  timer: null,
+  seconds: 0,
+  setKey: 'all',
+  order: 'shuf',
+  reviewMode: false
+};
+
+function startTimer(){
+  if(state.timer) clearInterval(state.timer);
+  state.seconds = 0;
+  document.getElementById('timer').textContent = '00:00';
+  state.timer = setInterval(()=>{
+    state.seconds++;
+    document.getElementById('timer').textContent = fmtTime(state.seconds);
+  },1000);
+}
+function stopTimer(){
+  if(state.timer){
+    clearInterval(state.timer);
+    state.timer = null;
+  }
+}
+
+// ===== Round control =====
+function startRound(fromNotYet=false){
+  const section = document.getElementById('section').value;
+  const order = document.getElementById('order').value;
+  state.setKey = section;
+  state.order = order;
+
+  let items;
+  if(fromNotYet){
+    items = [...state.notYetList];
+    state.reviewMode = true;
+  } else {
+    items = [...GROUPS[section]];
+    state.reviewMode = false;
+  }
+
+  if(order === 'shuf'){
+    items = shuffle(items);
+  }
+
+  state.list = items;
+  state.idx = 0;
+  state.got = 0;
+  state.notYet = 0;
+  state.notYetList = [];
+  updateStats();
+
+  document.getElementById('start').classList.add('hidden');
+  document.getElementById('result').classList.add('hidden');
+  document.getElementById('quiz').classList.remove('hidden');
+
+  const label = section === 'all'
+    ? 'All Unit 4 vocab'
+    : chapterLabel(Number(section));
+  document.getElementById('setTag').textContent = label;
+
+  startTimer();
+  renderCard();
+}
+
+function renderCard(){
+  if(state.idx >= state.list.length){
+    finishRound();
+    return;
+  }
+
+  const item = state.list[state.idx];
+  const total = state.list.length;
+
+  document.getElementById('progress').textContent =
+    `Card ${state.idx+1} / ${total}`;
+  document.getElementById('termText').textContent = item.term;
+  document.getElementById('chapterTag').textContent = chapterLabel(item.chapter);
+
+  const defNode = document.getElementById('defText');
+  defNode.textContent = 'Try to say the definition to yourself before you reveal it.';
+  defNode.classList.add('muted');
+
+  // Reset hint
+  document.getElementById('hint').textContent =
+    'Goal: say the definition out loud or in your head before you reveal it.';
+}
+
+function updateStats(){
+  document.getElementById('roundStats').textContent =
+    `Got it: ${state.got} · Not yet: ${state.notYet}`;
+}
+
+function showDefinition(){
+  if(state.idx >= state.list.length) return;
+  const item = state.list[state.idx];
+  const defNode = document.getElementById('defText');
+  defNode.textContent = item.definition;
+  defNode.classList.remove('muted');
+}
+
+function handleMark(isGotIt){
+  if(state.idx >= state.list.length) return;
+  const item = state.list[state.idx];
+
+  if(isGotIt){
+    state.got++;
+  } else {
+    state.notYet++;
+    state.notYetList.push(item);
+  }
+  state.idx++;
+  updateStats();
+  renderCard();
+}
+
+function finishRound(){
+  stopTimer();
+  document.getElementById('quiz').classList.add('hidden');
+  document.getElementById('result').classList.remove('hidden');
+
+  const total = state.list.length;
+  const got = state.got;
+  const notYet = state.notYet;
+
+  document.getElementById('scoreline').textContent =
+    `This round: Got it ${got} / ${total} (${total ? Math.round(got/total*100) : 0}%)`;
+  document.getElementById('timeline').textContent =
+    `Time: ${fmtTime(state.seconds)}`;
+
+  const msg = document.getElementById('reviewMsg');
+  if(notYet === 0){
+    msg.textContent = 'Perfect — no “Not yet” cards this round. You can start a fresh round or switch chapters.';
+  } else {
+    msg.textContent =
+      `You marked ${notYet} card(s) as “Not yet.” You can review only those cards, or start a brand new round.`;
+  }
+}
+
+// ===== DOM hooks =====
+document.getElementById('begin').addEventListener('click', ()=> startRound(false));
+
+document.getElementById('showDef').addEventListener('click', showDefinition);
+document.getElementById('gotIt').addEventListener('click', ()=> handleMark(true));
+document.getElementById('notYet').addEventListener('click', ()=> handleMark(false));
+
+document.getElementById('endEarly').addEventListener('click', finishRound);
+
+document.getElementById('retryNotYet').addEventListener('click', ()=>{
+  if(!state.notYetList || state.notYetList.length === 0){
+    alert('No “Not yet” cards to review.');
+    return;
+  }
+  startRound(true);
+});
+
+document.getElementById('newRound').addEventListener('click', ()=> startRound(false));
+
+document.getElementById('restart').addEventListener('click', ()=>{
+  stopTimer();
+  document.getElementById('result').classList.add('hidden');
+  document.getElementById('start').classList.remove('hidden');
+});
+</script>
+</body>
+</html>
