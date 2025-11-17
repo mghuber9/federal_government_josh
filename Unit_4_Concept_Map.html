@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Unit 4 — Concept Map (Civil Liberties, Civil Rights, Judiciary)</title>
+<style>
+  :root{
+    --bg:#e5e7eb;
+    --panel:#f9fafb;
+    --ink:#111827;
+    --muted:#6b7280;
+    --accent:#2563eb;
+    --ok:#16a34a;
+    --bad:#dc2626;
+    --tile:#ffffff;
+    --tile-border:rgba(15,23,42,.12);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;
+    color:var(--ink);
+    background:radial-gradient(900px 600px at 15% -10%, #dbeafe 0%, var(--bg) 55%);
+  }
+  .wrap{max-width:1100px; margin:0 auto; padding:24px}
+  h1{margin:0 0 6px; font-size:clamp(22px,3vw,32px)}
+  p,label{color:var(--muted)}
+  .card{
+    background:var(--panel);
+    border:1px solid rgba(15,23,42,.08);
+    border-radius:16px;
+    padding:18px;
+    box-shadow:0 6px 18px rgba(15,23,42,.08);
+  }
+  .grid{display:grid; gap:12px}
+  .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+  @media (max-width:900px){
+    .grid-2{grid-template-columns:1fr}
+    .grid-4{grid-template-columns:1fr}
+  }
+
+  select,button{
+    appearance:none;
+    border:1px solid rgba(15,23,42,.14);
+    background:#eff6ff;
+    color:var(--ink);
+    padding:10px 12px;
+    border-radius:10px;
+    font-size:15px;
+  }
+  button{
+    cursor:pointer;
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    border:1px solid rgba(37,99,235,.7);
+    color:#f9fafb;
+    font-weight:500;
+  }
+  button:hover{filter:brightness(1.05)}
+  .hidden{display:none}
+  .pill{
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid rgba(15,23,42,.12);
+    background:#e5e7eb;
+    color:#1f2937;
+    font-size:12px;
+  }
+  .hud{display:flex; gap:8px; align-items:center; justify-content:space-between; flex-wrap:wrap}
+  .sep{height:1px; background:rgba(15,23,42,.08); margin:12px 0}
+
+  .columns{display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:14px}
+  @media (max-width:980px){.columns{grid-template-columns:1fr}}
+
+  .col-title{
+    font-size:12px;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    color:#4b5563;
+    margin-bottom:8px;
+  }
+  .bucket{
+    border:1px dashed rgba(15,23,42,.18);
+    border-radius:14px;
+    padding:10px;
+    min-height:140px;
+    background:rgba(249,250,251,.9);
+  }
+  .bucket.highlight{
+    border-style:solid;
+    border-color:var(--accent);
+    background:#eff6ff;
+  }
+
+  .tile{
+    border:1px solid var(--tile-border);
+    background:var(--tile);
+    border-radius:12px;
+    padding:10px;
+    margin-bottom:8px;
+    cursor:grab;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .tile:active{cursor:grabbing}
+  .tile-title{
+    font-weight:600;
+    font-size:15px;
+  }
+  .tile-def{
+    font-size:13px;
+    color:var(--muted);
+  }
+  .tile.dragging{
+    opacity:.5;
+  }
+  .tile.correct{
+    border-color:var(--ok);
+    box-shadow:0 0 0 1px var(--ok);
+    background:#dcfce7;
+  }
+  .tile.wrong{
+    border-color:var(--bad);
+    box-shadow:0 0 0 1px var(--bad);
+    background:#fee2e2;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Unit 4 — Concept Map (Civil Liberties, Civil Rights, Judiciary)</h1>
+    <p class="muted">
+      Drag each concept into the chapter where it fits best: <strong>Ch. 4 Civil Liberties</strong>,
+      <strong>Ch. 5 Civil Rights</strong>, or <strong>Ch. 14 Judiciary</strong>.
+      This comes <em>before</em> vocab drills and MC — it’s a warm-up to sort the big ideas.
+    </p>
+
+    <!-- START -->
+    <section id="start" class="card grid">
+      <div class="grid grid-2">
+        <div>
+          <label for="size">Round size</label>
+          <select id="size">
+            <option value="9">9 concepts (3 per chapter)</option>
+            <option value="15" selected>15 concepts (5 per chapter)</option>
+            <option value="21">21 concepts (7 per chapter)</option>
+          </select>
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <div class="pill">
+            Concepts are pulled from the same Unit 4 MC bank. New round = new mix.
+          </div>
+        </div>
+      </div>
+      <div class="hud">
+        <button id="begin">Start Round</button>
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="quiz" class="card hidden">
+      <div class="hud">
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+          <span class="pill" id="roundInfo">Round: 15 concepts</span>
+          <span class="pill" id="progress">Placed 0 / 15</span>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+          <span class="pill" id="timer">00:00</span>
+          <span class="pill" id="score">Score: —</span>
+          <button id="check">Check Answers</button>
+          <button id="newRound">New Round</button>
+          <button id="back">Back to Start</button>
+        </div>
+      </div>
+      <div class="sep"></div>
+
+      <div class="columns">
+        <div>
+          <div class="col-title">Unused Concepts</div>
+          <div class="bucket" id="bucket-pool" data-bucket="pool"></div>
+        </div>
+        <div>
+          <div class="col-title">Ch. 4 — Civil Liberties</div>
+          <div class="bucket" id="bucket-4" data-bucket="4"></div>
+        </div>
+        <div>
+          <div class="col-title">Ch. 5 — Civil Rights</div>
+          <div class="bucket" id="bucket-5" data-bucket="5"></div>
+        </div>
+        <div>
+          <div class="col-title">Ch. 14 — Judiciary</div>
+          <div class="bucket" id="bucket-14" data-bucket="14"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+<script>
+// ===== Vocab pulled from Unit 4 MC bank =====
+const VOCAB = [
+  // Ch. 4
+  { term: 'Bill of Rights', chapter: 4,
+    definition: 'First ten amendments protecting individual liberties from government action.' },
+  { term: 'Civil liberties', chapter: 4,
+    definition: 'Freedoms that protect individuals from government interference.' },
+  { term: 'Selective incorporation', chapter: 4,
+    definition: 'Applying parts of the Bill of Rights to the states through the 14th Amendment.' },
+  { term: 'Substantive due process', chapter: 4,
+    definition: 'Limits on what government can do to your fundamental rights.' },
+  { term: 'Procedural due process', chapter: 4,
+    definition: 'Fair steps government must follow before taking life, liberty, or property.' },
+  { term: 'Establishment Clause', chapter: 4,
+    definition: 'Government may not establish or favor an official religion.' },
+  { term: 'Free Exercise Clause', chapter: 4,
+    definition: 'Protects the right to practice one’s religion within reasonable limits.' },
+  { term: 'Lemon test', chapter: 4,
+    definition: 'Test used to judge if a law violates the Establishment Clause.' },
+  { term: 'Fighting words', chapter: 4,
+    definition: 'Words likely to provoke immediate violence or breach of the peace.' },
+  { term: 'Clear and present danger test', chapter: 4,
+    definition: 'Limits speech that creates an immediate serious threat.' },
+  { term: 'Libel', chapter: 4,
+    definition: 'Written false statements that harm someone’s reputation.' },
+  { term: 'Slander', chapter: 4,
+    definition: 'Spoken false statements that harm someone’s reputation.' },
+  { term: 'Obscenity', chapter: 4,
+    definition: 'Sexual material not protected by free speech under the Miller test.' },
+  { term: 'Symbolic speech', chapter: 4,
+    definition: 'Actions that express ideas, such as flag burning.' },
+  { term: 'Exclusionary rule', chapter: 4,
+    definition: 'Illegally obtained evidence cannot be used in court.' },
+  { term: 'Good-faith exception', chapter: 4,
+    definition: 'Allows evidence if police reasonably relied on a defective warrant.' },
+  { term: 'Miranda rights', chapter: 4,
+    definition: 'Warnings about the right to remain silent and to an attorney.' },
+  { term: 'Right to privacy', chapter: 4,
+    definition: 'Implied right to personal autonomy in certain intimate decisions.' },
+  { term: 'Cruel and unusual punishment', chapter: 4,
+    definition: 'Excessive or barbaric punishments banned by the Eighth Amendment.' },
+
+  // Ch. 5
+  { term: 'Civil rights', chapter: 5,
+    definition: 'Government protections against discrimination and unequal treatment.' },
+  { term: 'Thirteenth Amendment', chapter: 5,
+    definition: 'Abolished slavery in the United States.' },
+  { term: 'Equal Protection Clause', chapter: 5,
+    definition: 'Requires states to treat people equally under the law.' },
+  { term: 'Fifteenth Amendment', chapter: 5,
+    definition: 'Bans denying the vote based on race, color, or past servitude.' },
+  { term: 'Nineteenth Amendment', chapter: 5,
+    definition: 'Guarantees women’s right to vote.' },
+  { term: 'Jim Crow laws', chapter: 5,
+    definition: 'State and local laws enforcing racial segregation.' },
+  { term: 'Black Codes', chapter: 5,
+    definition: 'Post–Civil War laws limiting freedoms of formerly enslaved people.' },
+  { term: 'De jure segregation', chapter: 5,
+    definition: 'Segregation required by law or official policy.' },
+  { term: 'De facto segregation', chapter: 5,
+    definition: 'Segregation caused by housing, income, or social patterns.' },
+  { term: '“Separate but equal” doctrine', chapter: 5,
+    definition: 'Idea that segregation is okay if facilities are equal (from Plessy).' },
+  { term: 'Civil Rights Act of 1964', chapter: 5,
+    definition: 'Bans discrimination in public places, employment, and federally funded programs.' },
+  { term: 'Voting Rights Act of 1965', chapter: 5,
+    definition: 'Targets barriers like literacy tests and expands minority voting rights.' },
+  { term: 'Poll tax', chapter: 5,
+    definition: 'Fee charged to vote; used to keep poor and Black citizens from voting.' },
+  { term: 'Literacy test', chapter: 5,
+    definition: 'Reading/understanding tests once used to block many African Americans from voting.' },
+  { term: 'Affirmative action', chapter: 5,
+    definition: 'Policies using race or gender as one factor to remedy past discrimination.' },
+  { term: 'Strict scrutiny', chapter: 5,
+    definition: 'Highest level of review for laws involving race or fundamental rights.' },
+  { term: 'Intermediate scrutiny', chapter: 5,
+    definition: 'Review standard usually used for gender classifications.' },
+  { term: 'Rational basis test', chapter: 5,
+    definition: 'Lenient test; law must be reasonably related to a legitimate goal.' },
+  { term: 'Americans with Disabilities Act (ADA)', chapter: 5,
+    definition: 'Requires reasonable accommodations and bans disability discrimination.' },
+  { term: 'Title IX', chapter: 5,
+    definition: 'Bans sex discrimination in education programs with federal funding.' },
+  { term: 'Equal Rights Amendment (ERA)', chapter: 5,
+    definition: 'Proposed amendment to guarantee equality regardless of sex; not ratified.' },
+  { term: 'Glass ceiling', chapter: 5,
+    definition: 'Invisible barrier to advancement for women and minorities.' },
+
+  // Ch. 14
+  { term: 'Judicial review', chapter: 14,
+    definition: 'Court power to declare laws or executive actions unconstitutional.' },
+  { term: 'Marbury v. Madison', chapter: 14,
+    definition: 'Case that established judicial review for the Supreme Court.' },
+  { term: 'Original jurisdiction', chapter: 14,
+    definition: 'Court hears a case first, before any appeals.' },
+  { term: 'Appellate jurisdiction', chapter: 14,
+    definition: 'Court reviews decisions from lower courts.' },
+  { term: 'Writ of certiorari', chapter: 14,
+    definition: 'Order for a lower court to send a case up to the Supreme Court.' },
+  { term: 'Rule of four', chapter: 14,
+    definition: 'At least four justices must agree to hear a Supreme Court case.' },
+  { term: 'Stare decisis', chapter: 14,
+    definition: '“Let the decision stand”; follow precedent.' },
+  { term: 'Majority opinion', chapter: 14,
+    definition: 'Official opinion of the Court, joined by most justices.' },
+  { term: 'Concurring opinion', chapter: 14,
+    definition: 'Justice agrees with result but writes a separate reason.' },
+  { term: 'Dissenting opinion', chapter: 14,
+    definition: 'Justice disagrees with the majority’s decision.' },
+  { term: 'Judicial activism', chapter: 14,
+    definition: 'Judges interpret the Constitution broadly and may shape policy to protect rights.' },
+  { term: 'Judicial restraint', chapter: 14,
+    definition: 'Judges defer to elected branches unless a law clearly violates the Constitution.' },
+  { term: 'U.S. District Court', chapter: 14,
+    definition: 'Federal trial court level where most federal cases start.' },
+  { term: 'U.S. Court of Appeals', chapter: 14,
+    definition: 'Federal courts that review district court decisions.' },
+  { term: 'Supreme Court of the United States', chapter: 14,
+    definition: 'Highest court in the federal judiciary.' },
+  { term: 'Felony', chapter: 14,
+    definition: 'Serious crime usually punishable by more than one year in prison.' },
+  { term: 'Misdemeanor', chapter: 14,
+    definition: 'Less serious crime, often with a shorter sentence or fine.' },
+  { term: 'Plea bargain', chapter: 14,
+    definition: 'Deal where the defendant pleads guilty to a lesser charge to avoid trial.' },
+  { term: 'Plaintiff', chapter: 14,
+    definition: 'Person who files a civil lawsuit.' },
+  { term: 'Defendant', chapter: 14,
+    definition: 'Person accused of a crime or being sued.' },
+  { term: 'Statutory law', chapter: 14,
+    definition: 'Law written and passed by legislatures.' },
+  { term: 'Common law', chapter: 14,
+    definition: 'Law built from judicial decisions and precedents.' },
+  { term: 'Administrative law', chapter: 14,
+    definition: 'Rules created by agencies to implement statutes.' },
+  { term: 'Amicus curiae brief', chapter: 14,
+    definition: '“Friend of the court” brief from a non-party offering information or arguments.' },
+  { term: 'Justiciable controversy', chapter: 14,
+    definition: 'Real dispute appropriate for court resolution, not hypothetical.' },
+  { term: 'Jurisdiction', chapter: 14,
+    definition: 'Court’s authority to hear and decide a case.' }
+];
+
+// ===== Helpers =====
+function shuffle(a){
+  const r = [...a];
+  for(let i=r.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [r[i],r[j]] = [r[j],r[i]];
+  }
+  return r;
+}
+function fmtTime(s){
+  const m = Math.floor(s/60).toString().padStart(2,'0');
+  const ss = (s%60).toString().padStart(2,'0');
+  return `${m}:${ss}`;
+}
+
+// Group vocab by chapter
+const GROUPS = {
+  4: VOCAB.filter(v => v.chapter === 4),
+  5: VOCAB.filter(v => v.chapter === 5),
+  14: VOCAB.filter(v => v.chapter === 14)
+};
+
+// ===== State =====
+let state = {
+  items: [],
+  total: 0,
+  timer: null,
+  seconds: 0
+};
+
+const bucketPool = document.getElementById('bucket-pool');
+const bucket4 = document.getElementById('bucket-4');
+const bucket5 = document.getElementById('bucket-5');
+const bucket14 = document.getElementById('bucket-14');
+const allBuckets = [bucketPool, bucket4, bucket5, bucket14];
+
+let dragNode = null;
+
+// ===== Timer =====
+function startTimer(){
+  if(state.timer) clearInterval(state.timer);
+  state.seconds = 0;
+  document.getElementById('timer').textContent = '00:00';
+  state.timer = setInterval(()=>{
+    state.seconds++;
+    document.getElementById('timer').textContent = fmtTime(state.seconds);
+  },1000);
+}
+function stopTimer(){
+  if(state.timer){
+    clearInterval(state.timer);
+    state.timer = null;
+  }
+}
+
+// ===== Round building =====
+function buildRound(){
+  // clear buckets
+  allBuckets.forEach(b => { b.innerHTML = ''; b.classList.remove('highlight'); });
+  document.getElementById('score').textContent = 'Score: —';
+
+  const size = Number(document.getElementById('size').value);
+  const perChapter = Math.max(1, Math.floor(size / 3));
+  const chapters = [4,5,14];
+  let selection = [];
+
+  chapters.forEach(ch=>{
+    const pool = shuffle(GROUPS[ch]);
+    selection = selection.concat(pool.slice(0, perChapter));
+  });
+
+  // If size not divisible by 3, add a couple extra random items
+  while(selection.length < size){
+    const randomChapter = chapters[Math.floor(Math.random()*chapters.length)];
+    const pool = shuffle(GROUPS[randomChapter]);
+    const candidate = pool.find(v => !selection.includes(v));
+    if(candidate) selection.push(candidate); else break;
+  }
+
+  selection = shuffle(selection);
+  state.items = selection;
+  state.total = selection.length;
+
+  document.getElementById('roundInfo').textContent = `Round: ${state.total} concepts`;
+  updateProgress();
+
+  // Create tiles in pool
+  selection.forEach(item=>{
+    const tile = document.createElement('div');
+    tile.className = 'tile';
+    tile.setAttribute('draggable','true');
+    tile.dataset.chapter = item.chapter;
+
+    const title = document.createElement('div');
+    title.className = 'tile-title';
+    title.textContent = item.term;
+
+    const def = document.createElement('div');
+    def.className = 'tile-def';
+    def.textContent = item.definition;
+
+    tile.appendChild(title);
+    tile.appendChild(def);
+
+    addTileDragHandlers(tile);
+    bucketPool.appendChild(tile);
+  });
+
+  startTimer();
+}
+
+function updateProgress(){
+  const placed = state.total - bucketPool.querySelectorAll('.tile').length;
+  document.getElementById('progress').textContent =
+    `Placed ${placed} / ${state.total}`;
+}
+
+// ===== Drag & Drop =====
+function addTileDragHandlers(tile){
+  tile.addEventListener('dragstart', e=>{
+    dragNode = tile;
+    tile.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+  });
+  tile.addEventListener('dragend', ()=>{
+    dragNode = null;
+    tile.classList.remove('dragging');
+    allBuckets.forEach(b => b.classList.remove('highlight'));
+  });
+}
+
+allBuckets.forEach(bucket=>{
+  bucket.addEventListener('dragover', e=>{
+    e.preventDefault();
+    if(dragNode){
+      bucket.classList.add('highlight');
+      e.dataTransfer.dropEffect = 'move';
+    }
+  });
+  bucket.addEventListener('dragleave', ()=>{
+    bucket.classList.remove('highlight');
+  });
+  bucket.addEventListener('drop', e=>{
+    e.preventDefault();
+    bucket.classList.remove('highlight');
+    if(dragNode){
+      bucket.appendChild(dragNode);
+      updateProgress();
+    }
+  });
+});
+
+// ===== Checking answers =====
+function checkAnswers(){
+  stopTimer();
+  let correct = 0;
+  let attempted = 0;
+
+  // Clear old markings
+  document.querySelectorAll('.tile').forEach(t=>{
+    t.classList.remove('correct','wrong');
+  });
+
+  [bucket4, bucket5, bucket14].forEach(bucket=>{
+    const bucketChapter = Number(bucket.dataset.bucket);
+    bucket.querySelectorAll('.tile').forEach(tile=>{
+      attempted++;
+      const trueChapter = Number(tile.dataset.chapter);
+      if(trueChapter === bucketChapter){
+        correct++;
+        tile.classList.add('correct');
+      }else{
+        tile.classList.add('wrong');
+      }
+    });
+  });
+
+  if(attempted === 0){
+    document.getElementById('score').textContent = 'Score: 0 / 0';
+  } else {
+    const pct = Math.round((correct/attempted)*100);
+    document.getElementById('score').textContent =
+      `Score: ${correct} / ${attempted} (${pct}%)`;
+  }
+}
+
+// ===== Nav =====
+document.getElementById('begin').addEventListener('click', ()=>{
+  document.getElementById('start').classList.add('hidden');
+  document.getElementById('quiz').classList.remove('hidden');
+  buildRound();
+});
+
+document.getElementById('newRound').addEventListener('click', ()=>{
+  stopTimer();
+  buildRound();
+});
+
+document.getElementById('check').addEventListener('click', checkAnswers);
+
+document.getElementById('back').addEventListener('click', ()=>{
+  stopTimer();
+  document.getElementById('quiz').classList.add('hidden');
+  document.getElementById('start').classList.remove('hidden');
+});
+</script>
+</body>
+</html>
