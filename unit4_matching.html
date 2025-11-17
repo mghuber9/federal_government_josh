@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Unit 4 — Matching (Civil Liberties, Civil Rights, Judiciary)</title>
+<style>
+  :root{
+    --bg:#e5e7eb;
+    --panel:#f9fafb;
+    --ink:#111827;
+    --muted:#6b7280;
+    --accent:#2563eb;
+    --ok:#16a34a;
+    --bad:#dc2626;
+    --tile:#ffffff;
+    --tile-border:rgba(15,23,42,.12);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;
+    color:var(--ink);
+    background:radial-gradient(900px 600px at 15% -10%, #dbeafe 0%, var(--bg) 55%);
+  }
+  .wrap{max-width:1100px; margin:0 auto; padding:24px}
+  h1{margin:0 0 6px; font-size:clamp(22px,3vw,32px)}
+  p,label{color:var(--muted)}
+  .card{
+    background:var(--panel);
+    border:1px solid rgba(15,23,42,.08);
+    border-radius:16px;
+    padding:18px;
+    box-shadow:0 6px 18px rgba(15,23,42,.08);
+  }
+  .grid{display:grid; gap:12px}
+  .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  @media (max-width:900px){.grid-2{grid-template-columns:1fr}}
+
+  select,button{
+    appearance:none;
+    border:1px solid rgba(15,23,42,.14);
+    background:#eff6ff;
+    color:var(--ink);
+    padding:10px 12px;
+    border-radius:10px;
+    font-size:15px;
+  }
+  button{
+    cursor:pointer;
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    border:1px solid rgba(37,99,235,.7);
+    color:#f9fafb;
+    font-weight:500;
+  }
+  button:hover{filter:brightness(1.05)}
+  .hidden{display:none}
+  .pill{
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid rgba(15,23,42,.12);
+    background:#e5e7eb;
+    color:#1f2937;
+    font-size:12px;
+  }
+  .hud{display:flex; gap:8px; align-items:center; justify-content:space-between; flex-wrap:wrap}
+  .sep{height:1px; background:rgba(15,23,42,.08); margin:12px 0}
+
+  .columns{display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px}
+  @media (max-width:980px){.columns{grid-template-columns:1fr}}
+
+  .col-title{
+    font-size:12px;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    color:#4b5563;
+    margin-bottom:8px;
+  }
+  .left,.center,.right{display:grid; gap:10px}
+
+  .prompt,.slot,.answer{
+    border:1px solid var(--tile-border);
+    background:var(--tile);
+    border-radius:12px;
+    padding:12px;
+    min-height:64px;
+    display:flex;
+    gap:10px;
+    align-items:center;
+  }
+  .prompt{position:relative}
+  .slot{justify-content:space-between}
+  .slot.empty{opacity:.75}
+  .placeholder{font-style:italic; color:var(--muted)}
+  .num{
+    flex:0 0 auto;
+    width:28px; height:28px;
+    border-radius:999px;
+    background:#e5e7eb;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:14px;
+    border:1px solid rgba(15,23,42,.12);
+  }
+  .text{flex:1 1 auto; font-size:clamp(15px,2vw,17px); line-height:1.35}
+  .ghost{opacity:.6}
+  .drag-over{outline:2px dashed var(--accent)}
+  .correct{background:#dcfce7; border-color:#22c55e}
+  .wrong{background:#fee2e2; border-color:#ef4444}
+  .answer{cursor:grab}
+  .answer:active{cursor:grabbing}
+
+  .sameHeight{height:var(--rowH,auto)}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Unit 4 — Matching Practice</h1>
+    <p class="muted">
+      Drag from <strong>Unused Answers</strong> into the <strong>Answer Slots</strong>. Each chapter has two rounds of 25; Unit 4 has six rounds of 25. Finish to see only missed items and retry just those.
+    </p>
+
+    <!-- START -->
+    <section id="start" class="card grid">
+      <div class="grid grid-2">
+        <div>
+          <label for="section">Round</label>
+          <select id="section">
+            <option value="ch4_r1">Ch. 4 — Civil Liberties · Round 1 (25)</option>
+            <option value="ch4_r2">Ch. 4 — Civil Liberties · Round 2 (25)</option>
+
+            <option value="ch5_r1">Ch. 5 — Civil Rights · Round 1 (25)</option>
+            <option value="ch5_r2">Ch. 5 — Civil Rights · Round 2 (25)</option>
+
+            <option value="ch14_r1">Ch. 14 — Judiciary · Round 1 (25)</option>
+            <option value="ch14_r2">Ch. 14 — Judiciary · Round 2 (25)</option>
+
+            <option value="u4_r1" selected>Unit 4 — Mixed · Round 1 (25)</option>
+            <option value="u4_r2">Unit 4 — Mixed · Round 2 (25)</option>
+            <option value="u4_r3">Unit 4 — Mixed · Round 3 (25)</option>
+            <option value="u4_r4">Unit 4 — Mixed · Round 4 (25)</option>
+            <option value="u4_r5">Unit 4 — Mixed · Round 5 (25)</option>
+            <option value="u4_r6">Unit 4 — Mixed · Round 6 (25)</option>
+          </select>
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <div class="pill">Exactly 25 pairs per round. Answers are shuffled each time.</div>
+        </div>
+      </div>
+      <div class="hud">
+        <button id="begin">Start Round</button>
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="quiz" class="card hidden">
+      <div class="hud">
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+          <span class="pill" id="setTag">Set</span>
+          <span class="pill" id="progress">Filled 0 / 25</span>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+          <span class="pill" id="timer">00:00</span>
+          <span class="pill" id="best">Best: —</span>
+          <button id="finish">Finish &amp; Review</button>
+        </div>
+      </div>
+      <div class="sep"></div>
+
+      <div class="columns">
+        <div>
+          <div class="col-title">Prompts</div>
+          <div class="left" id="left"></div>
+        </div>
+        <div>
+          <div class="col-title">Answer Slots</div>
+          <div class="center" id="center"></div>
+        </div>
+        <div>
+          <div class="col-title">Unused Answers</div>
+          <div class="right" id="right"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULT -->
+    <section id="result" class="card hidden">
+      <h2 style="margin:0 0 6px">Round Complete</h2>
+      <div class="hud" style="margin-bottom:6px">
+        <span class="pill" id="scoreline">Score</span>
+        <span class="pill" id="timeline">Time</span>
+        <span class="pill" id="bestline">Best</span>
+      </div>
+      <div class="sep"></div>
+      <div id="review"></div>
+      <div class="hud">
+        <button id="retry">New Round (same selection)</button>
+        <button id="retryMissed">Retry Missed Only</button>
+        <button id="restart">Back to Start</button>
+      </div>
+    </section>
+  </div>
+
+<script>
+// ---------- Helpers ----------
+function shuffle(a){ const r=[...a]; for(let i=r.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [r[i],r[j]]=[r[j],r[i]]; } return r; }
+function fmtTime(s){ const m=Math.floor(s/60).toString().padStart(2,'0'); const ss=(s%60).toString().padStart(2,'0'); return `${m}:${ss}`; }
+function setBest(key, seconds){ const prev = Number(localStorage.getItem(key)||Infinity); if(seconds < prev){ localStorage.setItem(key, String(seconds)); } }
+function getBest(key){ const v = localStorage.getItem(key); return v? fmtTime(Number(v)) : '—'; }
+
+// ---------- Question Bank (same as Unit 4 MC) ----------
+const BANK = [
+  // ===== Ch. 4 — Civil Liberties (50) =====
+  {chapter:4,set:'ch4',q:'What is the primary purpose of the Bill of Rights?',choices:['To protect individual liberties from government intrusion','To define the powers of the presidency','To organize political parties','To regulate state taxation'],answer:0},
+  {chapter:4,set:'ch4',q:'Originally, the Bill of Rights applied to which level of government?',choices:['Federal government only','State and federal governments equally','State governments only','Local governments only'],answer:0},
+  {chapter:4,set:'ch4',q:'Barron v. Baltimore (1833) held that the Bill of Rights:',choices:['Did not apply to the states','Automatically applied to the states','Was unconstitutional','Applied only to criminal cases'],answer:0},
+  {chapter:4,set:'ch4',q:'The process by which certain rights in the Bill of Rights are applied to the states through the Fourteenth Amendment is called:',choices:['Selective incorporation','Judicial restraint','Dual federalism','Executive privilege'],answer:0},
+  {chapter:4,set:'ch4',q:'Gitlow v. New York (1925) is important because it:',choices:['Began the selective incorporation of free speech','Ended the death penalty','Outlawed racial segregation in schools','Created judicial review'],answer:0},
+  {chapter:4,set:'ch4',q:'What is meant by “civil liberties”?',choices:['Freedoms that protect individuals from government action','Benefits distributed by public policy','Rights to vote and hold office','Economic protections for businesses'],answer:0},
+  {chapter:4,set:'ch4',q:'Substantive due process focuses on:',choices:['The fundamental rights the government cannot infringe','The steps the government must follow before depriving liberty','The size of juries','The structure of state courts'],answer:0},
+  {chapter:4,set:'ch4',q:'Procedural due process focuses on:',choices:['Fair and proper legal procedures','Economic policy outcomes','Separation of powers','Military law only'],answer:0},
+  {chapter:4,set:'ch4',q:'Which amendment is most associated with the Due Process and Equal Protection clauses used for incorporation?',choices:['Fourteenth Amendment','First Amendment','Tenth Amendment','Twenty-Second Amendment'],answer:0},
+  {chapter:4,set:'ch4',q:'The case of Near v. Minnesota (1931) dealt with:',choices:['Prior restraint and freedom of the press','School prayer','Gun ownership','Campaign finance'],answer:0},
+
+  {chapter:4,set:'ch4',q:'The Establishment Clause states that government may not:',choices:['Create an official religion or favor one religion','Protect religious freedom','Provide chaplains in the military','Tax churches'],answer:0},
+  {chapter:4,set:'ch4',q:'What is the “No Establishment Clause”?',choices:['The part of the First Amendment that forbids government from establishing a religion','The rule that states cannot tax churches','The rule that religious groups cannot lobby government','The clause that bans religious symbols in private homes'],answer:0},
+  {chapter:4,set:'ch4',q:'The Free Exercise Clause protects:',choices:['The right to practice one’s religion within reasonable limits','Only mainstream religious practices','Only non-Christian religions','State-sponsored prayer'],answer:0},
+  {chapter:4,set:'ch4',q:'In Abington School District v. Schempp, the Court struck down:',choices:['School-sponsored Bible reading and prayer','Federal aid to religious colleges','Religious symbols on private property','Tax exemptions for churches'],answer:0},
+  {chapter:4,set:'ch4',q:'Which case banned school-sponsored prayer written by the state?',choices:['Engel v. Vitale','Mapp v. Ohio','Gideon v. Wainwright','Roe v. Wade'],answer:0},
+  {chapter:4,set:'ch4',q:'The Lemon Test evaluates laws under which clause?',choices:['The Establishment Clause','The Free Exercise Clause','The Free Speech Clause','The Takings Clause'],answer:0},
+  {chapter:4,set:'ch4',q:'Which of the following is NOT a part of the Lemon Test?',choices:['Law must directly support a single church','Law must have a secular purpose','Law’s primary effect must neither advance nor inhibit religion','Law must avoid excessive government entanglement with religion'],answer:0},
+  {chapter:4,set:'ch4',q:'A seasonal holiday display on public property is most likely constitutional if:',choices:['It includes a variety of religious and secular symbols','It features only one religious tradition','It excludes all secular elements','It is funded only by religious groups'],answer:0},
+  {chapter:4,set:'ch4',q:'Which case allowed privately sponsored religious clubs to meet in public schools after hours if other clubs may do so?',choices:['Good News Club v. Milford Central School','Engel v. Vitale','Lawrence v. Texas','Brown v. Board of Education'],answer:0},
+  {chapter:4,set:'ch4',q:'Which case upheld the display of the Ten Commandments in a historical context on public property?',choices:['Van Orden v. Perry','Roe v. Wade','Everson v. Board of Education','Schenck v. United States'],answer:0},
+
+  {chapter:4,set:'ch4',q:'“Fighting words” are defined by the Court as:',choices:['Words that by their very utterance inflict injury or incite an immediate breach of the peace','Any criticism of government officials','Vulgar language used in private','Political slogans'],answer:0},
+  {chapter:4,set:'ch4',q:'The “clear and present danger” test came from which case?',choices:['Schenck v. United States','New York Times v. Sullivan','Miller v. California','Tinker v. Des Moines'],answer:0},
+  {chapter:4,set:'ch4',q:'Under Brandenburg v. Ohio, speech may be restricted if it:',choices:['Is directed to inciting imminent lawless action and is likely to produce it','Is offensive or unpopular','Criticizes the president','Is anonymous'],answer:0},
+  {chapter:4,set:'ch4',q:'Libel refers to:',choices:['Written false statements that damage a person’s reputation','Spoken false statements','Any harsh criticism','Symbolic speech'],answer:0},
+  {chapter:4,set:'ch4',q:'Slander refers to:',choices:['Spoken false statements that damage a person’s reputation','Written false statements','Any online comment','Commercial advertising'],answer:0},
+  {chapter:4,set:'ch4',q:'New York Times v. Sullivan (1964) established that public officials must show what to win a libel case?',choices:['Actual malice','Ordinary negligence','Economic loss','Political bias'],answer:0},
+  {chapter:4,set:'ch4',q:'Miller v. California established a test for:',choices:['Obscenity','Flag burning','Campaign spending','Search warrants'],answer:0},
+  {chapter:4,set:'ch4',q:'Which of the following is NOT part of the Miller obscenity test?',choices:['Speech must be political in nature','Appeals to prurient interest','Depicts sexual conduct in a patently offensive way','Lacks serious literary, artistic, political, or scientific value'],answer:0},
+  {chapter:4,set:'ch4',q:'Texas v. Johnson (1989) held that flag burning is:',choices:['Protected symbolic speech','Unprotected obscenity','Unprotected fighting words','A federal crime in all circumstances'],answer:0},
+  {chapter:4,set:'ch4',q:'Tinker v. Des Moines (1969) protected students’ right to:',choices:['Wear black armbands in protest at school','Skip school for political rallies','Carry weapons on campus','Refuse homework assignments'],answer:0},
+
+  {chapter:4,set:'ch4',q:'Griswold v. Connecticut (1965) established:',choices:['A constitutional right to privacy regarding contraception','The exclusionary rule','The doctrine of separate but equal','The executive privilege doctrine'],answer:0},
+  {chapter:4,set:'ch4',q:'The right to privacy in Griswold v. Connecticut was based on:',choices:['“Penumbras” formed by several amendments','Explicit text in the Tenth Amendment','An act of Congress','The Commerce Clause'],answer:0},
+  {chapter:4,set:'ch4',q:'Roe v. Wade (1973) was grounded primarily in:',choices:['The constitutional right to privacy','The Second Amendment','The Establishment Clause','The Tenth Amendment'],answer:0},
+  {chapter:4,set:'ch4',q:'Lawrence v. Texas (2003) struck down state laws that:',choices:['Criminalized consensual same-sex activity','Required public school uniforms','Banned interracial marriage','Legalized gambling'],answer:0},
+  {chapter:4,set:'ch4',q:'Which case first applied the exclusionary rule to federal law enforcement?',choices:['Weeks v. United States','Mapp v. Ohio','Gideon v. Wainwright','Miranda v. Arizona'],answer:0},
+  {chapter:4,set:'ch4',q:'Mapp v. Ohio (1961) extended which principle to the states?',choices:['The exclusionary rule','The right to bear arms','The right to a speedy trial','Executive privilege'],answer:0},
+  {chapter:4,set:'ch4',q:'The exclusionary rule generally means that:',choices:['Illegally obtained evidence cannot be used in court','All evidence is admissible if relevant','Only confessions can be excluded','States may ignore federal search rules'],answer:0},
+  {chapter:4,set:'ch4',q:'The “good faith” exception to the exclusionary rule allows evidence when:',choices:['Police reasonably relied on a defective warrant','Police had no warrant at all','The suspect is unpopular','The evidence is physical, not digital'],answer:0},
+  {chapter:4,set:'ch4',q:'The Fourth Amendment protects against:',choices:['Unreasonable searches and seizures','Self-incrimination','Cruel and unusual punishment','Compulsory military service'],answer:0},
+  {chapter:4,set:'ch4',q:'To obtain a warrant, police generally must show:',choices:['Probable cause','A preponderance of the evidence','Clear and convincing proof','Beyond a reasonable doubt'],answer:0},
+
+  {chapter:4,set:'ch4',q:'Miranda v. Arizona (1966) requires that suspects be informed of:',choices:['Their right to remain silent and right to an attorney','Their right to vote','Their right to a grand jury','Their right to a civil trial'],answer:0},
+  {chapter:4,set:'ch4',q:'Which amendment protects against self-incrimination?',choices:['Fifth Amendment','First Amendment','Sixth Amendment','Eighth Amendment'],answer:0},
+  {chapter:4,set:'ch4',q:'Gideon v. Wainwright (1963) established the right to:',choices:['An attorney in felony criminal cases','A jury of exactly twelve','Bail in all cases','Vote in all elections'],answer:0},
+  {chapter:4,set:'ch4',q:'The Sixth Amendment guarantees all of the following EXCEPT:',choices:['Freedom from double jeopardy','Right to a speedy trial','Right to confront witnesses','Right to counsel'],answer:0},
+  {chapter:4,set:'ch4',q:'The Eighth Amendment prohibits:',choices:['Cruel and unusual punishment','Quartering of soldiers','Self-incrimination','Unreasonable searches'],answer:0},
+  {chapter:4,set:'ch4',q:'Furman v. Georgia (1972) temporarily halted the death penalty because:',choices:['It was imposed in an arbitrary and inconsistent manner','It was banned by Congress','It was too expensive','It violated state constitutions only'],answer:0},
+  {chapter:4,set:'ch4',q:'Gregg v. Georgia (1976) upheld new death penalty laws that included:',choices:['Guided discretion and bifurcated trials','Mandatory death sentences for murder','Juryless sentencing','No appeals'],answer:0},
+  {chapter:4,set:'ch4',q:'Which of the following would most likely be considered “cruel and unusual punishment”?',choices:['Torture or barbaric physical punishment','A long jury trial','A public trial','A bench trial'],answer:0},
+  {chapter:4,set:'ch4',q:'Selective incorporation has had the overall effect of:',choices:['Requiring states to honor most Bill of Rights protections','Returning power to the states exclusively','Eliminating federal courts','Reducing judicial review'],answer:0},
+  {chapter:4,set:'ch4',q:'Civil liberties policy making today is heavily shaped by:',choices:['Supreme Court interpretation of the Constitution','Presidential executive orders only','State legislatures acting alone','International treaties alone'],answer:0},
+
+  // ===== Ch. 5 — Civil Rights (50) =====
+  {chapter:5,set:'ch5',q:'Civil rights are best defined as:',choices:['Government protections against discrimination and unequal treatment','Protections from government interference with freedom of expression','Economic liberties only','Rights that apply only in criminal trials'],answer:0},
+  {chapter:5,set:'ch5',q:'The Thirteenth Amendment:',choices:['Abolished slavery','Guaranteed women the right to vote','Banned poll taxes','Created term limits for the president'],answer:0},
+  {chapter:5,set:'ch5',q:'The Fourteenth Amendment contains which two key clauses used in civil rights litigation?',choices:['Due Process and Equal Protection Clauses','Commerce and Supremacy Clauses','Free Exercise and Establishment Clauses','Necessary and Proper and Supremacy Clauses'],answer:0},
+  {chapter:5,set:'ch5',q:'The Fifteenth Amendment prohibits denying the right to vote based on:',choices:['Race, color, or previous condition of servitude','Sex','Income','Education level'],answer:0},
+  {chapter:5,set:'ch5',q:'The Nineteenth Amendment guaranteed:',choices:['Women’s suffrage','Black suffrage','Direct election of senators','Prohibition of alcohol'],answer:0},
+  {chapter:5,set:'ch5',q:'Jim Crow laws were:',choices:['State and local laws enforcing racial segregation','Laws that banned slavery','Federal civil rights protections','Labor union regulations'],answer:0},
+  {chapter:5,set:'ch5',q:'Black Codes after the Civil War were designed to:',choices:['Limit the freedom and economic options of newly freed African Americans','Grant full civil rights to former slaves','Encourage interracial marriage','Expand voting rights'],answer:0},
+  {chapter:5,set:'ch5',q:'De jure segregation is segregation:',choices:['By law','By social custom only','Caused solely by economics','Found only in private institutions'],answer:0},
+  {chapter:5,set:'ch5',q:'De facto segregation results from:',choices:['Housing patterns and social factors without explicit laws','Explicit legal requirements','International treaties','Supreme Court mandates'],answer:0},
+  {chapter:5,set:'ch5',q:'Plessy v. Ferguson (1896) established the doctrine of:',choices:['“Separate but equal”','Judicial review','Clear and present danger','Affirmative action'],answer:0},
+
+  {chapter:5,set:'ch5',q:'Brown v. Board of Education (1954) held that:',choices:['Separate educational facilities are inherently unequal','Segregation was permissible under certain conditions','States could nullify federal court rulings','Only Congress could end segregation'],answer:0},
+  {chapter:5,set:'ch5',q:'Dred Scott v. Sandford (1857) concluded that:',choices:['African Americans could not be citizens of the United States','Slavery was unconstitutional','Segregation was illegal','Women had no right to vote'],answer:0},
+  {chapter:5,set:'ch5',q:'The Montgomery Bus Boycott began after:',choices:['Rosa Parks refused to give up her seat','Brown v. Board was overturned','The Voting Rights Act passed','Martin Luther King Jr. was elected to office'],answer:0},
+  {chapter:5,set:'ch5',q:'The Civil Rights Act of 1964 primarily targeted discrimination in:',choices:['Public accommodations, employment, and federally funded programs','Private marriages','Foreign policy decisions','Military draft procedures'],answer:0},
+  {chapter:5,set:'ch5',q:'The Voting Rights Act of 1965 aimed to:',choices:['Eliminate racial barriers to voting','Abolish the Electoral College','Expand the Supreme Court','Limit presidential terms'],answer:0},
+  {chapter:5,set:'ch5',q:'Poll taxes and literacy tests were used to:',choices:['Disenfranchise African American voters','Raise revenue for schools','Encourage voter turnout','Reward frequent voters'],answer:0},
+  {chapter:5,set:'ch5',q:'White primaries were:',choices:['Primary elections in which only white voters could participate','Primaries held only in rural areas','Primaries for white-collar workers','Bipartisan primaries'],answer:0},
+  {chapter:5,set:'ch5',q:'The Seneca Falls Convention of 1848 focused on:',choices:['Women’s rights and suffrage','Ending slavery in the territories','Creating a national income tax','Organizing labor unions'],answer:0},
+  {chapter:5,set:'ch5',q:'Affirmative action refers to:',choices:['Policies that seek to remedy past discrimination by taking race or gender into account in admissions or hiring','Total color-blind admission policies','Segregation in public schools','Military recruitment goals'],answer:0},
+  {chapter:5,set:'ch5',q:'Regents of the University of California v. Bakke (1978) held that:',choices:['Strict racial quotas in admissions are unconstitutional, but race can be a factor among others','All affirmative action is unconstitutional','States must use quotas','Race cannot ever be considered in admissions'],answer:0},
+
+  {chapter:5,set:'ch5',q:'Which case struck down laws banning interracial marriage?',choices:['Loving v. Virginia','Roe v. Wade','Brown v. Board','Lawrence v. Texas'],answer:0},
+  {chapter:5,set:'ch5',q:'Which case legalized same-sex marriage nationwide?',choices:['Obergefell v. Hodges','Bowers v. Hardwick','Gideon v. Wainwright','Plessy v. Ferguson'],answer:0},
+  {chapter:5,set:'ch5',q:'Lawrence v. Texas (2003) specifically struck down:',choices:['State sodomy laws criminalizing consensual same-sex conduct','All state marriage laws','All obscenity laws','Public prayer at graduations'],answer:0},
+  {chapter:5,set:'ch5',q:'The Americans with Disabilities Act (ADA) requires:',choices:['Reasonable accommodations for individuals with disabilities','Preference for disabled candidates regardless of qualifications','All businesses to hire disabled workers','Only federal buildings to be accessible'],answer:0},
+  {chapter:5,set:'ch5',q:'Title IX of the Education Amendments of 1972 prohibits:',choices:['Sex discrimination in federally funded education programs','Race discrimination in housing','Age discrimination in employment','Religious discrimination in military service'],answer:0},
+  {chapter:5,set:'ch5',q:'The Equal Pay Act and subsequent laws attempt to address:',choices:['Gender-based wage discrimination','Military spending levels','Voting district size','Tax rates on corporations'],answer:0},
+  {chapter:5,set:'ch5',q:'The term “glass ceiling” refers to:',choices:['Invisible barriers that prevent women and minorities from reaching top positions','A rule limiting the number of executives','Ceiling height regulations','A tax deduction for home repairs'],answer:0},
+  {chapter:5,set:'ch5',q:'Romer v. Evans (1996) struck down a Colorado amendment that:',choices:['Prohibited local governments from protecting gays and lesbians from discrimination','Required cities to adopt affirmative action','Banned discrimination based on age','Required equal funding for all schools'],answer:0},
+  {chapter:5,set:'ch5',q:'What were the Black Codes designed to do immediately after the Civil War?',choices:['Control the labor and behavior of former slaves and other African Americans','Guarantee voting rights for blacks','Create integrated schools','Encourage westward migration'],answer:0},
+  {chapter:5,set:'ch5',q:'Which group used legal strategies (litigation) as a primary tool to challenge segregation?',choices:['NAACP','AFL-CIO','Federal Reserve','NATO'],answer:0},
+
+  {chapter:5,set:'ch5',q:'The March on Washington in 1963 is best remembered for:',choices:['Martin Luther King Jr.’s “I Have a Dream” speech','The passage of Prohibition','The beginning of the New Deal','The end of the Vietnam War'],answer:0},
+  {chapter:5,set:'ch5',q:'Shelley v. Kraemer (1948) ruled that courts could not enforce:',choices:['Racially restrictive housing covenants','Speeding tickets','State income taxes','Military draft laws'],answer:0},
+  {chapter:5,set:'ch5',q:'Heart of Atlanta Motel v. United States (1964) upheld the Civil Rights Act using which constitutional power?',choices:['Commerce Clause','Necessary and Proper Clause','Treaty power','War powers'],answer:0},
+  {chapter:5,set:'ch5',q:'“Separate but equal” facilities were found unconstitutional primarily because they:',choices:['Created a sense of inferiority among minorities','Were too expensive to maintain','Violated the Second Amendment','Violated the Tenth Amendment'],answer:0},
+  {chapter:5,set:'ch5',q:'Sexual harassment law generally treats hostile work environment claims as:',choices:['A form of sex discrimination under civil rights law','A form of criminal law only','A contract dispute','An issue for military tribunals'],answer:0},
+  {chapter:5,set:'ch5',q:'The Equal Rights Amendment (ERA):',choices:['Was proposed to guarantee equality on the basis of sex but was never ratified by enough states','Is part of the Constitution today','Concerned voting age','Abolished slavery'],answer:0},
+  {chapter:5,set:'ch5',q:'Which of the following is an example of de facto segregation?',choices:['Residential segregation due to income and private decisions','Segregation mandated by state law','Segregation ordered by a judge','Segregation required by a federal statute'],answer:0},
+  {chapter:5,set:'ch5',q:'“Civil rights policy making” often involves:',choices:['Congress, the president, and the courts interacting over time to shape equality protections','Only state legislators passing laws','Only local school boards','Only the Supreme Court acting alone'],answer:0},
+  {chapter:5,set:'ch5',q:'Protected classes under civil rights law often include:',choices:['Race, sex, religion, national origin, and sometimes disability or age','Only income level','Only political party affiliation','Only profession'],answer:0},
+  {chapter:5,set:'ch5',q:'In Bakke and later affirmative action cases, the Court has generally allowed:',choices:['Race to be one factor among many in admissions decisions','Rigid racial quotas','Exclusion of majority-group applicants','Affirmative action only in private schools'],answer:0},
+
+  {chapter:5,set:'ch5',q:'One criticism of affirmative action is that it:',choices:['May amount to “reverse discrimination” against majority-group individuals','Always increases segregation','Eliminates individual merit as a factor','Violate the First Amendment’s Establishment Clause'],answer:0},
+  {chapter:5,set:'ch5',q:'One argument in favor of affirmative action is that it:',choices:['Helps overcome the effects of past discrimination','Reduces economic growth','Decreases political participation','Violates free speech'],answer:0},
+  {chapter:5,set:'ch5',q:'Civil rights protections for LGBTQ+ individuals have primarily been expanded through:',choices:['Supreme Court decisions and some federal/state statutes','The United Nations','County sheriffs alone','The Federal Reserve'],answer:0},
+  {chapter:5,set:'ch5',q:'“Strict scrutiny” is a standard of review used when laws classify people based on:',choices:['Race or fundamental rights','Age only','Profession only','Income alone'],answer:0},
+  {chapter:5,set:'ch5',q:'A law that treats men and women differently is usually evaluated using:',choices:['Intermediate scrutiny','Rational basis only','Automatic strict scrutiny','No judicial review'],answer:0},
+  {chapter:5,set:'ch5',q:'Rational basis review generally requires that a law be:',choices:['Reasonably related to a legitimate government interest','Supported by unanimous vote','Approved by the president','Based on explicit constitutional text'],answer:0},
+  {chapter:5,set:'ch5',q:'In the context of civil rights, “suspect classifications” are:',choices:['Categories like race or ethnicity that trigger strict scrutiny','Job categories that trigger unionization','Age-based categories only','Tax brackets'],answer:0},
+  {chapter:5,set:'ch5',q:'Lawrence v. Texas and Obergefell v. Hodges together reflect the Court’s willingness to:',choices:['Extend certain liberty and equality protections to LGBTQ+ persons','Restrict civil liberties for religious minorities','Eliminate gender equality protections','Limit voting rights'],answer:0},
+  {chapter:5,set:'ch5',q:'Overall, modern civil rights policy is characterized by:',choices:['An expanding understanding of equality for multiple groups over time','A fixed list of protected groups that never changes','Total state control without federal involvement','Judicial refusal to consider equality claims'],answer:0},
+
+  // ===== Ch. 14 — Judiciary (50) =====
+  {chapter:14,set:'ch14',q:'How are federal judges (including Supreme Court justices) selected?',choices:['Nominated by the president and confirmed by the Senate','Elected by popular vote','Chosen by state legislatures','Appointed by the House of Representatives'],answer:0},
+  {chapter:14,set:'ch14',q:'Federal judges hold office:',choices:['During “good behavior,” effectively life tenure','For fixed ten-year terms','Only while the president who appointed them is in office','For two-year terms'],answer:0},
+  {chapter:14,set:'ch14',q:'“Senatorial courtesy” refers to:',choices:['The Senate’s tendency to defer to senators from the nominee’s home state in lower-court nominations','The Supreme Court’s respect for Congress','The House’s power to impeach judges','The president’s veto threat'],answer:0},
+  {chapter:14,set:'ch14',q:'Judicial review is:',choices:['The power of courts to declare laws or executive actions unconstitutional','Congress’s power to review judicial salaries','The president’s power to review court decisions','The people’s power to review court rulings by referendum'],answer:0},
+  {chapter:14,set:'ch14',q:'Which case firmly established judicial review at the federal level?',choices:['Marbury v. Madison','McCulloch v. Maryland','Brown v. Board of Education','Plessy v. Ferguson'],answer:0},
+  {chapter:14,set:'ch14',q:'How many justices currently sit on the U.S. Supreme Court?',choices:['Nine','Seven','Eleven','Thirteen'],answer:0},
+  {chapter:14,set:'ch14',q:'The lowest level of the federal court system is the:',choices:['U.S. District Courts','U.S. Courts of Appeals','U.S. Supreme Court','State supreme courts'],answer:0},
+  {chapter:14,set:'ch14',q:'The U.S. Courts of Appeals have primarily:',choices:['Appellate jurisdiction','Original jurisdiction in felony cases','Original jurisdiction in civil cases only','No jurisdiction over federal agencies'],answer:0},
+  {chapter:14,set:'ch14',q:'Original jurisdiction means:',choices:['A court hears a case first, before any appeal','A court reviews a case from a lower court','A court issues advisory opinions','A court oversees administrative agencies'],answer:0},
+  {chapter:14,set:'ch14',q:'Concurrent jurisdiction occurs when:',choices:['More than one court system is authorized to hear a case','Only federal courts may hear a case','Only state courts may hear a case','No court can hear a case'],answer:0},
+
+  {chapter:14,set:'ch14',q:'Exclusive jurisdiction means:',choices:['Only a particular court or court system may hear a case','Two or more courts may hear a case','Only state courts may hear a case','Appeals are not allowed'],answer:0},
+  {chapter:14,set:'ch14',q:'The Supreme Court’s jurisdiction is mostly:',choices:['Appellate, with some original jurisdiction','Original only','State-based only','Limited to advisory opinions'],answer:0},
+  {chapter:14,set:'ch14',q:'A writ of certiorari is:',choices:['An order from the Supreme Court to a lower court to send up the record of a case','A request for a presidential veto','A senatorial courtesy letter','A judicial impeachment document'],answer:0},
+  {chapter:14,set:'ch14',q:'The “rule of four” means:',choices:['At least four Supreme Court justices must agree to hear a case','Four justices can overrule a majority','Four presidential vetoes are required','Four appellate courts must agree first'],answer:0},
+  {chapter:14,set:'ch14',q:'Stare decisis means that courts should:',choices:['Follow precedent in deciding cases','Ignore previous rulings','Always defer to Congress','Always side with the president'],answer:0},
+  {chapter:14,set:'ch14',q:'A majority opinion of the Supreme Court is:',choices:['The official opinion that represents the view of more than half of the justices','Any opinion joined by at least two justices','An opinion with no legal force','An opinion written by the most senior justice'],answer:0},
+  {chapter:14,set:'ch14',q:'A concurring opinion is written by a justice who:',choices:['Agrees with the outcome but for different or additional reasons','Disagrees with the majority decision','Rejects the Court’s jurisdiction','Refuses to vote'],answer:0},
+  {chapter:14,set:'ch14',q:'A dissenting opinion is written by a justice who:',choices:['Disagrees with the majority’s decision','Agrees with the result but not the reasoning','Takes no position','Wants to recuse from the case'],answer:0},
+  {chapter:14,set:'ch14',q:'Judicial activism is the view that judges should:',choices:['Interpret the Constitution broadly and sometimes shape policy to protect rights','Avoid interpreting beyond the literal text','Always defer to elected branches','Never overturn precedent'],answer:0},
+  {chapter:14,set:'ch14',q:'Judicial restraint is the view that judges should:',choices:['Defer to the elected branches unless a law clearly violates the Constitution','Act as primary policy makers','Frequently overturn precedent','Ignore the legislature’s intent'],answer:0},
+
+  {chapter:14,set:'ch14',q:'Robert Bork is best known in judicial politics as:',choices:['A Supreme Court nominee who was rejected by the Senate in a highly visible confirmation battle','A Chief Justice of the Supreme Court','A president who appointed many justices','The author of the Bill of Rights'],answer:0},
+  {chapter:14,set:'ch14',q:'Criminal law involves cases where:',choices:['The government prosecutes individuals for acts defined as crimes','Private parties sue over contracts','International organizations sue states','Only civil penalties are possible'],answer:0},
+  {chapter:14,set:'ch14',q:'Civil law primarily involves:',choices:['Disputes between private parties or between a private party and the government over rights and obligations','Criminal prosecutions','Military courts only','International treaties only'],answer:0},
+  {chapter:14,set:'ch14',q:'A felony is generally:',choices:['A serious crime punishable by more than one year in prison','A minor offense punishable by a small fine','A civil wrong only','Any traffic violation'],answer:0},
+  {chapter:14,set:'ch14',q:'A misdemeanor is generally:',choices:['A less serious crime, often punishable by less than a year in jail','A capital offense','A civil contract dispute','An international crime'],answer:0},
+  {chapter:14,set:'ch14',q:'A plea bargain is:',choices:['An agreement in which the defendant pleads guilty to a lesser charge to avoid trial','A public referendum on guilt','The jury’s decision','The judge’s sentencing guidelines'],answer:0},
+  {chapter:14,set:'ch14',q:'In a civil case, the person who brings the suit is called the:',choices:['Plaintiff','Defendant','Appellant','Bailiff'],answer:0},
+  {chapter:14,set:'ch14',q:'In a criminal case, the person accused of committing a crime is the:',choices:['Defendant','Plaintiff','Appellee','Juror'],answer:0},
+  {chapter:14,set:'ch14',q:'Which of the following is a type of law created by legislatures?',choices:['Statutory law','Common law','Administrative law created by agencies','Customary law'],answer:0},
+  {chapter:14,set:'ch14',q:'Common law is based primarily on:',choices:['Judicial precedents','Executive orders','International treaties','State constitutions only'],answer:0},
+
+  {chapter:14,set:'ch14',q:'Administrative law is made primarily by:',choices:['Regulatory agencies implementing statutes','The president alone','State legislatures only','Juries'],answer:0},
+  {chapter:14,set:'ch14',q:'Which of the following cases would most likely go first to a U.S. District Court?',choices:['A federal criminal trial','An appeal from a federal agency','A dispute between two foreign countries','A challenge to a state constitution only'],answer:0},
+  {chapter:14,set:'ch14',q:'Which case would most likely start in a state trial court?',choices:['A burglary charge under state law','A dispute over a federal treaty','A case involving an ambassador','A case between two states'],answer:0},
+  {chapter:14,set:'ch14',q:'The Supreme Court is most likely to grant certiorari when:',choices:['Lower courts are split on an important federal question','The case involves only state law with no federal issue','The case is moot and has no continuing controversy','The parties agree on all facts and law'],answer:0},
+  {chapter:14,set:'ch14',q:'Amicus curiae briefs are:',choices:['“Friend of the court” briefs filed by interested third parties','Mandatory documents filed by the losing side','Secret memos between justices','Executive orders'],answer:0},
+  {chapter:14,set:'ch14',q:'The “litigant” in a case refers to:',choices:['Any party to a lawsuit','Only the plaintiff','Only the judge','Only the jury'],answer:0},
+  {chapter:14,set:'ch14',q:'The Supreme Court’s decision in a case sets:',choices:['Binding precedent on all lower federal courts and usually on state courts on federal issues','Only advisory guidance with no legal force','Binding precedent only in the state where the case originated','Rules for Congress alone'],answer:0},
+  {chapter:14,set:'ch14',q:'A case is said to be “justiciable” when:',choices:['It is appropriate for court resolution and not a purely political question','It involves only foreign governments','It has no real dispute between parties','It is already decided by public opinion'],answer:0},
+  {chapter:14,set:'ch14',q:'The doctrine that courts should avoid deciding political questions is related most closely to:',choices:['Judicial restraint','Judicial activism','Judicial review','Senatorial courtesy'],answer:0},
+
+  {chapter:14,set:'ch14',q:'Article III of the Constitution primarily does what?',choices:['Establishes the federal judiciary','Creates political parties','Sets out civil rights protections','Creates the Electoral College'],answer:0},
+  {chapter:14,set:'ch14',q:'The term “jurisdiction” refers to:',choices:['A court’s authority to hear a case','The size of a jury','The length of a judge’s term','The number of lawyers in a case'],answer:0},
+  {chapter:14,set:'ch14',q:'Which of the following best describes the federal court system?',choices:['A three-tiered system of district courts, courts of appeals, and the Supreme Court','Two equal systems of federal and state courts with no overlap','A single national trial court with no appeals','A rotating set of temporary tribunals'],answer:0},
+  {chapter:14,set:'ch14',q:'The Supreme Court typically hears arguments in a case for:',choices:['About one hour, with each side allotted a set time','Several full days','Only written briefs, never oral argument','Ten minutes total'],answer:0},
+  {chapter:14,set:'ch14',q:'Judicial selection at the federal level has become more contentious because:',choices:['Lifetime appointments give judges long-term influence over policy','Judges must stand for reelection every two years','Congress directly controls all judicial decisions','The Supreme Court no longer issues written opinions'],answer:0},
+  {chapter:14,set:'ch14',q:'“Civil liberties policy making” by courts and “judicial terms” such as precedent and jurisdiction matter because they:',choices:['Shape how civil liberties and civil rights are actually protected in practice','Only affect historical trivia','Apply only to federal taxation','Have no impact beyond the Supreme Court building'],answer:0}
+];
+
+// Split into chapter groups
+const CH4 = BANK.filter(x => x.chapter === 4);
+const CH5 = BANK.filter(x => x.chapter === 5);
+const CH14 = BANK.filter(x => x.chapter === 14);
+
+// Randomly order within each chapter once, then slice into 25 + 25
+const CH4_ORDER = shuffle(CH4);
+const CH5_ORDER = shuffle(CH5);
+const CH14_ORDER = shuffle(CH14);
+
+// Unit 4 mixed: shuffle all 150 once, then 6×25
+const U4_ORDER = shuffle([...BANK]);
+
+const SETS = {
+  ch4_r1: CH4_ORDER.slice(0,25),
+  ch4_r2: CH4_ORDER.slice(25,50),
+
+  ch5_r1: CH5_ORDER.slice(0,25),
+  ch5_r2: CH5_ORDER.slice(25,50),
+
+  ch14_r1: CH14_ORDER.slice(0,25),
+  ch14_r2: CH14_ORDER.slice(25,50),
+
+  u4_r1: U4_ORDER.slice(0,25),
+  u4_r2: U4_ORDER.slice(25,50),
+  u4_r3: U4_ORDER.slice(50,75),
+  u4_r4: U4_ORDER.slice(75,100),
+  u4_r5: U4_ORDER.slice(100,125),
+  u4_r6: U4_ORDER.slice(125,150)
+};
+
+const SET_LABELS = {
+  ch4_r1: 'Ch. 4 — Civil Liberties · Round 1',
+  ch4_r2: 'Ch. 4 — Civil Liberties · Round 2',
+  ch5_r1: 'Ch. 5 — Civil Rights · Round 1',
+  ch5_r2: 'Ch. 5 — Civil Rights · Round 2',
+  ch14_r1: 'Ch. 14 — Judiciary · Round 1',
+  ch14_r2: 'Ch. 14 — Judiciary · Round 2',
+  u4_r1: 'Unit 4 — Mixed · Round 1',
+  u4_r2: 'Unit 4 — Mixed · Round 2',
+  u4_r3: 'Unit 4 — Mixed · Round 3',
+  u4_r4: 'Unit 4 — Mixed · Round 4',
+  u4_r5: 'Unit 4 — Mixed · Round 5',
+  u4_r6: 'Unit 4 — Mixed · Round 6'
+};
+
+// ---------- State ----------
+let state = {
+  pairs:[],
+  left:[],
+  right:[],
+  center:[],
+  timer:null,
+  seconds:0,
+  setKey:'u4_r1',
+  missedOnly:false,
+  misses:[]
+};
+
+function bestKey(){ return `best_match_u4_${state.setKey}`; }
+function startTimer(){
+  if(state.timer) clearInterval(state.timer);
+  state.timer = setInterval(()=>{
+    state.seconds++;
+    document.getElementById('timer').textContent = fmtTime(state.seconds);
+  },1000);
+}
+function stopTimer(){
+  if(state.timer){
+    clearInterval(state.timer);
+    state.timer = null;
+  }
+}
+
+function buildPairs(items){
+  return items.map((x,i)=>({
+    id:i,
+    chapter:x.chapter,
+    prompt:x.q,
+    answer:x.choices[x.answer]
+  }));
+}
+
+function startRound(fromMissed=false){
+  state.setKey = document.getElementById('section').value;
+  let items;
+
+  if(fromMissed){
+    // rebuild from misses as mini-bank
+    items = state.misses.map(m => ({
+      chapter:m.chapter,
+      q:m.prompt,
+      choices:[m.answer],
+      answer:0
+    }));
+  } else {
+    items = [...SETS[state.setKey]];
+  }
+
+  const pairs = buildPairs(items);
+  state.pairs = pairs;
+  state.left = pairs.map((p,i)=>({key:i, text:p.prompt, chapter:p.chapter}));
+
+  const answers = pairs.map((p,i)=>({key:i, text:p.answer}));
+  state.right = shuffle(answers);
+  state.center = new Array(pairs.length).fill(null);
+  state.missedOnly = fromMissed;
+  state.misses = [];
+  state.seconds = 0;
+
+  document.getElementById('start').classList.add('hidden');
+  document.getElementById('result').classList.add('hidden');
+  document.getElementById('quiz').classList.remove('hidden');
+  document.getElementById('setTag').textContent = SET_LABELS[state.setKey];
+  document.getElementById('best').textContent = 'Best: ' + getBest(bestKey());
+
+  renderAll();
+  startTimer();
+}
+
+function renderAll(){
+  renderLeft();
+  renderCenter();
+  renderRight();
+  updateProgress();
+  requestAnimationFrame(equalizeHeights);
+}
+
+function renderLeft(){
+  const L = document.getElementById('left');
+  L.innerHTML = '';
+  state.left.forEach((item, idx)=>{
+    const div = document.createElement('div');
+    div.className = 'prompt sameHeight';
+    const num = document.createElement('div');
+    num.className = 'num';
+    num.textContent = idx+1;
+    div.appendChild(num);
+    const tx = document.createElement('div');
+    tx.className = 'text';
+    tx.textContent = item.text;
+    div.appendChild(tx);
+    L.appendChild(div);
+  });
+}
+
+function renderCenter(){
+  const C = document.getElementById('center');
+  C.innerHTML = '';
+  state.center.forEach((ans, idx)=>{
+    const slot = document.createElement('div');
+    slot.className = 'slot sameHeight' + (ans ? '' : ' empty');
+    slot.dataset.slot = idx;
+
+    const badge = document.createElement('div');
+    badge.className = 'num';
+    badge.textContent = idx+1;
+    slot.appendChild(badge);
+
+    const content = document.createElement('div');
+    content.className = 'text';
+
+    if(ans){
+      const inner = document.createElement('div');
+      inner.className = 'answer sameHeight';
+      inner.setAttribute('draggable','true');
+      inner.dataset.key = ans.key;
+      inner.dataset.origin = 'center';
+
+      const num = document.createElement('div');
+      num.className = 'num';
+      num.textContent = '⇄';
+      inner.appendChild(num);
+
+      const tx = document.createElement('div');
+      tx.className = 'text';
+      tx.textContent = ans.text;
+      inner.appendChild(tx);
+
+      addAnswerDragHandlers(inner);
+      content.innerHTML = '';
+      content.appendChild(inner);
+    } else {
+      content.innerHTML = '<span class="placeholder">Drop answer here</span>';
+    }
+
+    slot.appendChild(content);
+    addSlotHandlers(slot);
+    C.appendChild(slot);
+  });
+}
+
+function renderRight(){
+  const R = document.getElementById('right');
+  R.innerHTML = '';
+  state.right.forEach((item, idx)=>{
+    const div = createAnswerNode(item, 'right', idx);
+    div.classList.add('sameHeight');
+    R.appendChild(div);
+  });
+}
+
+function createAnswerNode(item, origin, idx){
+  const div = document.createElement('div');
+  div.className = 'answer';
+  div.setAttribute('draggable','true');
+  div.dataset.key = item.key;
+  div.dataset.origin = origin;
+
+  const num = document.createElement('div');
+  num.className = 'num';
+  num.textContent = origin === 'right' ? String.fromCharCode(65+idx) : '⇄';
+
+  const tx = document.createElement('div');
+  tx.className = 'text';
+  tx.textContent = item.text;
+
+  div.appendChild(num);
+  div.appendChild(tx);
+  addAnswerDragHandlers(div);
+  return div;
+}
+
+function updateProgress(){
+  const total = state.center.length;
+  const filled = state.center.filter(Boolean).length;
+  document.getElementById('progress').textContent = `Filled ${filled} / ${total}`;
+}
+
+// ---- Drag & Drop ----
+let dragData = null;
+
+function addAnswerDragHandlers(node){
+  node.addEventListener('dragstart', (e)=>{
+    const key = Number(node.dataset.key);
+    const origin = node.dataset.origin;
+    dragData = {type:'answer', from:origin, key};
+    if(origin === 'right'){
+      const idx = [...node.parentNode.children].indexOf(node);
+      dragData.fromIndex = idx;
+    } else if(origin === 'center'){
+      const slotIndex = state.center.findIndex(a => a && a.key === key);
+      dragData.fromSlot = slotIndex;
+    }
+    node.classList.add('ghost');
+    e.dataTransfer.effectAllowed = 'move';
+  });
+  node.addEventListener('dragend', ()=>{
+    node.classList.remove('ghost');
+    renumberRight();
+    requestAnimationFrame(equalizeHeights);
+  });
+}
+
+function addSlotHandlers(slot){
+  slot.addEventListener('dragover', (e)=>{
+    e.preventDefault();
+    slot.classList.add('drag-over');
+  });
+  slot.addEventListener('dragleave', ()=>{
+    slot.classList.remove('drag-over');
+  });
+  slot.addEventListener('drop', (e)=>{
+    e.preventDefault();
+    slot.classList.remove('drag-over');
+    if(!dragData || dragData.type !== 'answer') return;
+
+    const targetSlot = Number(slot.dataset.slot);
+
+    if(dragData.from === 'right'){
+      const answerObj = state.right.splice(dragData.fromIndex,1)[0];
+      if(state.center[targetSlot]){
+        const displaced = state.center[targetSlot];
+        state.center[targetSlot] = answerObj;
+        state.right.splice(dragData.fromIndex,0,displaced);
+      } else {
+        state.center[targetSlot] = answerObj;
+      }
+    } else if(dragData.from === 'center'){
+      const fromSlot = dragData.fromSlot;
+      const temp = state.center[targetSlot];
+      state.center[targetSlot] = state.center[fromSlot];
+      state.center[fromSlot] = temp || null;
+    }
+
+    renderCenter();
+    renderRight();
+    updateProgress();
+    requestAnimationFrame(equalizeHeights);
+  });
+}
+
+// allow dropping back into "Unused Answers"
+const rightBox = document.getElementById('right');
+rightBox.addEventListener('dragover', (e)=>{
+  e.preventDefault();
+  rightBox.classList.add('drag-over');
+});
+rightBox.addEventListener('dragleave', ()=>{
+  rightBox.classList.remove('drag-over');
+});
+rightBox.addEventListener('drop', (e)=>{
+  e.preventDefault();
+  rightBox.classList.remove('drag-over');
+  if(!dragData || dragData.type !== 'answer') return;
+  if(dragData.from === 'center'){
+    const fromSlot = dragData.fromSlot;
+    const moved = state.center[fromSlot];
+    if(moved){
+      state.center[fromSlot] = null;
+      state.right.push(moved);
+      renderCenter();
+      renderRight();
+      updateProgress();
+      requestAnimationFrame(equalizeHeights);
+    }
+  }
+});
+
+function renumberRight(){
+  [...document.querySelectorAll('#right .answer .num')].forEach((n,i)=>{
+    n.textContent = String.fromCharCode(65+i);
+  });
+}
+
+function finish(){
+  stopTimer();
+  const total = state.center.length;
+  let correct = 0;
+  state.misses = [];
+
+  state.center.forEach((ans, i)=>{
+    const left = state.left[i];
+    const correctAnswer = state.pairs[i].answer;
+    const ok = !!ans && ans.key === i;
+    if(ok){
+      correct++;
+    } else {
+      state.misses.push({
+        chapter:left.chapter,
+        prompt:left.text,
+        answer:correctAnswer,
+        chosen: ans ? ans.text : '—'
+      });
+    }
+  });
+
+  document.getElementById('quiz').classList.add('hidden');
+  document.getElementById('result').classList.remove('hidden');
+
+  if(!state.missedOnly){
+    setBest(bestKey(), state.seconds);
+  }
+
+  document.getElementById('scoreline').textContent =
+    `Score: ${correct} / ${total} (${Math.round(correct/total*100)}%)`;
+  document.getElementById('timeline').textContent = `Time: ${fmtTime(state.seconds)}`;
+  document.getElementById('bestline').textContent = `Best: ${getBest(bestKey())}`;
+
+  const rev = document.getElementById('review');
+  rev.innerHTML = '';
+
+  if(state.misses.length === 0){
+    rev.innerHTML = '<p class="muted">Perfect! No missed items to review.</p>';
+  } else {
+    const list = document.createElement('div');
+    list.className = 'grid';
+    list.style.gridTemplateColumns = '1fr';
+    list.style.gap = '10px';
+
+    state.misses.forEach((m,i)=>{
+      const row = document.createElement('div');
+      row.className = 'card';
+      row.style.padding = '12px';
+      row.innerHTML =
+        `<div style="font-weight:700; margin-bottom:6px">Missed ${i+1} · Ch. ${m.chapter}</div>`+
+        `<div style="margin-bottom:6px">${m.prompt}</div>`+
+        `<div style="display:flex; gap:8px; flex-wrap:wrap">`+
+        `<span class="pill">Your answer: ${m.chosen}</span>`+
+        `<span class="pill">Correct: ${m.answer}</span>`+
+        `</div>`;
+      list.appendChild(row);
+    });
+
+    rev.appendChild(list);
+  }
+}
+
+function startRoundMissed(){
+  if(!state.misses || state.misses.length === 0){
+    alert('No missed items to retry.');
+    return;
+  }
+  startRound(true);
+}
+
+// nav
+document.getElementById('begin').addEventListener('click', ()=> startRound(false));
+document.getElementById('retry').addEventListener('click', ()=> startRound(false));
+document.getElementById('retryMissed').addEventListener('click', startRoundMissed);
+document.getElementById('restart').addEventListener('click', ()=>{
+  document.getElementById('result').classList.add('hidden');
+  document.getElementById('start').classList.remove('hidden');
+});
+document.getElementById('finish').addEventListener('click', finish);
+
+// equal heights
+function equalizeHeights(){
+  const all = [
+    ...document.querySelectorAll('.left .prompt'),
+    ...document.querySelectorAll('.center .slot'),
+    ...document.querySelectorAll('.right .answer')
+  ];
+  if(!all.length) return;
+  all.forEach(n => { n.style.height = 'auto'; });
+  let max = 0;
+  all.forEach(n => { max = Math.max(max, n.offsetHeight); });
+  all.forEach(n => { n.style.height = max + 'px'; });
+}
+
+function debounce(fn, ms){
+  let t;
+  return (...args)=>{
+    clearTimeout(t);
+    t = setTimeout(()=>fn.apply(this,args), ms);
+  };
+}
+window.addEventListener('resize', debounce(()=> requestAnimationFrame(equalizeHeights), 100));
+
+// quick sanity check
+(function selfCheck(){
+  try{
+    console.assert(BANK.length === 150, 'BANK should contain 150 items, got '+BANK.length);
+    console.log('%cUnit 4 matching bank OK','color:#16a34a');
+  }catch(e){
+    console.warn('Self-check failed', e);
+  }
+})();
+</script>
+</body>
+</html>
