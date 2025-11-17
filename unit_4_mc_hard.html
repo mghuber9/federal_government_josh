@@ -827,6 +827,16 @@ if (selectedIndex === null) {
           label.appendChild(tag);
         }
 
+        if(selectedIndex === null && cIdx === q.correct){
+          const tag = document.createElement('span');
+          tag.style.fontSize = '11px';
+          tag.style.marginLeft = '6px';
+          tag.style.color = '#1d4ed8';
+          tag.textContent = ' (correct — unanswered)';
+          label.appendChild(tag);
+        }
+
+
         if(cIdx === q.correct){
           const tag = document.createElement('span');
           tag.style.fontSize = '11px';
