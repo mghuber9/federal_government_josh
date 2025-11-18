@@ -154,6 +154,30 @@
     color:#374151;
   }
   .statline strong{color:#111827}
+
+  /* Missed explanation styles */
+  #explainBlock{
+    margin-top:10px;
+  }
+  .miss-list{
+    display:grid;
+    gap:8px;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  }
+  .miss-card{
+    background:#f9fafb;
+    border:1px solid rgba(148,163,184,.7);
+    border-radius:12px;
+    padding:8px 10px;
+    font-size:13px;
+  }
+  .miss-term{
+    font-weight:600;
+    margin-bottom:2px;
+  }
+  .miss-detail{
+    color:#4b5563;
+  }
 </style>
 </head>
 <body>
@@ -244,6 +268,7 @@
         No round checked yet. After you click <strong>Check Work</strong>, you’ll see how many terms
         are in the right chapter and which chapter needs the most attention.
       </p>
+      <div id="explainBlock"></div>
     </section>
   </div>
 
@@ -362,6 +387,22 @@ const VOCAB_BIG = [
   { term: 'Supreme Court of the United States', chapter: 14 }
 ];
 
+// Simple chapter info for explanations
+const CH_INFO = {
+  4: {
+    title: 'Ch. 4 — Civil Liberties',
+    blurb: 'focuses on individual freedoms and protections from government action.'
+  },
+  5: {
+    title: 'Ch. 5 — Civil Rights',
+    blurb: 'focuses on equal treatment and protection from discrimination.'
+  },
+  14: {
+    title: 'Ch. 14 — Judiciary',
+    blurb: 'focuses on courts, judicial review, and how the legal system works.'
+  }
+};
+
 function shuffle(a){
   const r = [...a];
   for(let i=r.length-1;i>0;i--){
@@ -387,6 +428,7 @@ const stat14 = document.getElementById('stat14');
 const progressEl = document.getElementById('progress');
 const statusEl = document.getElementById('status');
 const summaryLine = document.getElementById('summaryLine');
+const explainBlock = document.getElementById('explainBlock');
 
 function getMode(){
   return document.getElementById('mode').value;
@@ -414,6 +456,7 @@ function resetRound(){
     bankEl.appendChild(node);
   });
 
+  explainBlock.innerHTML = '';
   updateProgress();
   updateChapterStats();
   summaryLine.innerHTML =
@@ -514,6 +557,7 @@ function checkWork(){
   let placed = 0;
   let correct = 0;
   const correctCounts = { '4':0, '5':0, '14':0 };
+  const missed = [];
 
   currentTerms.forEach(t=>{
     const where = placements[t.id];
@@ -528,10 +572,9 @@ function checkWork(){
       correct++;
       correctCounts[where] = (correctCounts[where] || 0) + 1;
       node.classList.add('correct');
-    } else if(where === 'bank'){
-      node.classList.add('wrong');
     } else {
       node.classList.add('wrong');
+      missed.push({ term: t.term, chapter: t.chapter, placement: where });
     }
   });
 
@@ -556,6 +599,44 @@ function checkWork(){
 
   summaryLine.innerHTML = msg;
   statusEl.textContent = 'Check the green vs red terms, then adjust and hit Check again or start a new round.';
+
+  // Build explanations for missed terms
+  explainBlock.innerHTML = '';
+  if(missed.length === 0){
+    const p = document.createElement('p');
+    p.className = 'statline';
+    p.textContent = 'No missed terms this round — your chapter categories are spot on.';
+    explainBlock.appendChild(p);
+  } else {
+    const intro = document.createElement('p');
+    intro.className = 'statline';
+    intro.innerHTML = '<strong>Missed terms:</strong> Here is where each one really belongs.';
+    explainBlock.appendChild(intro);
+
+    const list = document.createElement('div');
+    list.className = 'miss-list';
+
+    missed.forEach(m=>{
+      const info = CH_INFO[m.chapter];
+      const card = document.createElement('div');
+      card.className = 'miss-card';
+
+      const title = document.createElement('div');
+      title.className = 'miss-term';
+      title.textContent = m.term;
+
+      const detail = document.createElement('div');
+      detail.className = 'miss-detail';
+      detail.textContent =
+        `${info.title} ${info.blurb}`;
+
+      card.appendChild(title);
+      card.appendChild(detail);
+      list.appendChild(card);
+    });
+
+    explainBlock.appendChild(list);
+  }
 }
 
 // Wire buttons
