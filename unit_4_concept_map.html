@@ -462,8 +462,7 @@ const TERM_DETAILS = {
   },
   "Cruel and unusual punishment": {
     explanation: "Punishments that are extreme or disproportionate, banned by the Eighth Amendment."
-
-  ,
+  },
 
   // Ch. 5
   "Civil rights": {
@@ -531,8 +530,7 @@ const TERM_DETAILS = {
   },
   "Glass ceiling": {
     explanation: "An invisible barrier that prevents qualified people, often women or minorities, from advancing to top positions."
-
-  ,
+  },
 
   // Ch. 14
   "Judicial review": {
@@ -812,7 +810,7 @@ function checkWork(){
   summaryLine.innerHTML = msg;
   statusEl.textContent = 'Check the green vs red terms, then adjust and hit Check again or start a new round.';
 
-  // Build explanations for missed terms
+  // Build explanations for missed terms, grouped by chapter
   explainBlock.innerHTML = '';
   if(missed.length === 0){
     const p = document.createElement('p');
@@ -822,38 +820,58 @@ function checkWork(){
   } else {
     const intro = document.createElement('p');
     intro.className = 'statline';
-    intro.innerHTML = '<strong>Missed terms:</strong> Here is where each one really belongs and what it means.';
+    intro.innerHTML = '<strong>Missed terms:</strong> Grouped by chapter so you can see which “bucket” needs the most review.';
     explainBlock.appendChild(intro);
 
-    const list = document.createElement('div');
-    list.className = 'miss-list';
-
-    missed.forEach(m=>{
-      const info = CH_INFO[m.chapter];
-      const termInfo = TERM_DETAILS[m.term];
-      const card = document.createElement('div');
-      card.className = 'miss-card';
-
-      const title = document.createElement('div');
-      title.className = 'miss-term';
-      title.textContent = m.term;
-
-      const detail = document.createElement('div');
-      detail.className = 'miss-detail';
-
-      let text = `${info.title} ${info.blurb}`;
-      if(termInfo && termInfo.explanation){
-        text += " " + termInfo.explanation;
-      }
-
-      detail.textContent = text;
-
-      card.appendChild(title);
-      card.appendChild(detail);
-      list.appendChild(card);
+    // Group missed terms by chapter
+    const byChapter = { '4': [], '5': [], '14': [] };
+    missed.forEach(m => {
+      byChapter[String(m.chapter)].push(m);
     });
 
-    explainBlock.appendChild(list);
+    ['4','5','14'].forEach(ch => {
+      if(byChapter[ch].length === 0) return;
+
+      const info = CH_INFO[ch];
+
+      // Chapter heading
+      const chHeading = document.createElement('p');
+      chHeading.className = 'statline';
+      chHeading.innerHTML = `<strong>${info.title}</strong> — ${info.blurb}`;
+      explainBlock.appendChild(chHeading);
+
+      // List for that chapter
+      const list = document.createElement('div');
+      list.className = 'miss-list';
+
+      byChapter[ch].forEach(m => {
+        const termInfo = TERM_DETAILS[m.term];
+        const card = document.createElement('div');
+        card.className = 'miss-card';
+
+        const title = document.createElement('div');
+        title.className = 'miss-term';
+        title.textContent = m.term;
+
+        const detail = document.createElement('div');
+        detail.className = 'miss-detail';
+
+        let text = '';
+        if(termInfo && termInfo.explanation){
+          text = termInfo.explanation;
+        } else {
+          text = 'Key term from this chapter. Review its definition in your notes or textbook.';
+        }
+
+        detail.textContent = text;
+
+        card.appendChild(title);
+        card.appendChild(detail);
+        list.appendChild(card);
+      });
+
+      explainBlock.appendChild(list);
+    });
   }
 }
 
