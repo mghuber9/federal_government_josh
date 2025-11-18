@@ -113,19 +113,6 @@
     gap:6px;
     box-shadow:0 1px 3px rgba(15,23,42,.08);
   }
-  .term span.label{
-    white-space:nowrap;
-  }
-  .term .chapter-tag{
-    font-size:10px;
-    text-transform:uppercase;
-    letter-spacing:.06em;
-    padding:2px 6px;
-    border-radius:999px;
-    background:#eff6ff;
-    color:#1d4ed8;
-    border:1px solid rgba(37,99,235,.3);
-  }
   .term.correct{
     background:#dcfce7;
     border-color:#22c55e;
@@ -205,7 +192,7 @@
     <div class="layout" style="margin-top:14px">
       <!-- Term bank -->
       <section>
-        <div class="col-title">Term Bank (drag from here)</div>
+        <div class="col-title">TERM BANK (DRAG FROM HERE)</div>
         <div class="bank dz" id="bank" data-chapter="bank">
           <!-- terms appear here -->
         </div>
@@ -213,7 +200,7 @@
 
       <!-- Chapter dropzones -->
       <section>
-        <div class="col-title">Chapters (drop here)</div>
+        <div class="col-title">CHAPTERS (DROP HERE)</div>
         <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px">
           <div class="dz" id="dz4" data-chapter="4">
             <div class="dz-header">
@@ -262,7 +249,6 @@
 
 <script>
 // ===== Vocab master list =====
-// chapter: 4 (liberties), 5 (rights), 14 (judiciary)
 const VOCAB_FULL = [
   // Ch. 4 — Civil Liberties
   { term: 'Bill of Rights', chapter: 4 },
@@ -338,7 +324,7 @@ const VOCAB_FULL = [
   { term: 'Jurisdiction', chapter: 14 }
 ];
 
-// “Big ideas” subset: fewer, more conceptual anchors
+// Big-ideas subset
 const VOCAB_BIG = [
   // Ch. 4
   { term: 'Bill of Rights', chapter: 4 },
@@ -376,7 +362,6 @@ const VOCAB_BIG = [
   { term: 'Supreme Court of the United States', chapter: 14 }
 ];
 
-// ===== Helpers =====
 function shuffle(a){
   const r = [...a];
   for(let i=r.length-1;i>0;i--){
@@ -385,19 +370,13 @@ function shuffle(a){
   }
   return r;
 }
-function chapterLabel(ch){
-  if(ch === 4) return 'Ch. 4';
-  if(ch === 5) return 'Ch. 5';
-  if(ch === 14) return 'Ch. 14';
-  return '';
-}
 
-// ===== State =====
-let currentTerms = []; // {id, term, chapter}
-let placements = {};   // id -> 'bank' | '4' | '5' | '14'
+// State
+let currentTerms = [];
+let placements = {};
 let dragData = null;
 
-// DOM references
+// DOM
 const bankEl = document.getElementById('bank');
 const list4 = document.getElementById('list4');
 const list5 = document.getElementById('list5');
@@ -425,13 +404,11 @@ function resetRound(){
   placements = {};
   currentTerms.forEach(t => placements[t.id] = 'bank');
 
-  // Clear UI
   bankEl.innerHTML = '';
   list4.innerHTML = '';
   list5.innerHTML = '';
   list14.innerHTML = '';
 
-  // Build bank terms
   currentTerms.forEach(t=>{
     const node = createTermNode(t);
     bankEl.appendChild(node);
@@ -453,22 +430,13 @@ function createTermNode(termObj){
   div.dataset.id = termObj.id;
   div.dataset.chapter = termObj.chapter;
 
-  const label = document.createElement('span');
-  label.className = 'label';
-  label.textContent = termObj.term;
-
-  const tag = document.createElement('span');
-  tag.className = 'chapter-tag';
-  tag.textContent = chapterLabel(termObj.chapter);
-
-  div.appendChild(label);
-  div.appendChild(tag);
+  div.textContent = termObj.term;  // no chapter tag shown
 
   addDragHandlers(div);
   return div;
 }
 
-// ===== Drag & drop =====
+// Drag & drop
 function addDragHandlers(node){
   node.addEventListener('dragstart', e=>{
     dragData = { id: node.dataset.id };
@@ -507,8 +475,6 @@ function addDropHandlers(container){
                      : 'bank';
 
     placements[termId] = newChapter;
-
-    // Reset correctness styling on move
     node.classList.remove('correct','wrong');
 
     updateProgress();
@@ -516,13 +482,12 @@ function addDropHandlers(container){
   });
 }
 
-// Set up drop handlers
 addDropHandlers(bankEl);
 addDropHandlers(list4);
 addDropHandlers(list5);
 addDropHandlers(list14);
 
-// ===== Progress & stats =====
+// Progress & stats
 function updateProgress(){
   const total = currentTerms.length;
   const placed = Object.values(placements).filter(p => p !== 'bank').length;
@@ -541,7 +506,7 @@ function updateChapterStats(correctCounts){
   stat14.textContent = `${correctCounts['14'] || 0} correct`;
 }
 
-// ===== Check work =====
+// Check work
 function checkWork(){
   if(currentTerms.length === 0) return;
 
@@ -564,7 +529,6 @@ function checkWork(){
       correctCounts[where] = (correctCounts[where] || 0) + 1;
       node.classList.add('correct');
     } else if(where === 'bank'){
-      // left in bank, don’t mark wrong yet but it’s not correct
       node.classList.add('wrong');
     } else {
       node.classList.add('wrong');
@@ -582,7 +546,6 @@ function checkWork(){
     msg += `You left <strong>${skipped}</strong> term(s) in the bank — try to place everything next round. `;
   }
 
-  // Coaching blurb
   if(pct === 100){
     msg += 'Nice — your mental map of Unit 4 is very stable.';
   } else if(pct >= 70){
@@ -595,12 +558,12 @@ function checkWork(){
   statusEl.textContent = 'Check the green vs red terms, then adjust and hit Check again or start a new round.';
 }
 
-// ===== Wire buttons =====
+// Wire buttons
 document.getElementById('newRound').addEventListener('click', resetRound);
 document.getElementById('mode').addEventListener('change', resetRound);
 document.getElementById('check').addEventListener('click', checkWork);
 
-// Start with a default round
+// Start with default round
 resetRound();
 </script>
 </body>
