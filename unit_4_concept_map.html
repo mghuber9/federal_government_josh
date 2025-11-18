@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Unit 4 — Concept Map (Ch. 4, 5, 14)</title>
+<style>
+  :root{
+    --bg:#e5e7eb;
+    --panel:#f9fafb;
+    --ink:#111827;
+    --muted:#6b7280;
+    --accent:#2563eb;
+    --ok:#16a34a;
+    --bad:#dc2626;
+    --tile:#ffffff;
+    --tile-border:rgba(15,23,42,.12);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;
+    color:var(--ink);
+    background:radial-gradient(900px 600px at 15% -10%, #dbeafe 0%, var(--bg) 55%);
+  }
+  .wrap{max-width:1100px; margin:0 auto; padding:24px}
+  h1{margin:0 0 6px; font-size:clamp(22px,3vw,32px)}
+  p,label{color:var(--muted)}
+  h2{margin:0 0 8px; font-size:18px}
+  .card{
+    background:var(--panel);
+    border:1px solid rgba(15,23,42,.08);
+    border-radius:16px;
+    padding:18px;
+    box-shadow:0 6px 18px rgba(15,23,42,.08);
+  }
+  .grid{display:grid; gap:12px}
+  .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  @media (max-width:900px){.grid-2{grid-template-columns:1fr}}
+
+  select,button{
+    appearance:none;
+    border:1px solid rgba(15,23,42,.14);
+    background:#eff6ff;
+    color:var(--ink);
+    padding:10px 12px;
+    border-radius:10px;
+    font-size:15px;
+  }
+  button{
+    cursor:pointer;
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    border:1px solid rgba(37,99,235,.7);
+    color:#f9fafb;
+    font-weight:500;
+  }
+  button:hover{filter:brightness(1.05)}
+  .pill{
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid rgba(15,23,42,.12);
+    background:#e5e7eb;
+    color:#1f2937;
+    font-size:12px;
+  }
+  .hud{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+  }
+  .sep{height:1px; background:rgba(15,23,42,.08); margin:12px 0}
+
+  .layout{
+    display:grid;
+    grid-template-columns:minmax(0,280px) minmax(0,1fr);
+    gap:14px;
+  }
+  @media (max-width:900px){.layout{grid-template-columns:1fr}}
+
+  .col-title{
+    font-size:12px;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    color:#4b5563;
+    margin-bottom:8px;
+  }
+
+  .bank, .dropzone-list{
+    border-radius:14px;
+    border:1px dashed rgba(148,163,184,.9);
+    background:rgba(249,250,251,.9);
+    padding:10px;
+    min-height:120px;
+  }
+  .bank{
+    border-style:solid;
+    border-color:rgba(148,163,184,1);
+  }
+
+  .term{
+    background:var(--tile);
+    border:1px solid var(--tile-border);
+    border-radius:999px;
+    padding:6px 10px;
+    margin:4px 0;
+    font-size:14px;
+    cursor:grab;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    box-shadow:0 1px 3px rgba(15,23,42,.08);
+  }
+  .term span.label{
+    white-space:nowrap;
+  }
+  .term .chapter-tag{
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    padding:2px 6px;
+    border-radius:999px;
+    background:#eff6ff;
+    color:#1d4ed8;
+    border:1px solid rgba(37,99,235,.3);
+  }
+  .term.correct{
+    background:#dcfce7;
+    border-color:#22c55e;
+  }
+  .term.wrong{
+    background:#fee2e2;
+    border-color:#ef4444;
+  }
+  .term.dragging{
+    opacity:.7;
+  }
+  .dz{
+    padding:6px;
+    border-radius:12px;
+    border:1px solid transparent;
+  }
+  .dz.drag-over{
+    border-color:var(--accent);
+    background:#e0f2fe;
+  }
+
+  .dz-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:4px;
+  }
+  .dz-title{
+    font-size:14px;
+    font-weight:600;
+  }
+  .dz-sub{
+    font-size:11px;
+    color:#6b7280;
+  }
+
+  .statline{
+    font-size:13px;
+    color:#374151;
+  }
+  .statline strong{color:#111827}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Unit 4 — Concept Map</h1>
+    <p class="muted">
+      Warm-up activity: sort key ideas into the correct chapter. This comes
+      <strong>before vocab work</strong> to help see the “big picture”:
+      <strong>Ch. 4 Civil Liberties</strong>, <strong>Ch. 5 Civil Rights</strong>,
+      <strong>Ch. 14 Judiciary</strong>.
+    </p>
+
+    <section class="card grid">
+      <div class="grid grid-2">
+        <div>
+          <label for="mode">Set</label>
+          <select id="mode">
+            <option value="big" selected>Big Ideas Only (shorter list)</option>
+            <option value="full">Full Vocab (all terms)</option>
+          </select>
+        </div>
+        <div>
+          <label>Round controls</label>
+          <div class="hud">
+            <button id="newRound">Start / Reset Round</button>
+            <button id="check">Check Work</button>
+          </div>
+        </div>
+      </div>
+      <div class="hud" style="margin-top:8px">
+        <span class="pill" id="status">Drag each term into the chapter where it belongs.</span>
+        <span class="pill" id="progress">Placed 0 / 0</span>
+      </div>
+    </section>
+
+    <div class="layout" style="margin-top:14px">
+      <!-- Term bank -->
+      <section>
+        <div class="col-title">Term Bank (drag from here)</div>
+        <div class="bank dz" id="bank" data-chapter="bank">
+          <!-- terms appear here -->
+        </div>
+      </section>
+
+      <!-- Chapter dropzones -->
+      <section>
+        <div class="col-title">Chapters (drop here)</div>
+        <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px">
+          <div class="dz" id="dz4" data-chapter="4">
+            <div class="dz-header">
+              <div>
+                <div class="dz-title">Ch. 4 — Civil Liberties</div>
+                <div class="dz-sub">Individual freedoms and protections from government</div>
+              </div>
+              <span class="pill" id="stat4">0 correct</span>
+            </div>
+            <div class="dropzone-list" id="list4"></div>
+          </div>
+
+          <div class="dz" id="dz5" data-chapter="5">
+            <div class="dz-header">
+              <div>
+                <div class="dz-title">Ch. 5 — Civil Rights</div>
+                <div class="dz-sub">Equal treatment and protection from discrimination</div>
+              </div>
+              <span class="pill" id="stat5">0 correct</span>
+            </div>
+            <div class="dropzone-list" id="list5"></div>
+          </div>
+
+          <div class="dz" id="dz14" data-chapter="14">
+            <div class="dz-header">
+              <div>
+                <div class="dz-title">Ch. 14 — Judiciary</div>
+                <div class="dz-sub">Courts, judicial review, and legal processes</div>
+              </div>
+              <span class="pill" id="stat14">0 correct</span>
+            </div>
+            <div class="dropzone-list" id="list14"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" style="margin-top:14px">
+      <h2 style="margin-top:0">Round Summary</h2>
+      <p class="statline" id="summaryLine">
+        No round checked yet. After you click <strong>Check Work</strong>, you’ll see how many terms
+        are in the right chapter and which chapter needs the most attention.
+      </p>
+    </section>
+  </div>
+
+<script>
+// ===== Vocab master list =====
+// chapter: 4 (liberties), 5 (rights), 14 (judiciary)
+const VOCAB_FULL = [
+  // Ch. 4 — Civil Liberties
+  { term: 'Bill of Rights', chapter: 4 },
+  { term: 'Civil liberties', chapter: 4 },
+  { term: 'Selective incorporation', chapter: 4 },
+  { term: 'Substantive due process', chapter: 4 },
+  { term: 'Procedural due process', chapter: 4 },
+  { term: 'Establishment Clause', chapter: 4 },
+  { term: 'Free Exercise Clause', chapter: 4 },
+  { term: 'Lemon test', chapter: 4 },
+  { term: 'Fighting words', chapter: 4 },
+  { term: 'Clear and present danger test', chapter: 4 },
+  { term: 'Libel', chapter: 4 },
+  { term: 'Slander', chapter: 4 },
+  { term: 'Obscenity', chapter: 4 },
+  { term: 'Symbolic speech', chapter: 4 },
+  { term: 'Exclusionary rule', chapter: 4 },
+  { term: 'Good-faith exception', chapter: 4 },
+  { term: 'Miranda rights', chapter: 4 },
+  { term: 'Right to privacy', chapter: 4 },
+  { term: 'Cruel and unusual punishment', chapter: 4 },
+
+  // Ch. 5 — Civil Rights
+  { term: 'Civil rights', chapter: 5 },
+  { term: 'Thirteenth Amendment', chapter: 5 },
+  { term: 'Equal Protection Clause', chapter: 5 },
+  { term: 'Fifteenth Amendment', chapter: 5 },
+  { term: 'Nineteenth Amendment', chapter: 5 },
+  { term: 'Jim Crow laws', chapter: 5 },
+  { term: 'Black Codes', chapter: 5 },
+  { term: 'De jure segregation', chapter: 5 },
+  { term: 'De facto segregation', chapter: 5 },
+  { term: '“Separate but equal” doctrine', chapter: 5 },
+  { term: 'Civil Rights Act of 1964', chapter: 5 },
+  { term: 'Voting Rights Act of 1965', chapter: 5 },
+  { term: 'Poll tax', chapter: 5 },
+  { term: 'Literacy test', chapter: 5 },
+  { term: 'Affirmative action', chapter: 5 },
+  { term: 'Strict scrutiny', chapter: 5 },
+  { term: 'Intermediate scrutiny', chapter: 5 },
+  { term: 'Rational basis test', chapter: 5 },
+  { term: 'Americans with Disabilities Act (ADA)', chapter: 5 },
+  { term: 'Title IX', chapter: 5 },
+  { term: 'Equal Rights Amendment (ERA)', chapter: 5 },
+  { term: 'Glass ceiling', chapter: 5 },
+
+  // Ch. 14 — Judiciary
+  { term: 'Judicial review', chapter: 14 },
+  { term: 'Marbury v. Madison', chapter: 14 },
+  { term: 'Original jurisdiction', chapter: 14 },
+  { term: 'Appellate jurisdiction', chapter: 14 },
+  { term: 'Writ of certiorari', chapter: 14 },
+  { term: 'Rule of four', chapter: 14 },
+  { term: 'Stare decisis', chapter: 14 },
+  { term: 'Majority opinion', chapter: 14 },
+  { term: 'Concurring opinion', chapter: 14 },
+  { term: 'Dissenting opinion', chapter: 14 },
+  { term: 'Judicial activism', chapter: 14 },
+  { term: 'Judicial restraint', chapter: 14 },
+  { term: 'U.S. District Court', chapter: 14 },
+  { term: 'U.S. Court of Appeals', chapter: 14 },
+  { term: 'Supreme Court of the United States', chapter: 14 },
+  { term: 'Felony', chapter: 14 },
+  { term: 'Misdemeanor', chapter: 14 },
+  { term: 'Plea bargain', chapter: 14 },
+  { term: 'Plaintiff', chapter: 14 },
+  { term: 'Defendant', chapter: 14 },
+  { term: 'Statutory law', chapter: 14 },
+  { term: 'Common law', chapter: 14 },
+  { term: 'Administrative law', chapter: 14 },
+  { term: 'Amicus curiae brief', chapter: 14 },
+  { term: 'Justiciable controversy', chapter: 14 },
+  { term: 'Jurisdiction', chapter: 14 }
+];
+
+// “Big ideas” subset: fewer, more conceptual anchors
+const VOCAB_BIG = [
+  // Ch. 4
+  { term: 'Bill of Rights', chapter: 4 },
+  { term: 'Civil liberties', chapter: 4 },
+  { term: 'Selective incorporation', chapter: 4 },
+  { term: 'Establishment Clause', chapter: 4 },
+  { term: 'Free Exercise Clause', chapter: 4 },
+  { term: 'Clear and present danger test', chapter: 4 },
+  { term: 'Exclusionary rule', chapter: 4 },
+  { term: 'Miranda rights', chapter: 4 },
+  { term: 'Right to privacy', chapter: 4 },
+
+  // Ch. 5
+  { term: 'Civil rights', chapter: 5 },
+  { term: 'Equal Protection Clause', chapter: 5 },
+  { term: 'Jim Crow laws', chapter: 5 },
+  { term: 'De jure segregation', chapter: 5 },
+  { term: 'De facto segregation', chapter: 5 },
+  { term: '“Separate but equal” doctrine', chapter: 5 },
+  { term: 'Civil Rights Act of 1964', chapter: 5 },
+  { term: 'Voting Rights Act of 1965', chapter: 5 },
+  { term: 'Affirmative action', chapter: 5 },
+  { term: 'Strict scrutiny', chapter: 5 },
+
+  // Ch. 14
+  { term: 'Judicial review', chapter: 14 },
+  { term: 'Marbury v. Madison', chapter: 14 },
+  { term: 'Original jurisdiction', chapter: 14 },
+  { term: 'Appellate jurisdiction', chapter: 14 },
+  { term: 'Stare decisis', chapter: 14 },
+  { term: 'Judicial activism', chapter: 14 },
+  { term: 'Judicial restraint', chapter: 14 },
+  { term: 'U.S. District Court', chapter: 14 },
+  { term: 'U.S. Court of Appeals', chapter: 14 },
+  { term: 'Supreme Court of the United States', chapter: 14 }
+];
+
+// ===== Helpers =====
+function shuffle(a){
+  const r = [...a];
+  for(let i=r.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [r[i],r[j]] = [r[j],r[i]];
+  }
+  return r;
+}
+function chapterLabel(ch){
+  if(ch === 4) return 'Ch. 4';
+  if(ch === 5) return 'Ch. 5';
+  if(ch === 14) return 'Ch. 14';
+  return '';
+}
+
+// ===== State =====
+let currentTerms = []; // {id, term, chapter}
+let placements = {};   // id -> 'bank' | '4' | '5' | '14'
+let dragData = null;
+
+// DOM references
+const bankEl = document.getElementById('bank');
+const list4 = document.getElementById('list4');
+const list5 = document.getElementById('list5');
+const list14 = document.getElementById('list14');
+const stat4 = document.getElementById('stat4');
+const stat5 = document.getElementById('stat5');
+const stat14 = document.getElementById('stat14');
+const progressEl = document.getElementById('progress');
+const statusEl = document.getElementById('status');
+const summaryLine = document.getElementById('summaryLine');
+
+function getMode(){
+  return document.getElementById('mode').value;
+}
+
+function resetRound(){
+  const mode = getMode();
+  const source = mode === 'full' ? VOCAB_FULL : VOCAB_BIG;
+  const shuffled = shuffle(source);
+  currentTerms = shuffled.map((t, idx)=>({
+    id: 't' + idx,
+    term: t.term,
+    chapter: t.chapter
+  }));
+  placements = {};
+  currentTerms.forEach(t => placements[t.id] = 'bank');
+
+  // Clear UI
+  bankEl.innerHTML = '';
+  list4.innerHTML = '';
+  list5.innerHTML = '';
+  list14.innerHTML = '';
+
+  // Build bank terms
+  currentTerms.forEach(t=>{
+    const node = createTermNode(t);
+    bankEl.appendChild(node);
+  });
+
+  updateProgress();
+  updateChapterStats();
+  summaryLine.innerHTML =
+    'New round started. Drag each term into the chapter where it belongs, then click <strong>Check Work</strong>.';
+  statusEl.textContent = mode === 'full'
+    ? 'Full vocab mode: big list. Take your time.'
+    : 'Big ideas only: focus on the main concepts first.';
+}
+
+function createTermNode(termObj){
+  const div = document.createElement('div');
+  div.className = 'term';
+  div.setAttribute('draggable','true');
+  div.dataset.id = termObj.id;
+  div.dataset.chapter = termObj.chapter;
+
+  const label = document.createElement('span');
+  label.className = 'label';
+  label.textContent = termObj.term;
+
+  const tag = document.createElement('span');
+  tag.className = 'chapter-tag';
+  tag.textContent = chapterLabel(termObj.chapter);
+
+  div.appendChild(label);
+  div.appendChild(tag);
+
+  addDragHandlers(div);
+  return div;
+}
+
+// ===== Drag & drop =====
+function addDragHandlers(node){
+  node.addEventListener('dragstart', e=>{
+    dragData = { id: node.dataset.id };
+    node.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+  });
+  node.addEventListener('dragend', ()=>{
+    node.classList.remove('dragging');
+    dragData = null;
+  });
+}
+
+function addDropHandlers(container){
+  container.addEventListener('dragover', e=>{
+    e.preventDefault();
+    container.closest('.dz').classList.add('drag-over');
+  });
+  container.addEventListener('dragleave', ()=>{
+    container.closest('.dz').classList.remove('drag-over');
+  });
+  container.addEventListener('drop', e=>{
+    e.preventDefault();
+    container.closest('.dz').classList.remove('drag-over');
+    if(!dragData) return;
+
+    const termId = dragData.id;
+    const node = document.querySelector(`.term[data-id="${termId}"]`);
+    if(!node) return;
+
+    container.appendChild(node);
+
+    const newChapter = container.id === 'bank' ? 'bank'
+                     : container.id === 'list4' ? '4'
+                     : container.id === 'list5' ? '5'
+                     : container.id === 'list14' ? '14'
+                     : 'bank';
+
+    placements[termId] = newChapter;
+
+    // Reset correctness styling on move
+    node.classList.remove('correct','wrong');
+
+    updateProgress();
+    updateChapterStats();
+  });
+}
+
+// Set up drop handlers
+addDropHandlers(bankEl);
+addDropHandlers(list4);
+addDropHandlers(list5);
+addDropHandlers(list14);
+
+// ===== Progress & stats =====
+function updateProgress(){
+  const total = currentTerms.length;
+  const placed = Object.values(placements).filter(p => p !== 'bank').length;
+  progressEl.textContent = `Placed ${placed} / ${total}`;
+}
+
+function updateChapterStats(correctCounts){
+  if(!correctCounts){
+    stat4.textContent = '0 correct';
+    stat5.textContent = '0 correct';
+    stat14.textContent = '0 correct';
+    return;
+  }
+  stat4.textContent = `${correctCounts['4'] || 0} correct`;
+  stat5.textContent = `${correctCounts['5'] || 0} correct`;
+  stat14.textContent = `${correctCounts['14'] || 0} correct`;
+}
+
+// ===== Check work =====
+function checkWork(){
+  if(currentTerms.length === 0) return;
+
+  let total = currentTerms.length;
+  let placed = 0;
+  let correct = 0;
+  const correctCounts = { '4':0, '5':0, '14':0 };
+
+  currentTerms.forEach(t=>{
+    const where = placements[t.id];
+    if(where !== 'bank') placed++;
+
+    const node = document.querySelector(`.term[data-id="${t.id}"]`);
+    if(!node) return;
+
+    node.classList.remove('correct','wrong');
+
+    if(where === String(t.chapter)){
+      correct++;
+      correctCounts[where] = (correctCounts[where] || 0) + 1;
+      node.classList.add('correct');
+    } else if(where === 'bank'){
+      // left in bank, don’t mark wrong yet but it’s not correct
+      node.classList.add('wrong');
+    } else {
+      node.classList.add('wrong');
+    }
+  });
+
+  updateChapterStats(correctCounts);
+
+  const pct = total ? Math.round(correct/total*100) : 0;
+  const skipped = total - placed;
+
+  let msg = `You placed ${placed} of ${total} terms. `;
+  msg += `Correct: <strong>${correct}/${total}</strong> (${pct}%). `;
+  if(skipped > 0){
+    msg += `You left <strong>${skipped}</strong> term(s) in the bank — try to place everything next round. `;
+  }
+
+  // Coaching blurb
+  if(pct === 100){
+    msg += 'Nice — your mental map of Unit 4 is very stable.';
+  } else if(pct >= 70){
+    msg += 'Solid map. Focus especially on any chapter where you had fewer correct placements.';
+  } else {
+    msg += 'Treat this as a warm-up: move terms around, talk through why each belongs in its chapter, and then try again.';
+  }
+
+  summaryLine.innerHTML = msg;
+  statusEl.textContent = 'Check the green vs red terms, then adjust and hit Check again or start a new round.';
+}
+
+// ===== Wire buttons =====
+document.getElementById('newRound').addEventListener('click', resetRound);
+document.getElementById('mode').addEventListener('change', resetRound);
+document.getElementById('check').addEventListener('click', checkWork);
+
+// Start with a default round
+resetRound();
+</script>
+</body>
+</html>
