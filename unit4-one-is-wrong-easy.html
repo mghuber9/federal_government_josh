@@ -80,37 +80,28 @@
   .choice{
   text-align:left;
   border-radius:12px;
-  border:2px solid #cbd5e1;      /* thicker border */
-  background:#ffffff;
-  padding:14px 16px;              /* larger padding */
-  font-size:16px;                 /* larger text */
-  line-height:1.4;
+  border:1px solid rgba(15,23,42,.12);
+  background:white;
+  padding:10px 12px;
+  font-size:14px;
   cursor:pointer;
-  transition:background .15s, border-color .15s, transform .05s;
+  transition:background .15s,border-color .15s,transform .05s;
 }
-
-.choice:hover{
-  background:#f1f5f9;             /* light hover highlight */
-  transform:translateY(-1px);
-}
-
+.choice:hover{transform:translateY(-1px);}
 .choice.correct-guess{
   background:#dcfce7;
   border-color:#16a34a;
 }
-
 .choice.wrong-guess{
   background:#fee2e2;
   border-color:#dc2626;
 }
-
 .choice.actual-wrong{
-  box-shadow:0 0 0 3px rgba(220,38,38,.6);
+  box-shadow:0 0 0 2px rgba(220,38,38,.6);
 }
-
 .choice.disabled{
   pointer-events:none;
-  opacity:0.95;
+  opacity:.9;
 }
 
 
