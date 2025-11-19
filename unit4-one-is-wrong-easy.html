@@ -52,7 +52,8 @@
   .pill-okay{background:#dcfce7; border-color:#16a34a;}
   .pill-warn{background:#fee2e2; border-color:#dc2626;}
 
-  button{
+  /* NEXT button only (no global button styles) */
+  #nextBtn{
     appearance:none;
     border-radius:999px;
     border:1px solid rgba(37,99,235,.7);
@@ -63,11 +64,11 @@
     cursor:pointer;
     font-weight:500;
   }
-  button[disabled]{
+  #nextBtn[disabled]{
     opacity:.6;
     cursor:default;
   }
-  button:hover:not([disabled]){filter:brightness(1.04);}
+  #nextBtn:hover:not([disabled]){filter:brightness(1.04);}
 
   .prompt{
     font-size:15px;
@@ -77,45 +78,44 @@
     display:grid;
     gap:10px;
   }
+
+  /* ANSWER CHOICES – NEW HIGH-CONTRAST STYLES */
   .choice{
-  text-align:left;
-  border-radius:12px;
-  border:2px solid #cbd5e1;      /* thicker border */
-  background:#ffffff;
-  color:var(--ink);              /* <<< make text dark again */
-  padding:14px 16px;             /* larger padding */
-  font-size:16px;                /* larger text */
-  line-height:1.4;
-  cursor:pointer;
-  transition:background .15s, border-color .15s, transform .05s;
-}
+    text-align:left;
+    border-radius:12px;
+    border:2px solid #cbd5e1;      /* thicker border */
+    background:#ffffff;
+    color:var(--ink);               /* <<< dark text */
+    padding:14px 16px;              /* larger padding */
+    font-size:16px;                 /* larger text */
+    line-height:1.4;
+    cursor:pointer;
+    transition:background .15s, border-color .15s, transform .05s;
+  }
 
+  .choice:hover{
+    background:#f1f5f9;             /* light hover highlight */
+    transform:translateY(-1px);
+  }
 
-.choice:hover{
-  background:#f1f5f9;             /* light hover highlight */
-  transform:translateY(-1px);
-}
+  .choice.correct-guess{
+    background:#dcfce7;
+    border-color:#16a34a;
+  }
 
-.choice.correct-guess{
-  background:#dcfce7;
-  border-color:#16a34a;
-}
+  .choice.wrong-guess{
+    background:#fee2e2;
+    border-color:#dc2626;
+  }
 
-.choice.wrong-guess{
-  background:#fee2e2;
-  border-color:#dc2626;
-}
+  .choice.actual-wrong{
+    box-shadow:0 0 0 3px rgba(220,38,38,.6);
+  }
 
-.choice.actual-wrong{
-  box-shadow:0 0 0 3px rgba(220,38,38,.6);
-}
-
-.choice.disabled{
-  pointer-events:none;
-  opacity:0.95;
-}
-
-
+  .choice.disabled{
+    pointer-events:none;
+    opacity:0.95;
+  }
 
   .explain{
     margin-top:10px;
@@ -159,22 +159,10 @@ const QUESTIONS = [
     topic: "Big Picture — Civil Liberties",
     prompt: "Which statement about civil liberties is WRONG?",
     items: [
-      {
-        text: "Civil liberties are basic freedoms like speech and religion.",
-        isWrong: false
-      },
-      {
-        text: "Civil liberties mostly tell the government what it cannot do to you.",
-        isWrong: false
-      },
-      {
-        text: "The Bill of Rights is a main source of civil liberties in the U.S.",
-        isWrong: false
-      },
-      {
-        text: "Civil liberties are all about how citizens run for political office.",
-        isWrong: true
-      }
+      { text: "Civil liberties are basic freedoms like speech and religion.", isWrong: false },
+      { text: "Civil liberties mostly tell the government what it cannot do to you.", isWrong: false },
+      { text: "The Bill of Rights is a main source of civil liberties in the U.S.", isWrong: false },
+      { text: "Civil liberties are all about how citizens run for political office.", isWrong: true }
     ],
     explanation: "Civil liberties protect basic freedoms; they are not mainly about running for office."
   },
@@ -182,22 +170,10 @@ const QUESTIONS = [
     topic: "Big Picture — Civil Rights",
     prompt: "Which statement about civil rights is WRONG?",
     items: [
-      {
-        text: "Civil rights focus on equal treatment under the law.",
-        isWrong: false
-      },
-      {
-        text: "Civil rights often deal with stopping discrimination based on race, gender, and other traits.",
-        isWrong: false
-      },
-      {
-        text: "The government sometimes must take action to protect civil rights.",
-        isWrong: false
-      },
-      {
-        text: "Civil rights mean the government ignores discrimination and lets citizens handle it alone.",
-        isWrong: true
-      }
+      { text: "Civil rights focus on equal treatment under the law.", isWrong: false },
+      { text: "Civil rights often deal with stopping discrimination based on race, gender, and other traits.", isWrong: false },
+      { text: "The government sometimes must take action to protect civil rights.", isWrong: false },
+      { text: "Civil rights mean the government ignores discrimination and lets citizens handle it alone.", isWrong: true }
     ],
     explanation: "Civil rights usually require government action to prevent or punish discrimination."
   },
@@ -205,22 +181,10 @@ const QUESTIONS = [
     topic: "Big Picture — The Judiciary",
     prompt: "Which statement about the judiciary (court system) is WRONG?",
     items: [
-      {
-        text: "The judiciary includes the Supreme Court and other federal courts.",
-        isWrong: false
-      },
-      {
-        text: "Courts interpret laws and the Constitution.",
-        isWrong: false
-      },
-      {
-        text: "Courts can decide if a law violates the Constitution.",
-        isWrong: false
-      },
-      {
-        text: "The judiciary’s main job is to pass new laws for Congress.",
-        isWrong: true
-      }
+      { text: "The judiciary includes the Supreme Court and other federal courts.", isWrong: false },
+      { text: "Courts interpret laws and the Constitution.", isWrong: false },
+      { text: "Courts can decide if a law violates the Constitution.", isWrong: false },
+      { text: "The judiciary’s main job is to pass new laws for Congress.", isWrong: true }
     ],
     explanation: "Courts interpret and apply laws; Congress passes new laws."
   },
@@ -228,22 +192,10 @@ const QUESTIONS = [
     topic: "Civil Liberties — Religion",
     prompt: "Which statement about religion and the First Amendment is WRONG?",
     items: [
-      {
-        text: "The government cannot make an official national religion.",
-        isWrong: false
-      },
-      {
-        text: "People have a right to practice their religion, within reasonable limits.",
-        isWrong: false
-      },
-      {
-        text: "The First Amendment protects both the Establishment Clause and the Free Exercise Clause.",
-        isWrong: false
-      },
-      {
-        text: "The government can force everyone to attend a certain church on Sundays.",
-        isWrong: true
-      }
+      { text: "The government cannot make an official national religion.", isWrong: false },
+      { text: "People have a right to practice their religion, within reasonable limits.", isWrong: false },
+      { text: "The First Amendment protects both the Establishment Clause and the Free Exercise Clause.", isWrong: false },
+      { text: "The government can force everyone to attend a certain church on Sundays.", isWrong: true }
     ],
     explanation: "The Establishment Clause prevents the government from forcing people into a certain religion."
   },
@@ -251,22 +203,10 @@ const QUESTIONS = [
     topic: "Civil Liberties — Rights of the Accused",
     prompt: "Which statement about someone accused of a crime is WRONG?",
     items: [
-      {
-        text: "People accused of crimes have a right to a lawyer.",
-        isWrong: false
-      },
-      {
-        text: "Police must give Miranda warnings before a custodial interrogation.",
-        isWrong: false
-      },
-      {
-        text: "Evidence found illegally can be excluded from trial.",
-        isWrong: false
-      },
-      {
-        text: "The government may punish a person without any trial if it believes they are guilty.",
-        isWrong: true
-      }
+      { text: "People accused of crimes have a right to a lawyer.", isWrong: false },
+      { text: "Police must give Miranda warnings before a custodial interrogation.", isWrong: false },
+      { text: "Evidence found illegally can be excluded from trial.", isWrong: false },
+      { text: "The government may punish a person without any trial if it believes they are guilty.", isWrong: true }
     ],
     explanation: "Due process requires a fair legal process; punishment without a trial violates that idea."
   },
@@ -274,22 +214,10 @@ const QUESTIONS = [
     topic: "Civil Rights — Voting",
     prompt: "Which statement about voting rights is WRONG?",
     items: [
-      {
-        text: "Poll taxes and literacy tests were used to keep some people from voting.",
-        isWrong: false
-      },
-      {
-        text: "The Voting Rights Act of 1965 helped protect the voting rights of racial minorities.",
-        isWrong: false
-      },
-      {
-        text: "The Fifteenth Amendment banned denying the right to vote based on race.",
-        isWrong: false
-      },
-      {
-        text: "Today, the Constitution clearly says only landowners may vote in federal elections.",
-        isWrong: true
-      }
+      { text: "Poll taxes and literacy tests were used to keep some people from voting.", isWrong: false },
+      { text: "The Voting Rights Act of 1965 helped protect the voting rights of racial minorities.", isWrong: false },
+      { text: "The Fifteenth Amendment banned denying the right to vote based on race.", isWrong: false },
+      { text: "Today, the Constitution clearly says only landowners may vote in federal elections.", isWrong: true }
     ],
     explanation: "Property ownership is not a requirement for voting in federal elections."
   },
@@ -297,22 +225,10 @@ const QUESTIONS = [
     topic: "Judiciary — Court Levels",
     prompt: "Which statement about the federal court system is WRONG?",
     items: [
-      {
-        text: "U.S. District Courts are the main trial courts in the federal system.",
-        isWrong: false
-      },
-      {
-        text: "U.S. Courts of Appeals mostly review cases from District Courts.",
-        isWrong: false
-      },
-      {
-        text: "The Supreme Court is the highest court in the country.",
-        isWrong: false
-      },
-      {
-        text: "Most federal cases start at the Supreme Court and are never heard anywhere else.",
-        isWrong: true
-      }
+      { text: "U.S. District Courts are the main trial courts in the federal system.", isWrong: false },
+      { text: "U.S. Courts of Appeals mostly review cases from District Courts.", isWrong: false },
+      { text: "The Supreme Court is the highest court in the country.", isWrong: false },
+      { text: "Most federal cases start at the Supreme Court and are never heard anywhere else.", isWrong: true }
     ],
     explanation: "Most federal cases start in District Court, not at the Supreme Court."
   },
@@ -320,22 +236,10 @@ const QUESTIONS = [
     topic: "Judiciary — Judicial Review",
     prompt: "Which statement about judicial review is WRONG?",
     items: [
-      {
-        text: "Judicial review is the power of courts to strike down unconstitutional laws.",
-        isWrong: false
-      },
-      {
-        text: "Marbury v. Madison helped establish judicial review.",
-        isWrong: false
-      },
-      {
-        text: "Judicial review lets courts check the other branches of government.",
-        isWrong: false
-      },
-      {
-        text: "Judicial review means Congress always reviews every court case before it is decided.",
-        isWrong: true
-      }
+      { text: "Judicial review is the power of courts to strike down unconstitutional laws.", isWrong: false },
+      { text: "Marbury v. Madison helped establish judicial review.", isWrong: false },
+      { text: "Judicial review lets courts check the other branches of government.", isWrong: false },
+      { text: "Judicial review means Congress always reviews every court case before it is decided.", isWrong: true }
     ],
     explanation: "Judicial review is a court power, not a process where Congress reviews court cases."
   }
