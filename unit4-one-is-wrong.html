@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Unit 4 — “One Is Wrong” Challenge</title>
+<style>
+  :root{
+    --bg:#e5e7eb;
+    --panel:#f9fafb;
+    --ink:#111827;
+    --muted:#6b7280;
+    --accent:#2563eb;
+    --ok:#16a34a;
+    --bad:#dc2626;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;
+    color:var(--ink);
+    background:radial-gradient(900px 600px at 15% -10%, #dbeafe 0%, var(--bg) 55%);
+  }
+  .wrap{max-width:900px; margin:0 auto; padding:24px}
+  h1{margin:0 0 6px; font-size:clamp(22px,3vw,32px)}
+  p,label{color:var(--muted)}
+  h2{margin:0 0 8px; font-size:18px}
+  .card{
+    background:var(--panel);
+    border:1px solid rgba(15,23,42,.08);
+    border-radius:16px;
+    padding:18px;
+    box-shadow:0 6px 18px rgba(15,23,42,.08);
+  }
+  .hud{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:10px;
+  }
+  .pill{
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid rgba(15,23,42,.12);
+    background:#e5e7eb;
+    color:#1f2937;
+    font-size:12px;
+  }
+  .pill-okay{background:#dcfce7; border-color:#16a34a;}
+  .pill-warn{background:#fee2e2; border-color:#dc2626;}
+
+  button{
+    appearance:none;
+    border-radius:999px;
+    border:1px solid rgba(37,99,235,.7);
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    color:#f9fafb;
+    padding:8px 14px;
+    font-size:14px;
+    cursor:pointer;
+    font-weight:500;
+  }
+  button[disabled]{
+    opacity:.6;
+    cursor:default;
+  }
+  button:hover:not([disabled]){filter:brightness(1.04);}
+
+  .prompt{
+    font-size:15px;
+    margin-bottom:10px;
+  }
+  .choices{
+    display:grid;
+    gap:10px;
+  }
+  .choice{
+    text-align:left;
+    border-radius:12px;
+    border:1px solid rgba(15,23,42,.12);
+    background:white;
+    padding:10px 12px;
+    font-size:14px;
+    cursor:pointer;
+    transition:background .15s,border-color .15s,transform .05s;
+  }
+  .choice:hover{transform:translateY(-1px);}
+  .choice.correct-guess{
+    background:#dcfce7;
+    border-color:#16a34a;
+  }
+  .choice.wrong-guess{
+    background:#fee2e2;
+    border-color:#dc2626;
+  }
+  .choice.actual-wrong{
+    box-shadow:0 0 0 2px rgba(220,38,38,.6);
+  }
+  .choice.disabled{
+    pointer-events:none;
+    opacity:.9;
+  }
+
+  .explain{
+    margin-top:10px;
+    font-size:14px;
+    color:#374151;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Unit 4 — “One Is Wrong” Challenge</h1>
+  <p>
+    For each question, <strong>three statements are correct</strong> and
+    <strong>one statement is wrong</strong>. Click the statement you think is wrong.
+  </p>
+
+  <section class="card" id="gameCard">
+    <div class="hud">
+      <span class="pill" id="progressPill">Question 1 / 1</span>
+      <span class="pill" id="scorePill">Score: 0 correct</span>
+    </div>
+
+    <h2 id="topicTitle">Topic</h2>
+    <p class="prompt" id="promptText"></p>
+
+    <div class="choices" id="choices"></div>
+
+    <div class="explain" id="explainBox"></div>
+
+    <div style="margin-top:12px; display:flex; justify-content:space-between; gap:8px;">
+      <button id="nextBtn" disabled>Next Question</button>
+      <span class="pill" id="statusPill">Pick the <strong>wrong</strong> statement.</span>
+    </div>
+  </section>
+</div>
+
+<script>
+// ===== Question bank =====
+const QUESTIONS = [
+  {
+    topic: "Civil Liberties — Speech & Expression",
+    prompt: "Which statement about free speech is WRONG?",
+    items: [
+      {
+        text: "Symbolic speech, like wearing an armband, can be protected by the First Amendment.",
+        isWrong: false
+      },
+      {
+        text: "The government can sometimes limit speech that creates a clear and present danger of serious harm.",
+        isWrong: false
+      },
+      {
+        text: "Libel and slander are fully protected by the First Amendment as long as they are about public figures.",
+        isWrong: true
+      },
+      {
+        text: "Not all types of speech, such as true threats, receive full First Amendment protection.",
+        isWrong: false
+      }
+    ],
+    explanation: "Defamation (libel and slander) is NOT fully protected, even when it involves public figures."
+  },
+  {
+    topic: "Civil Liberties — Religion",
+    prompt: "Which statement about religion and the First Amendment is WRONG?",
+    items: [
+      {
+        text: "The Establishment Clause limits government from promoting one religion over another.",
+        isWrong: false
+      },
+      {
+        text: "The Free Exercise Clause protects a person’s right to practice their religion.",
+        isWrong: false
+      },
+      {
+        text: "The government may create an official state church as long as attendance is voluntary.",
+        isWrong: true
+      },
+      {
+        text: "Courts use tests like the Lemon test to decide whether a law improperly endorses religion.",
+        isWrong: false
+      }
+    ],
+    explanation: "The government may NOT create an official state church under the Establishment Clause."
+  },
+  {
+    topic: "Civil Liberties — Rights of the Accused",
+    prompt: "Which statement about the rights of the accused is WRONG?",
+    items: [
+      {
+        text: "The exclusionary rule can block illegally obtained evidence from being used at trial.",
+        isWrong: false
+      },
+      {
+        text: "Miranda warnings remind suspects of their right to remain silent and to have an attorney.",
+        isWrong: false
+      },
+      {
+        text: "Police may torture suspects to get a confession as long as they later repeat the confession in court.",
+        isWrong: true
+      },
+      {
+        text: "The Eighth Amendment bans cruel and unusual punishment.",
+        isWrong: false
+      }
+    ],
+    explanation: "Coerced or tortured confessions violate due process and are not allowed."
+  },
+  {
+    topic: "Civil Rights — Equal Protection Basics",
+    prompt: "Which statement about civil rights and equal protection is WRONG?",
+    items: [
+      {
+        text: "The Equal Protection Clause is part of the Fourteenth Amendment.",
+        isWrong: false
+      },
+      {
+        text: "Civil rights focus on protection from discrimination and unequal treatment.",
+        isWrong: false
+      },
+      {
+        text: "The government may never treat groups differently under any circumstances.",
+        isWrong: true
+      },
+      {
+        text: "Some government classifications, like age limits for driving, are allowed under the rational basis test.",
+        isWrong: false
+      }
+    ],
+    explanation: "Government may treat groups differently if it passes the appropriate level of scrutiny."
+  },
+  {
+    topic: "Civil Rights — Voting & Barriers",
+    prompt: "Which statement about voting rights is WRONG?",
+    items: [
+      {
+        text: "Literacy tests were historically used to keep some citizens from voting.",
+        isWrong: false
+      },
+      {
+        text: "Poll taxes once forced people to pay money in order to vote.",
+        isWrong: false
+      },
+      {
+        text: "The Voting Rights Act of 1965 was designed to remove barriers that kept racial minorities from voting.",
+        isWrong: false
+      },
+      {
+        text: "Jim Crow laws expanded and protected the voting rights of African Americans in the South.",
+        isWrong: true
+      }
+    ],
+    explanation: "Jim Crow laws restricted, rather than expanded, the rights of African Americans."
+  },
+  {
+    topic: "Civil Rights — Scrutiny Levels",
+    prompt: "Which statement about levels of judicial scrutiny is WRONG?",
+    items: [
+      {
+        text: "Strict scrutiny is the toughest test and is used for laws involving race or fundamental rights.",
+        isWrong: false
+      },
+      {
+        text: "Intermediate scrutiny is often applied to laws that classify based on gender.",
+        isWrong: false
+      },
+      {
+        text: "Rational basis review is the easiest test for a law to pass.",
+        isWrong: false
+      },
+      {
+        text: "Under strict scrutiny, courts assume the law is constitutional and the challenger must prove otherwise.",
+        isWrong: true
+      }
+    ],
+    explanation: "Under strict scrutiny, the law is presumed unconstitutional and the government has the heavy burden to justify it."
+  },
+  {
+    topic: "Judiciary — Court Structure",
+    prompt: "Which statement about the federal court system is WRONG?",
+    items: [
+      {
+        text: "U.S. District Courts are the main trial courts of the federal system.",
+        isWrong: false
+      },
+      {
+        text: "U.S. Courts of Appeals usually review cases in three-judge panels.",
+        isWrong: false
+      },
+      {
+        text: "The Supreme Court is the highest court in the country.",
+        isWrong: false
+      },
+      {
+        text: "Most federal cases start at the Supreme Court under its original jurisdiction.",
+        isWrong: true
+      }
+    ],
+    explanation: "Most federal cases start in District Court; the Supreme Court hears very few cases under original jurisdiction."
+  },
+  {
+    topic: "Judiciary — Supreme Court Process",
+    prompt: "Which statement about the Supreme Court’s case selection is WRONG?",
+    items: [
+      {
+        text: "A writ of certiorari is an order saying the Court will hear a case.",
+        isWrong: false
+      },
+      {
+        text: "Under the rule of four, at least four justices must agree to hear a case.",
+        isWrong: false
+      },
+      {
+        text: "Every losing party in a lower court automatically gets a full hearing at the Supreme Court.",
+        isWrong: true
+      },
+      {
+        text: "The Court denies many petitions and only hears a small percentage of cases requested.",
+        isWrong: false
+      }
+    ],
+    explanation: "There is no automatic right to a Supreme Court hearing; the Court chooses which cases to hear."
+  },
+  {
+    topic: "Judiciary — Opinions & Precedent",
+    prompt: "Which statement about court opinions is WRONG?",
+    items: [
+      {
+        text: "The majority opinion explains the Court’s official decision and its reasoning.",
+        isWrong: false
+      },
+      {
+        text: "A concurring opinion agrees with the result but adds different reasoning.",
+        isWrong: false
+      },
+      {
+        text: "A dissenting opinion disagrees with the majority’s decision.",
+        isWrong: false
+      },
+      {
+        text: "Once written, dissenting opinions have no influence on future law or legal debates.",
+        isWrong: true
+      }
+    ],
+    explanation: "Dissents can influence future courts, lawyers, and even later reversals of precedent."
+  },
+  {
+    topic: "Pulling It Together — Civil Liberties, Civil Rights, Judiciary",
+    prompt: "Which summary statement is WRONG?",
+    items: [
+      {
+        text: "Civil liberties focus on freedoms the government must not take away without strong justification.",
+        isWrong: false
+      },
+      {
+        text: "Civil rights focus on protections the government must enforce to prevent discrimination.",
+        isWrong: false
+      },
+      {
+        text: "The judiciary interprets the Constitution and can strike down laws that violate rights.",
+        isWrong: false
+      },
+      {
+        text: "Civil liberties, civil rights, and the judiciary are completely unrelated topics in American government.",
+        isWrong: true
+      }
+    ],
+    explanation: "All three are tightly connected: the judiciary interprets civil liberties and civil rights claims."
+  }
+];
+
+// ===== Utility =====
+function shuffle(array){
+  const a = [...array];
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// ===== State =====
+let questions = shuffle(QUESTIONS);
+let currentIndex = 0;
+let score = 0;
+let answered = false;
+
+// ===== DOM =====
+const topicTitle = document.getElementById('topicTitle');
+const promptText = document.getElementById('promptText');
+const choicesBox = document.getElementById('choices');
+const explainBox = document.getElementById('explainBox');
+const progressPill = document.getElementById('progressPill');
+const scorePill = document.getElementById('scorePill');
+const statusPill = document.getElementById('statusPill');
+const nextBtn = document.getElementById('nextBtn');
+
+// ===== Render =====
+function renderQuestion(){
+  answered = false;
+  explainBox.textContent = '';
+  nextBtn.disabled = true;
+  statusPill.className = 'pill';
+  statusPill.innerHTML = 'Pick the <strong>wrong</strong> statement.';
+
+  const q = questions[currentIndex];
+  topicTitle.textContent = q.topic;
+  promptText.textContent = q.prompt;
+
+  progressPill.textContent = `Question ${currentIndex + 1} / ${questions.length}`;
+  scorePill.textContent = `Score: ${score} correct`;
+
+  const shuffledItems = shuffle(q.items);
+  choicesBox.innerHTML = '';
+
+  shuffledItems.forEach(item => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'choice';
+    btn.textContent = item.text;
+
+    btn.addEventListener('click', () => handleChoice(btn, item, shuffledItems));
+    choicesBox.appendChild(btn);
+  });
+}
+
+function handleChoice(clickedBtn, item, itemsForThisQuestion){
+  if(answered) return;
+  answered = true;
+
+  const choiceButtons = Array.from(document.querySelectorAll('.choice'));
+  choiceButtons.forEach(b => b.classList.add('disabled'));
+
+  const wrongItem = itemsForThisQuestion.find(it => it.isWrong);
+
+  // Highlight the student's choice
+  if(item.isWrong){
+    clickedBtn.classList.add('correct-guess','actual-wrong');
+    score++;
+    statusPill.className = 'pill pill-okay';
+    statusPill.textContent = 'Nice catch — you found the wrong statement.';
+  } else {
+    clickedBtn.classList.add('wrong-guess');
+    statusPill.className = 'pill pill-warn';
+    statusPill.textContent = 'Not quite. The highlighted statement below is the one that was wrong.';
+  }
+
+  // Highlight the actual wrong answer
+  choiceButtons.forEach(b => {
+    if(b.textContent === wrongItem.text){
+      b.classList.add('actual-wrong');
+    }
+  });
+
+  // Explanation
+  const q = questions[currentIndex];
+  explainBox.textContent = q.explanation;
+
+  // Update score pill & enable next
+  scorePill.textContent = `Score: ${score} correct`;
+  nextBtn.disabled = false;
+
+  if(currentIndex === questions.length - 1){
+    nextBtn.textContent = 'View Final Score';
+  } else {
+    nextBtn.textContent = 'Next Question';
+  }
+}
+
+// ===== Navigation =====
+nextBtn.addEventListener('click', () => {
+  if(currentIndex < questions.length - 1){
+    currentIndex++;
+    renderQuestion();
+  } else {
+    // Final summary
+    const percent = Math.round((score / questions.length) * 100);
+    promptText.textContent = '';
+    choicesBox.innerHTML = '';
+    explainBox.innerHTML =
+      `You answered <strong>${score}</strong> out of <strong>${questions.length}</strong> questions correctly (${percent}%).<br>` +
+      (percent >= 80
+        ? "Your understanding of the tricky details in Unit 4 is strong."
+        : "Review the explanations above, then refresh the page to try again with the questions in a new order.");
+    statusPill.className = 'pill';
+    statusPill.textContent = 'Challenge complete.';
+    progressPill.textContent = 'Finished';
+    nextBtn.disabled = true;
+  }
+});
+
+// Start game
+renderQuestion();
+</script>
+</body>
+</html>
