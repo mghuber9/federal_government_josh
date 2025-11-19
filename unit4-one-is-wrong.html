@@ -52,7 +52,8 @@
   .pill-okay{background:#dcfce7; border-color:#16a34a;}
   .pill-warn{background:#fee2e2; border-color:#dc2626;}
 
-  button{
+  /* NEXT button only */
+  #nextBtn{
     appearance:none;
     border-radius:999px;
     border:1px solid rgba(37,99,235,.7);
@@ -63,11 +64,11 @@
     cursor:pointer;
     font-weight:500;
   }
-  button[disabled]{
+  #nextBtn[disabled]{
     opacity:.6;
     cursor:default;
   }
-  button:hover:not([disabled]){filter:brightness(1.04);}
+  #nextBtn:hover:not([disabled]){filter:brightness(1.04);}
 
   .prompt{
     font-size:15px;
@@ -77,48 +78,44 @@
     display:grid;
     gap:10px;
   }
- .choices{
-    display:grid;
-    gap:10px;
-  }
+
+  /* ANSWER CHOICES – high-contrast */
   .choice{
-  text-align:left;
-  border-radius:12px;
-  border:2px solid #cbd5e1;      /* thicker border */
-  background:#ffffff;
-  color:var(--ink);              /* <<< make text dark again */
-  padding:14px 16px;             /* larger padding */
-  font-size:16px;                /* larger text */
-  line-height:1.4;
-  cursor:pointer;
-  transition:background .15s, border-color .15s, transform .05s;
-}
+    text-align:left;
+    border-radius:12px;
+    border:2px solid #cbd5e1;      /* thicker border */
+    background:#ffffff;
+    color:var(--ink);               /* dark text */
+    padding:14px 16px;              /* larger padding */
+    font-size:16px;                 /* larger text */
+    line-height:1.4;
+    cursor:pointer;
+    transition:background .15s, border-color .15s, transform .05s;
+  }
 
+  .choice:hover{
+    background:#f1f5f9;             /* light hover highlight */
+    transform:translateY(-1px);
+  }
 
-.choice:hover{
-  background:#f1f5f9;             /* light hover highlight */
-  transform:translateY(-1px);
-}
+  .choice.correct-guess{
+    background:#dcfce7;
+    border-color:#16a34a;
+  }
 
-.choice.correct-guess{
-  background:#dcfce7;
-  border-color:#16a34a;
-}
+  .choice.wrong-guess{
+    background:#fee2e2;
+    border-color:#dc2626;
+  }
 
-.choice.wrong-guess{
-  background:#fee2e2;
-  border-color:#dc2626;
-}
+  .choice.actual-wrong{
+    box-shadow:0 0 0 3px rgba(220,38,38,.6);
+  }
 
-.choice.actual-wrong{
-  box-shadow:0 0 0 3px rgba(220,38,38,.6);
-}
-
-.choice.disabled{
-  pointer-events:none;
-  opacity:0.95;
-}
-
+  .choice.disabled{
+    pointer-events:none;
+    opacity:0.95;
+  }
 
   .explain{
     margin-top:10px;
