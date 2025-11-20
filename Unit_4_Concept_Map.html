@@ -119,32 +119,36 @@
   }
   
 
-  /* Strong override for checked tiles */
-.tile.correct {
-  background:#dbeafe !important;      /* light blue */
-  border:2px solid #1d4ed8 !important;/* deep blue border */
+ /* High-contrast correct (covers tiles AND pill-style chips) */
+.tile.correct,
+.correct {
+  background:#dbeafe !important;          /* light blue */
+  border:2px solid #1d4ed8 !important;    /* deep blue border */
   color:#1e3a8a !important;
   border-left:6px solid #1d4ed8 !important;
   position:relative;
 }
 
-.tile.correct::before {
+.tile.correct::before,
+.correct::before {
   content:"✓";
   font-weight:700;
   margin-right:6px;
   display:inline-block;
 }
 
-/* High-contrast neutral for wrong */
-.tile.wrong {
-  background:#f3f4f6 !important;      /* light gray */
-  border:2px solid #111827 !important;/* very dark gray */
+/* High-contrast wrong (covers tiles AND pill-style chips) */
+.tile.wrong,
+.wrong {
+  background:#f3f4f6 !important;          /* light gray */
+  border:2px solid #111827 !important;    /* very dark gray */
   color:#111827 !important;
   border-left:6px solid #111827 !important;
   position:relative;
 }
 
-.tile.wrong::before {
+.tile.wrong::before,
+.wrong::before {
   content:"✗";
   font-weight:700;
   margin-right:6px;
