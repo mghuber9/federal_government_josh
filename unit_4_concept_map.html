@@ -113,14 +113,21 @@
     gap:6px;
     box-shadow:0 1px 3px rgba(15,23,42,.08);
   }
-  .term.correct{
-    background:#dcfce7;
-    border-color:#22c55e;
+    .term.correct{
+    background:#15803d;          /* darker green */
+    border-color:#166534;
+    color:#f9fafb;               /* white text for strong contrast */
+    font-weight:600;
+    box-shadow:0 0 0 2px rgba(22,101,52,.4);
   }
   .term.wrong{
-    background:#fee2e2;
-    border-color:#ef4444;
+    background:#b91c1c;          /* darker red */
+    border-color:#7f1d1d;
+    color:#f9fafb;               /* white text */
+    font-weight:600;
+    box-shadow:0 0 0 2px rgba(127,29,29,.45);
   }
+
   .term.dragging{
     opacity:.7;
   }
