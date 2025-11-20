@@ -117,15 +117,21 @@
   .tile.dragging{
     opacity:.5;
   }
-  .tile.correct{
-    border-color:var(--ok);
-    box-shadow:0 0 0 1px var(--ok);
-    background:#dcfce7;
+   .tile.correct{
+    /* High-contrast cool tone for correct */
+    border-color:#1d4ed8;          /* deep blue border */
+    box-shadow:0 0 0 1px #1d4ed8;
+    background:#dbeafe;            /* light blue background */
+    border-left-width:6px;         /* thicker left edge for shape cue */
   }
   .tile.wrong{
-    border-color:var(--bad);
-    box-shadow:0 0 0 1px var(--bad);
-    background:#fee2e2;
+    /* High-contrast neutral for wrong */
+    border-color:#111827;          /* very dark gray border */
+    box-shadow:0 0 0 1px #111827;
+    background:#e5e7eb;            /* light gray background */
+    border-left-width:6px;         /* same thickness, different tone */
+  }
+
   }
 </style>
 </head>
