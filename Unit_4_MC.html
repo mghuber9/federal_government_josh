@@ -138,7 +138,7 @@
   <div class="wrap">
     <h1>Lightning Round — Unit 4 (Civil Liberties, Civil Rights, Judiciary)</h1>
     <p class="muted">
-      Auto-advance on answer. Stopwatch runs during the round. End screen shows only missed items with the correct answer.
+      Auto-advance on answer. Stopwatch runs during each part. End screen shows only missed items with the correct answer.
     </p>
 
     <!-- START -->
@@ -150,7 +150,7 @@
             <option value="ch4">Ch. 4 — Civil Liberties (all 50)</option>
             <option value="ch5">Ch. 5 — Civil Rights (all 50)</option>
             <option value="ch14">Ch. 14 — Judiciary (all 50)</option>
-            <option value="unit4" selected>Unit 4 — Mixed (random 50)</option>
+            <option value="unit4" selected>Unit 4 — Mixed (all 150 in 5 parts)</option>
           </select>
         </div>
         <div>
@@ -163,7 +163,7 @@
       </div>
       <div class="hud">
         <button id="begin">Start Round</button>
-        <span class="pill" id="hint">Answers are shuffled per question.</span>
+        <span class="pill" id="hint">Multi-part: chapters = 2×25; unit = 5×30.</span>
       </div>
     </section>
 
@@ -186,7 +186,7 @@
 
     <!-- RESULT -->
     <section id="result" class="card hidden">
-      <h2 style="margin:0 0 6px">Round Complete</h2>
+      <h2 id="resultTitle" style="margin:0 0 6px">Round Complete</h2>
       <div class="hud" style="margin-bottom:6px">
         <span class="pill" id="scoreline">Score</span>
         <span class="pill" id="timeline">Time</span>
@@ -195,6 +195,7 @@
       <div class="sep"></div>
       <div id="review"></div>
       <div class="hud">
+        <button id="nextPart" class="hidden">Next Part</button>
         <button id="retry">New Round</button>
         <button id="retryMissed">Retry Missed Only</button>
         <button id="restart">Back to Start</button>
@@ -399,14 +400,14 @@ const SETS = {
   ch4:  BANK.filter(x => x.set === 'ch4'),
   ch5:  BANK.filter(x => x.set === 'ch5'),
   ch14: BANK.filter(x => x.set === 'ch14'),
-  unit4: [...BANK]
+  unit4: [...BANK] // all 150
 };
 
 const SET_LABELS = {
   ch4:  'Ch. 4 — Civil Liberties (50)',
   ch5:  'Ch. 5 — Civil Rights (50)',
   ch14: 'Ch. 14 — Judiciary (50)',
-  unit4: 'Unit 4 — Mixed (random 50)'
+  unit4: 'Unit 4 — Mixed (150)'
 };
 
 // ---------- State ----------
@@ -417,15 +418,21 @@ let state = {
   misses: [],
   timer: null,
   seconds: 0,
-  missedOnly: false
+  missedOnly: false,
+  parts: [],
+  partIndex: 0,
+  totalParts: 1
 };
 
 function bestKey(){
-  return `best_mc_unit4_${state.setKey}`;
+  // Track best time per set *and* per part
+  return `best_mc_unit4_${state.setKey}_p${state.partIndex+1}`;
 }
 
 function startTimer(){
   if(state.timer) clearInterval(state.timer);
+  state.seconds = 0;
+  document.getElementById('timer').textContent = fmtTime(0);
   state.timer = setInterval(()=>{
     state.seconds++;
     document.getElementById('timer').textContent = fmtTime(state.seconds);
@@ -439,37 +446,61 @@ function stopTimer(){
   }
 }
 
+// Build multi-part structure and start Part 1
 function startRound(){
   const sk  = document.getElementById('section').value;
   const ord = document.getElementById('order').value;
   state.setKey = sk;
 
-  let items = [...SETS[sk]];
-  if(sk === 'unit4'){
-    items = shuffle(items).slice(0,50); // random 50 from full bank
-  }
-  if(ord === 'shuf'){
-    items = shuffle(items);
+  // Base items: chapters use their 50; unit uses all 150
+  const base = (sk === 'unit4') ? [...BANK] : [...SETS[sk]];
+  let items = (ord === 'shuf') ? shuffle(base) : base;
+
+  // Part sizes: 25 for chapters, 30 for unit (5×30 =150)
+  const partSize = (sk === 'unit4') ? 30 : 25;
+  const parts = [];
+  for(let i=0;i<items.length;i+=partSize){
+    parts.push(items.slice(i, i+partSize));
   }
 
-  state.list = items.map(x => ({...x}));
+  state.parts = parts;
+  state.totalParts = parts.length;
+  state.partIndex = 0;
+  state.misses = [];
+  state.missedOnly = false;
+
+  document.getElementById('start').classList.add('hidden');
+  document.getElementById('result').classList.add('hidden');
+
+  startPart(0);
+}
+
+function startPart(index){
+  state.partIndex = index;
+  state.list = state.parts[index].map(x => ({...x}));
   state.idx = 0;
   state.misses = [];
-  state.seconds = 0;
   state.missedOnly = false;
 
   startTimer();
-  document.getElementById('start').classList.add('hidden');
-  document.getElementById('result').classList.add('hidden');
+
   document.getElementById('quiz').classList.remove('hidden');
-  document.getElementById('setTag').textContent = SET_LABELS[state.setKey];
+  document.getElementById('result').classList.add('hidden');
+
+  const partTag = (state.totalParts > 1)
+    ? ` — Part ${state.partIndex+1} of ${state.totalParts}`
+    : '';
+  document.getElementById('setTag').textContent =
+    SET_LABELS[state.setKey] + partTag;
   document.getElementById('best').textContent = 'Best: ' + getBest(bestKey());
+
   renderQ();
 }
 
 function renderQ(){
   const q = state.list[state.idx];
-  document.getElementById('progress').textContent = `Q ${state.idx+1} / ${state.list.length}`;
+  document.getElementById('progress').textContent =
+    `Q ${state.idx+1} / ${state.list.length}`;
   document.getElementById('prompt').textContent = q.q;
 
   const correctText = q.choices[q.answer];
@@ -523,10 +554,33 @@ function finish(){
 
   document.getElementById('quiz').classList.add('hidden');
   document.getElementById('result').classList.remove('hidden');
+
+  const isMulti = state.totalParts > 1;
+  const isLastPart = state.partIndex === state.totalParts - 1;
+  const titleEl = document.getElementById('resultTitle');
+
+  if(isMulti && !state.missedOnly){
+    titleEl.textContent = isLastPart
+      ? 'All Parts Complete'
+      : `Part ${state.partIndex+1} Complete`;
+  } else {
+    titleEl.textContent = 'Round Complete';
+  }
+
   document.getElementById('scoreline').textContent =
     `Score: ${correct} / ${total} (${Math.round(correct/total*100)}%)`;
-  document.getElementById('timeline').textContent = `Time: ${fmtTime(state.seconds)}`;
-  document.getElementById('bestline').textContent = `Best: ${getBest(bestKey())}`;
+  document.getElementById('timeline').textContent =
+    `Time: ${fmtTime(state.seconds)}`;
+  document.getElementById('bestline').textContent =
+    `Best: ${getBest(bestKey())}`;
+
+  const nextBtn = document.getElementById('nextPart');
+  // ✅ allow Next Part after normal OR missed-only runs
+  if(isMulti && !isLastPart){
+    nextBtn.classList.remove('hidden');
+  } else {
+    nextBtn.classList.add('hidden');
+  }
 
   const rev = document.getElementById('review');
   rev.innerHTML = '';
@@ -566,7 +620,12 @@ function startRoundMissed(){
   startTimer();
   document.getElementById('result').classList.add('hidden');
   document.getElementById('quiz').classList.remove('hidden');
-  document.getElementById('setTag').textContent = SET_LABELS[state.setKey] + ' — Missed Only';
+
+  const partTag = (state.totalParts > 1)
+    ? ` — Part ${state.partIndex+1} of ${state.totalParts} (Missed Only)`
+    : ' — Missed Only';
+  document.getElementById('setTag').textContent =
+    SET_LABELS[state.setKey] + partTag;
   document.getElementById('best').textContent = 'Best: ' + getBest(bestKey());
   renderQ();
 }
@@ -575,6 +634,12 @@ function startRoundMissed(){
 document.getElementById('begin').addEventListener('click', startRound);
 document.getElementById('retry').addEventListener('click', startRound);
 document.getElementById('retryMissed').addEventListener('click', startRoundMissed);
+document.getElementById('nextPart').addEventListener('click', ()=>{
+  const isLastPart = state.partIndex === state.totalParts - 1;
+  if(!isLastPart){
+    startPart(state.partIndex + 1);
+  }
+});
 document.getElementById('restart').addEventListener('click', ()=>{
   document.getElementById('result').classList.add('hidden');
   document.getElementById('start').classList.remove('hidden');
