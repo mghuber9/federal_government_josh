@@ -575,7 +575,8 @@ function finish(){
     `Best: ${getBest(bestKey())}`;
 
   const nextBtn = document.getElementById('nextPart');
-  if(!state.missedOnly && isMulti && !isLastPart){
+  // ✅ allow Next Part after normal OR missed-only runs
+  if(isMulti && !isLastPart){
     nextBtn.classList.remove('hidden');
   } else {
     nextBtn.classList.add('hidden');
