@@ -4,7 +4,6 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Unit 4 — Lightning Round (Civil Liberties, Civil Rights, Judiciary)</title>
-
 <style>
   :root{
     --bg:#e5e7eb;           /* page background */
@@ -24,9 +23,7 @@
     margin:0;
     font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;
     color:var(--ink);
-    -webkit-text-fill-color:var(--ink);
     background:radial-gradient(900px 600px at 15% -10%, #dbeafe 0%, var(--bg) 55%);
-    background-color:var(--bg);
   }
 
   .wrap{max-width:980px; margin:0 auto; padding:24px}
@@ -37,8 +34,6 @@
 
   .card{
     background:var(--panel);
-    color:var(--ink);
-    -webkit-text-fill-color:var(--ink);
     border:1px solid rgba(15,23,42,0.08);
     border-radius:16px;
     padding:18px;
@@ -56,7 +51,6 @@
     border:1px solid rgba(15,23,42,0.14);
     background:#eff6ff;
     color:var(--ink);
-    -webkit-text-fill-color:var(--ink);
     padding:10px 12px;
     border-radius:10px;
     font-size:15px;
@@ -67,7 +61,6 @@
     background:linear-gradient(135deg,#2563eb,#1d4ed8);
     border:1px solid rgba(37,99,235,0.7);
     color:#f9fafb;
-    -webkit-text-fill-color:#f9fafb;
     font-weight:500;
   }
   button:hover{filter:brightness(1.05)}
@@ -81,7 +74,6 @@
     border:1px solid rgba(15,23,42,0.12);
     background:#e5e7eb;
     color:#1f2937;
-    -webkit-text-fill-color:#1f2937;
     font-size:12px;
   }
 
@@ -103,7 +95,7 @@
     .choices{grid-template-columns:1fr}
   }
 
-  /* 🔥 Tiles: FORCE readable text */
+  /* 🔥 Tiles: force readable text */
   .tile{
     min-height:90px;
     padding:14px;
@@ -115,9 +107,7 @@
     align-items:center;
     text-align:left;
     transition:background 0.15s ease,border-color 0.15s ease,transform 0.08s ease;
-
     color:var(--ink) !important;
-    -webkit-text-fill-color:var(--ink) !important;
   }
 
   .tile:hover{transform:translateY(-1px)}
@@ -126,29 +116,23 @@
     font-size:clamp(15px,2vw,17px);
     line-height:1.35;
     color:var(--ink) !important;
-    -webkit-text-fill-color:var(--ink) !important;
   }
 
   .tile.correct{
     background:#dcfce7;
     border-color:var(--ok);
     color:#064e3b !important;
-    -webkit-text-fill-color:#064e3b !important;
   }
 
   .tile.wrong{
     background:#fee2e2;
     border-color:var(--bad);
     color:#7f1d1d !important;
-    -webkit-text-fill-color:#7f1d1d !important;
   }
 
   .muted{color:var(--muted)}
   .sep{height:1px; background:rgba(15,23,42,0.08); margin:12px 0}
 </style>
-
-
-
 </head>
 <body>
   <div class="wrap">
@@ -246,10 +230,25 @@ function getBest(key){
 
 // ---------- Question Bank (150 total) ----------
 // Each item: {chapter:4|5|14, set:'ch4'|'ch5'|'ch14', q:'stem', choices:[...4+], answer:index}
-const BANK = [/* ... your existing BANK array unchanged ... */];
-/*  I left BANK out here for brevity in this snippet, but you can paste
-    the entire BANK and script from your original file below this comment.
-    Everything in JS is unchanged from your version. */
-</script>
-</body>
-</html>
+const BANK = [
+  // ===== Ch. 4 — Civil Liberties (50) =====
+  {chapter:4,set:'ch4',q:'What is the primary purpose of the Bill of Rights?',choices:['To protect individual liberties from government intrusion','To define the powers of the presidency','To organize political parties','To regulate state taxation'],answer:0},
+  {chapter:4,set:'ch4',q:'Originally, the Bill of Rights applied to which level of government?',choices:['Federal government only','State and federal governments equally','State governments only','Local governments only'],answer:0},
+  {chapter:4,set:'ch4',q:'Barron v. Baltimore (1833) held that the Bill of Rights:',choices:['Did not apply to the states','Automatically applied to the states','Was unconstitutional','Applied only to criminal cases'],answer:0},
+  {chapter:4,set:'ch4',q:'The process by which certain rights in the Bill of Rights are applied to the states through the Fourteenth Amendment is called:',choices:['Selective incorporation','Judicial restraint','Dual federalism','Executive privilege'],answer:0},
+  {chapter:4,set:'ch4',q:'Gitlow v. New York (1925) is important because it:',choices:['Began the selective incorporation of free speech','Ended the death penalty','Outlawed racial segregation in schools','Created judicial review'],answer:0},
+  {chapter:4,set:'ch4',q:'What is meant by “civil liberties”?',choices:['Freedoms that protect individuals from government action','Benefits distributed by public policy','Rights to vote and hold office','Economic protections for businesses'],answer:0},
+  {chapter:4,set:'ch4',q:'Substantive due process focuses on:',choices:['The fundamental rights the government cannot infringe','The steps the government must follow before depriving liberty','The size of juries','The structure of state courts'],answer:0},
+  {chapter:4,set:'ch4',q:'Procedural due process focuses on:',choices:['Fair and proper legal procedures','Economic policy outcomes','Separation of powers','Military law only'],answer:0},
+  {chapter:4,set:'ch4',q:'Which amendment is most associated with the Due Process and Equal Protection clauses used for incorporation?',choices:['Fourteenth Amendment','First Amendment','Tenth Amendment','Twenty-Second Amendment'],answer:0},
+  {chapter:4,set:'ch4',q:'The case of Near v. Minnesota (1931) dealt with:',choices:['Prior restraint and freedom of the press','School prayer','Gun ownership','Campaign finance'],answer:0},
+
+  {chapter:4,set:'ch4',q:'The Establishment Clause states that government may not:',choices:['Create an official religion or favor one religion','Protect religious freedom','Provide chaplains in the military','Tax churches'],answer:0},
+  {chapter:4,set:'ch4',q:'What is the “No Establishment Clause”?',choices:['The part of the First Amendment that forbids government from establishing a religion','The rule that states cannot tax churches','The rule that religious groups cannot lobby government','The clause that bans religious symbols in private homes'],answer:0},
+  {chapter:4,set:'ch4',q:'The Free Exercise Clause protects:',choices:['The right to practice one’s religion within reasonable limits','Only mainstream religious practices','Only non-Christian religions','State-sponsored prayer'],answer:0},
+  {chapter:4,set:'ch4',q:'In Abington School District v. Schempp, the Court struck down:',choices:['School-sponsored Bible reading and prayer','Federal aid to religious colleges','Religious symbols on private property','Tax exemptions for churches'],answer:0},
+  {chapter:4,set:'ch4',q:'Which case banned school-sponsored prayer written by the state?',choices:['Engel v. Vitale','Mapp v. Ohio','Gideon v. Wainwright','Roe v. Wade'],answer:0},
+  {chapter:4,set:'ch4',q:'The Lemon Test evaluates laws under which clause?',choices:['The Establishment Clause','The Free Exercise Clause','The Free Speech Clause','The Takings Clause'],answer:0},
+  {chapter:4,set:'ch4',q:'Which of the following is NOT a part of the Lemon Test?',choices:['Law must directly support a single church','Law must have a secular purpose','Law’s primary effect must neither advance nor inhibit religion','Law must avoid excessive government entanglement with religion'],answer:0},
+  {chapter:4,set:'ch4',q:'A seasonal holiday display on public property is most likely constitutional if:',choices:['It includes a variety of religious and secular symbols','It features only one religious tradition','It excludes all secular elements','It is funded only by religious groups'],answer:0},
+  {chapter:4,set:'ch4',q:'Which case allowed privately sponsored religious clubs to meet in public schools after hours if other clubs may do so?',choices:['Good News Club v. Milford Cent]()
