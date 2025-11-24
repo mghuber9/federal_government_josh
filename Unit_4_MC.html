@@ -4,6 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Unit 4 — Lightning Round (Civil Liberties, Civil Rights, Judiciary)</title>
+
 <style>
   :root{
     --bg:#e5e7eb;           /* page background */
@@ -70,6 +71,7 @@
     font-weight:500;
   }
   button:hover{filter:brightness(1.05)}
+
   .hidden{display:none}
 
   .pill{
@@ -101,44 +103,52 @@
     .choices{grid-template-columns:1fr}
   }
 
+  /* 🔥 Tiles: FORCE readable text */
   .tile{
     min-height:90px;
     padding:14px;
     border-radius:12px;
     border:1px solid var(--tile-border);
     background:var(--tile);
-    color:var(--ink);
-    -webkit-text-fill-color:var(--ink);
     cursor:pointer;
     display:flex;
     align-items:center;
     text-align:left;
     transition:background 0.15s ease,border-color 0.15s ease,transform 0.08s ease;
+
+    color:var(--ink) !important;
+    -webkit-text-fill-color:var(--ink) !important;
   }
+
   .tile:hover{transform:translateY(-1px)}
 
   .tile .inner{
     font-size:clamp(15px,2vw,17px);
     line-height:1.35;
+    color:var(--ink) !important;
+    -webkit-text-fill-color:var(--ink) !important;
   }
 
   .tile.correct{
     background:#dcfce7;
     border-color:var(--ok);
-    color:#064e3b;
-    -webkit-text-fill-color:#064e3b;
+    color:#064e3b !important;
+    -webkit-text-fill-color:#064e3b !important;
   }
 
   .tile.wrong{
     background:#fee2e2;
     border-color:var(--bad);
-    color:#7f1d1d;
-    -webkit-text-fill-color:#7f1d1d;
+    color:#7f1d1d !important;
+    -webkit-text-fill-color:#7f1d1d !important;
   }
 
   .muted{color:var(--muted)}
   .sep{height:1px; background:rgba(15,23,42,0.08); margin:12px 0}
 </style>
+
+
+
 </head>
 <body>
   <div class="wrap">
