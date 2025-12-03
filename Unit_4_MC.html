@@ -130,6 +130,22 @@
     color:#7f1d1d !important;
   }
 
+
+/* 🔵 High-contrast correct and incorrect colors (colorblind-friendly) */
+.tile.correct-strong {
+  background:#dbeafe !important;  /* soft blue */
+  border-color:#1e40af !important; /* strong navy */
+  color:#1e3a8a !important;
+}
+
+.tile.wrong-strong {
+  background:#fbcfe8 !important;  /* vivid pink (very readable for colorblind) */
+  border-color:#be185d !important;
+  color:#831843 !important;
+}
+
+  
+
   .muted{color:var(--muted)}
   .sep{height:1px; background:rgba(15,23,42,0.08); margin:12px 0}
 </style>
@@ -528,18 +544,46 @@ function renderQ(){
 }
 
 function pick(isCorrect, node, item){
-  node.classList.add(isCorrect ? 'correct' : 'wrong');
-  if(!isCorrect){
+  const choicesBox = document.getElementById('choices');
+  const allTiles = [...choicesBox.querySelectorAll('.tile')];
+
+  if(isCorrect){
+    // ⭐ KEEP CURRENT BEHAVIOR FOR CORRECT ANSWERS
+    node.classList.add('correct');
+    setTimeout(()=>{
+      if(state.idx < state.list.length - 1){
+        state.idx++;
+        renderQ();
+      } else {
+        finish();
+      }
+    }, 500);
+
+  } else {
+    // ❌ WRONG ANSWER BEHAVIOR
     state.misses.push(item);
+
+    // 1. Mark student's wrong choice
+    node.classList.add('wrong-strong');
+
+    // 2. Highlight the correct choice
+    const correctText = item.choices[item.answer];
+    allTiles.forEach(btn=>{
+      if(btn.innerText.trim() === correctText.trim()){
+        btn.classList.add('correct-strong');
+      }
+    });
+
+    // 3. Pause 3 seconds
+    setTimeout(()=>{
+      if(state.idx < state.list.length - 1){
+        state.idx++;
+        renderQ();
+      } else {
+        finish();
+      }
+    }, 3000);
   }
-  setTimeout(()=>{
-    if(state.idx < state.list.length - 1){
-      state.idx++;
-      renderQ();
-    } else {
-      finish();
-    }
-  }, 550);
 }
 
 function finish(){
