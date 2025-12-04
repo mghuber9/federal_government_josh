@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Unit 4 — Vocab Matching (Civil Liberties, Civil Rights, Judiciary)</title>
+<style>
+  :root{
+    --bg:#e5e7eb;
+    --panel:#f9fafb;
+    --ink:#111827;
+    --muted:#6b7280;
+    --accent:#2563eb;
+    --ok:#16a34a;
+    --bad:#dc2626;
+    --tile:#ffffff;
+    --tile-border:rgba(15,23,42,.12);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;
+    color:var(--ink);
+    background:radial-gradient(900px 600px at 15% -10%, #dbeafe 0%, var(--bg) 55%);
+  }
+  .wrap{max-width:1100px; margin:0 auto; padding:24px}
+  h1{margin:0 0 6px; font-size:clamp(22px,3vw,32px)}
+  p,label{color:var(--muted)}
+  .card{
+    background:var(--panel);
+    border:1px solid rgba(15,23,42,.08);
+    border-radius:16px;
+    padding:18px;
+    box-shadow:0 6px 18px rgba(15,23,42,.08);
+  }
+  .grid{display:grid; gap:12px}
+  .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  @media (max-width:900px){.grid-2{grid-template-columns:1fr}}
+
+  select,button{
+    appearance:none;
+    border:1px solid rgba(15,23,42,.14);
+    background:#eff6ff;
+    color:var(--ink);
+    padding:10px 12px;
+    border-radius:10px;
+    font-size:15px;
+  }
+  button{
+    cursor:pointer;
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    border:1px solid rgba(37,99,235,.7);
+    color:#f9fafb;
+    font-weight:500;
+  }
+  button:hover{filter:brightness(1.05)}
+  .hidden{display:none}
+  .pill{
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid rgba(15,23,42,.12);
+    background:#e5e7eb;
+    color:#1f2937;
+    font-size:12px;
+  }
+  .hud{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+  }
+  .sep{height:1px; background:rgba(15,23,42,.08); margin:12px 0}
+
+  .columns{display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px}
+  @media (max-width:980px){.columns{grid-template-columns:1fr}}
+
+  .col-title{
+    font-size:12px;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    color:#4b5563;
+    margin-bottom:8px;
+  }
+
+  .left,.center,.right{display:grid; gap:10px}
+
+  .prompt,.slot,.answer{
+    border:1px solid var(--tile-border);
+    background:var(--tile);
+    border-radius:12px;
+    padding:12px;
+    min-height:64px;
+    display:flex;
+    gap:10px;
+    align-items:center;
+  }
+  .prompt{position:relative}
+  .slot{justify-content:space-between}
+  .slot.empty{opacity:.8}
+  .placeholder{font-style:italic; color:var(--muted)}
+  .num{
+    flex:0 0 auto;
+    width:28px; height:28px;
+    border-radius:999px;
+    background:#e5e7eb;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:14px;
+    border:1px solid rgba(15,23,42,.12);
+  }
+  .text{
+    flex:1 1 auto;
+    font-size:clamp(14px,2vw,16px);
+    line-height:1.35;
+  }
+
+  .answer{
+    cursor:pointer;
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .answer.correct{
+    background:#dcfce7;
+    border-color:#22c55e;
+  }
+  .answer.wrong{
+    background:#fee2e2;
+    border-color:#ef4444;
+  }
+
+  .sameHeight{height:var(--rowH,auto)}
+
+  /* Click-select helpers (matching-style) */
+  .selectable{cursor:pointer;}
+  .selected-slot{
+    outline:3px solid #2563eb;
+    outline-offset:2px;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Unit 4 — Vocab Matching</h1>
+    <p class="muted">
+      Click an <strong>Answer Slot</strong> in the middle, then click a <strong>definition</strong> in
+      <strong>Unused Definitions</strong> to fill it. Click a filled definition to send it back.
+      Finish to see <strong>only missed vocab</strong> and optionally retry just those.
+    </p>
+
+    <!-- START -->
+    <section id="start" class="card grid">
+      <div class="grid grid-2">
+        <div>
+          <label for="section">Set</label>
+          <select id="section">
+            <option value="all" selected>All Unit 4 vocab (Ch. 4 + 5 + 14)</option>
+            <option value="4">Ch. 4 — Civil Liberties only</option>
+            <option value="5">Ch. 5 — Civil Rights only</option>
+            <option value="14">Ch. 14 — Judiciary only</option>
+          </select>
+        </div>
+        <div>
+          <label for="size">Round size</label>
+          <select id="size">
+            <option value="10">10 vocab items</option>
+            <option value="15" selected>15 vocab items</option>
+            <option value="20">20 vocab items</option>
+          </select>
+        </div>
+      </div>
+      <div class="hud">
+        <button id="begin">Start Round</button>
+        <span class="pill">You’ll only see a subset each round; definitions shuffle every time.</span>
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="quiz" class="card hidden">
+      <div class="hud">
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+          <span class="pill" id="setTag">Set</span>
+          <span class="pill" id="progress">Filled 0 / N</span>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+          <span class="pill" id="timer">00:00</span>
+          <span class="pill" id="best">Best: —</span>
+          <button id="finish">Finish &amp; Check</button>
+          <button id="newRound">New Round</button>
+          <button id="back">Back to Start</button>
+        </div>
+      </div>
+      <div class="sep"></div>
+
+      <div class="columns">
+        <div>
+          <div class="col-title">Vocab Terms</div>
+          <div class="left" id="left"></div>
+        </div>
+        <div>
+          <div class="col-title">Answer Slots</div>
+          <div class="center" id="center"></div>
+        </div>
+        <div>
+          <div class="col-title">Unused Definitions</div>
+          <div class="right" id="right"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULT -->
+    <section id="result" class="card hidden">
+      <h2 style="margin:0 0 6px">Round Results</h2>
+      <div class="hud" style="margin-bottom:6px">
+        <span class="pill" id="scoreline">Score</span>
+        <span class="pill" id="timeline">Time</span>
+        <span class="pill" id="bestline">Best</span>
+      </div>
+      <div class="sep"></div>
+      <div id="review"></div>
+      <div class="hud">
+        <button id="retry">New Round (same settings)</button>
+        <button id="retryMissed">Retry Missed Only</button>
+        <button id="restart">Back to Start</button>
+      </div>
+    </section>
+  </div>
+
+<script>
+// ===== Vocab list (same as flip cards) =====
+const VOCAB = [
+  // Ch. 4 — Civil Liberties
+  { term: 'Bill of Rights', chapter: 4,
+    definition: 'First ten amendments protecting individual liberties from government action.' },
+  { term: 'Civil liberties', chapter: 4,
+    definition: 'Freedoms that protect individuals from government interference.' },
+  { term: 'Selective incorporation', chapter: 4,
+    definition: 'Applying parts of the Bill of Rights to the states through the Fourteenth Amendment.' },
+  { term: 'Substantive due process', chapter: 4,
+    definition: 'Limits on what government may do to fundamental rights, regardless of procedure.' },
+  { term: 'Procedural due process', chapter: 4,
+    definition: 'Fair steps government must follow before taking life, liberty, or property.' },
+  { term: 'Establishment Clause', chapter: 4,
+    definition: 'Government may not establish or favor an official religion.' },
+  { term: 'Free Exercise Clause', chapter: 4,
+    definition: 'Protects the right to practice one’s religion within reasonable limits.' },
+  { term: 'Lemon test', chapter: 4,
+    definition: 'Three-part test to judge if a law violates the Establishment Clause.' },
+  { term: 'Fighting words', chapter: 4,
+    definition: 'Words likely to provoke immediate violence or a breach of the peace.' },
+  { term: 'Clear and present danger test', chapter: 4,
+    definition: 'Standard that once allowed limits on speech posing an immediate serious threat.' },
+  { term: 'Libel', chapter: 4,
+    definition: 'Written false statements that harm someone’s reputation.' },
+  { term: 'Slander', chapter: 4,
+    definition: 'Spoken false statements that harm someone’s reputation.' },
+  { term: 'Obscenity', chapter: 4,
+    definition: 'Sexually explicit material not protected by the First Amendment under the Miller test.' },
+  { term: 'Symbolic speech', chapter: 4,
+    definition: 'Actions that express ideas, such as flag burning.' },
+  { term: 'Exclusionary rule', chapter: 4,
+    definition: 'Illegally obtained evidence generally cannot be used in court.' },
+  { term: 'Good-faith exception', chapter: 4,
+    definition: 'Allows evidence if police reasonably relied on a warrant later found invalid.' },
+  { term: 'Miranda rights', chapter: 4,
+    definition: 'Warnings about the right to remain silent and to an attorney during police questioning.' },
+  { term: 'Right to privacy', chapter: 4,
+    definition: 'Implied constitutional right to personal autonomy in certain intimate decisions.' },
+  { term: 'Cruel and unusual punishment', chapter: 4,
+    definition: 'Excessive, barbaric, or grossly disproportionate punishments banned by the Eighth Amendment.' },
+
+  // Ch. 5 — Civil Rights
+  { term: 'Civil rights', chapter: 5,
+    definition: 'Government protections against discrimination and unequal treatment.' },
+  { term: 'Thirteenth Amendment', chapter: 5,
+    definition: 'Abolished slavery and involuntary servitude in the United States.' },
+  { term: 'Equal Protection Clause', chapter: 5,
+    definition: 'Part of the Fourteenth Amendment requiring states to treat people equally under the law.' },
+  { term: 'Fifteenth Amendment', chapter: 5,
+    definition: 'Prohibits denying the right to vote based on race, color, or previous condition of servitude.' },
+  { term: 'Nineteenth Amendment', chapter: 5,
+    definition: 'Guarantees women the right to vote.' },
+  { term: 'Jim Crow laws', chapter: 5,
+    definition: 'State and local laws that enforced racial segregation in the South.' },
+  { term: 'Black Codes', chapter: 5,
+    definition: 'Post–Civil War laws designed to limit the freedoms of formerly enslaved people.' },
+  { term: 'De jure segregation', chapter: 5,
+    definition: 'Segregation that exists because of laws or official policy.' },
+  { term: 'De facto segregation', chapter: 5,
+    definition: 'Segregation resulting from housing patterns, income, or social factors, not law.' },
+  { term: '“Separate but equal” doctrine', chapter: 5,
+    definition: 'Idea from Plessy v. Ferguson that segregation was constitutional if facilities were equal.' },
+  { term: 'Civil Rights Act of 1964', chapter: 5,
+    definition: 'Law banning discrimination in public accommodations, employment, and federally funded programs.' },
+  { term: 'Voting Rights Act of 1965', chapter: 5,
+    definition: 'Law targeting barriers like literacy tests and expanding minority voting rights.' },
+  { term: 'Poll tax', chapter: 5,
+    definition: 'Fee required to vote, used to keep poor and Black citizens from voting.' },
+  { term: 'Literacy test', chapter: 5,
+    definition: 'Reading or “understanding” tests once used to prevent many African Americans from voting.' },
+  { term: 'Affirmative action', chapter: 5,
+    definition: 'Policies that take race or gender into account to help remedy past discrimination.' },
+  { term: 'Strict scrutiny', chapter: 5,
+    definition: 'Toughest review standard; used when laws classify by race or affect fundamental rights.' },
+  { term: 'Intermediate scrutiny', chapter: 5,
+    definition: 'Standard usually used for gender classifications; law must be substantially related to an important goal.' },
+  { term: 'Rational basis test', chapter: 5,
+    definition: 'Most lenient review; law must be reasonably related to a legitimate government interest.' },
+  { term: 'Americans with Disabilities Act (ADA)', chapter: 5,
+    definition: 'Law requiring reasonable accommodations and banning discrimination against people with disabilities.' },
+  { term: 'Title IX', chapter: 5,
+    definition: 'Federal law banning sex discrimination in education programs that receive federal funds.' },
+  { term: 'Equal Rights Amendment (ERA)', chapter: 5,
+    definition: 'Proposed but unratified amendment to guarantee equality regardless of sex.' },
+  { term: 'Glass ceiling', chapter: 5,
+    definition: 'Invisible barriers preventing women and minorities from reaching top positions.' },
+
+  // Ch. 14 — Judiciary
+  { term: 'Judicial review', chapter: 14,
+    definition: 'Power of courts to declare laws or executive actions unconstitutional.' },
+  { term: 'Marbury v. Madison', chapter: 14,
+    definition: 'Supreme Court case that firmly established judicial review.' },
+  { term: 'Original jurisdiction', chapter: 14,
+    definition: 'Authority of a court to hear a case first, before any appeal.' },
+  { term: 'Appellate jurisdiction', chapter: 14,
+    definition: 'Authority of a court to review decisions from lower courts.' },
+  { term: 'Writ of certiorari', chapter: 14,
+    definition: 'Order for a lower court to send a case record up to the Supreme Court.' },
+  { term: 'Rule of four', chapter: 14,
+    definition: 'Informal rule that at least four justices must agree to hear a Supreme Court case.' },
+  { term: 'Stare decisis', chapter: 14,
+    definition: 'Doctrine of following precedent in deciding cases (“let the decision stand”).' },
+  { term: 'Majority opinion', chapter: 14,
+    definition: 'Official Court opinion that reflects the views of more than half the justices.' },
+  { term: 'Concurring opinion', chapter: 14,
+    definition: 'Opinion agreeing with the result but offering different or additional reasoning.' },
+  { term: 'Dissenting opinion', chapter: 14,
+    definition: 'Opinion written by justices who disagree with the majority’s decision.' },
+  { term: 'Judicial activism', chapter: 14,
+    definition: 'View that judges should interpret the Constitution broadly and may shape policy to protect rights.' },
+  { term: 'Judicial restraint', chapter: 14,
+    definition: 'View that judges should defer to elected branches unless a law clearly violates the Constitution.' },
+  { term: 'U.S. District Court', chapter: 14,
+    definition: 'Lowest level federal trial courts where most federal cases begin.' },
+  { term: 'U.S. Court of Appeals', chapter: 14,
+    definition: 'Intermediate federal courts that review decisions of district courts.' },
+  { term: 'Supreme Court of the United States', chapter: 14,
+    definition: 'Highest court in the federal system, with mostly appellate jurisdiction.' },
+  { term: 'Felony', chapter: 14,
+    definition: 'Serious crime usually punishable by more than one year in prison.' },
+  { term: 'Misdemeanor', chapter: 14,
+    definition: 'Less serious crime, often punishable by less than a year in jail or a fine.' },
+  { term: 'Plea bargain', chapter: 14,
+    definition: 'Agreement where the defendant pleads guilty to a lesser charge to avoid trial.' },
+  { term: 'Plaintiff', chapter: 14,
+    definition: 'Person or party who brings a civil lawsuit.' },
+  { term: 'Defendant', chapter: 14,
+    definition: 'Person or party accused of a crime or being sued.' },
+  { term: 'Statutory law', chapter: 14,
+    definition: 'Law written and passed by legislatures.' },
+  { term: 'Common law', chapter: 14,
+    definition: 'Law built up over time by judicial decisions and precedents.' },
+  { term: 'Administrative law', chapter: 14,
+    definition: 'Rules and regulations made by government agencies to implement statutes.' },
+  { term: 'Amicus curiae brief', chapter: 14,
+    definition: '“Friend of the court” brief filed by a third party to provide information or arguments.' },
+  { term: 'Justiciable controversy', chapter: 14,
+    definition: 'Real, live dispute appropriate for court resolution (not hypothetical or purely political).' },
+  { term: 'Jurisdiction', chapter: 14,
+    definition: 'A court’s authority to hear and decide a case.' }
+];
+
+// Group vocab by chapter/all
+const GROUPS = {
+  all: VOCAB,
+  4: VOCAB.filter(v => v.chapter === 4),
+  5: VOCAB.filter(v => v.chapter === 5),
+  14: VOCAB.filter(v => v.chapter === 14)
+};
+
+// ===== Helpers =====
+function shuffle(a){
+  const r = [...a];
+  for(let i=r.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [r[i],r[j]] = [r[j],r[i]];
+  }
+  return r;
+}
+function fmtTime(s){
+  const m = Math.floor(s/60).toString().padStart(2,'0');
+  const ss = (s%60).toString().padStart(2,'0');
+  return `${m}:${ss}`;
+}
+function chapterLabel(ch){
+  if(ch === 4) return 'Ch. 4 — Civil Liberties';
+  if(ch === 5) return 'Ch. 5 — Civil Rights';
+  if(ch === 14) return 'Ch. 14 — Judiciary';
+  return 'Unit 4 Mixed';
+}
+function setBest(key, seconds){
+  if(!key) return;
+  const prev = Number(localStorage.getItem(key) || Infinity);
+  if(seconds < prev){
+    localStorage.setItem(key, String(seconds));
+  }
+}
+function getBest(key){
+  if(!key) return '—';
+  const v = localStorage.getItem(key);
+  return v ? fmtTime(Number(v)) : '—';
+}
+
+// ===== State =====
+let state = {
+  pairs: [],     // [{id, term, definition, chapter}]
+  left: [],      // term list
+  right: [],     // [{key,text}]
+  center: [],    // [{key,text}] or null, index = term index
+  setKey: 'all',
+  size: 15,
+  timer: null,
+  seconds: 0,
+  missedOnly: false,
+  misses: []     // [{term,chapter,definition,chosen}]
+};
+
+let selectedSlot = null;
+
+function bestKey(){
+  if(state.missedOnly) return null;
+  return `best_vocab_u4_${state.setKey}_${state.size}`;
+}
+
+function startTimer(){
+  if(state.timer) clearInterval(state.timer);
+  state.seconds = 0;
+  document.getElementById('timer').textContent = '00:00';
+  state.timer = setInterval(()=>{
+    state.seconds++;
+    document.getElementById('timer').textContent = fmtTime(state.seconds);
+  },1000);
+}
+function stopTimer(){
+  if(state.timer){
+    clearInterval(state.timer);
+    state.timer = null;
+  }
+}
+
+// ===== Round building (matching-style) =====
+function startRound(fromMissed=false){
+  let selection;
+
+  if(fromMissed){
+    // Build mini-set from misses only
+    selection = state.misses.map(m => ({
+      term: m.term,
+      definition: m.definition,
+      chapter: m.chapter
+    }));
+    state.missedOnly = true;
+  } else {
+    const section = document.getElementById('section').value;
+    const size = Number(document.getElementById('size').value);
+    state.setKey = section;
+    state.size = size;
+    state.missedOnly = false;
+
+    let pool = [...GROUPS[section]];
+    pool = shuffle(pool);
+    selection = pool.slice(0, Math.min(size, pool.length));
+  }
+
+  state.pairs = selection.map((item, idx)=>({
+    id: idx,
+    term: item.term,
+    definition: item.definition,
+    chapter: item.chapter
+  }));
+
+  state.left = state.pairs.map((p,i)=>({key:i, text:p.term, chapter:p.chapter}));
+  const answers = state.pairs.map((p,i)=>({key:i, text:p.definition}));
+  state.right = shuffle(answers);
+  state.center = new Array(state.pairs.length).fill(null);
+  state.misses = [];
+  state.seconds = 0;
+  selectedSlot = null;
+
+  let label;
+  if(fromMissed){
+    label = 'Retry — Missed Only';
+  } else if(state.setKey === 'all'){
+    label = 'All Unit 4 vocab';
+  } else {
+    label = chapterLabel(Number(state.setKey));
+  }
+  document.getElementById('setTag').textContent = label;
+
+  const bKey = bestKey();
+  document.getElementById('best').textContent = 'Best: ' + getBest(bKey);
+
+  document.getElementById('start').classList.add('hidden');
+  document.getElementById('result').classList.add('hidden');
+  document.getElementById('quiz').classList.remove('hidden');
+
+  renderAll();
+  startTimer();
+}
+
+// ===== Rendering =====
+function updateProgress(){
+  const total = state.center.length;
+  const filled = state.center.filter(Boolean).length;
+  document.getElementById('progress').textContent =
+    `Filled ${filled} / ${total}`;
+}
+
+function renderAll(){
+  renderLeft();
+  renderCenter();
+  renderRight();
+  updateProgress();
+  requestAnimationFrame(equalizeHeights);
+}
+
+function renderLeft(){
+  const L = document.getElementById('left');
+  L.innerHTML = '';
+  state.left.forEach((item, idx)=>{
+    const div = document.createElement('div');
+    div.className = 'prompt sameHeight';
+    const num = document.createElement('div');
+    num.className = 'num';
+    num.textContent = idx + 1;
+    const tx = document.createElement('div');
+    tx.className = 'text';
+    tx.textContent = item.text;
+
+    div.appendChild(num);
+    div.appendChild(tx);
+    L.appendChild(div);
+  });
+}
+
+function renderCenter(){
+  const C = document.getElementById('center');
+  C.innerHTML = '';
+  state.center.forEach((ans, idx)=>{
+    const slot = document.createElement('div');
+    slot.className = 'slot sameHeight' + (ans ? '' : ' empty');
+    slot.dataset.slot = idx;
+
+    const badge = document.createElement('div');
+    badge.className = 'num';
+    badge.textContent = idx + 1;
+    slot.appendChild(badge);
+
+    const content = document.createElement('div');
+    content.className = 'text';
+
+    if(ans){
+      const inner = document.createElement('div');
+      inner.className = 'answer sameHeight selectable';
+      inner.dataset.key = ans.key;
+      inner.dataset.origin = 'center';
+
+      const label = document.createElement('div');
+      label.className = 'text';
+      label.textContent = ans.text;
+      inner.appendChild(label);
+
+      // Click to remove back to bank
+      inner.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        const moved = state.center[idx];
+        if(moved){
+          state.center[idx] = null;
+          state.right.push(moved);
+          selectedSlot = idx; // keep slot focused
+          renderCenter();
+          renderRight();
+          updateProgress();
+          requestAnimationFrame(equalizeHeights);
+        }
+      });
+
+      content.innerHTML = '';
+      content.appendChild(inner);
+    } else {
+      content.innerHTML = '<span class="placeholder">Click a definition on the right</span>';
+    }
+
+    slot.appendChild(content);
+
+    // Click slot to select it
+    slot.addEventListener('click', ()=>{
+      selectedSlot = idx;
+      updateSelectedSlotHighlights();
+      requestAnimationFrame(equalizeHeights);
+    });
+
+    C.appendChild(slot);
+  });
+
+  updateSelectedSlotHighlights();
+}
+
+function renderRight(){
+  const R = document.getElementById('right');
+  R.innerHTML = '';
+  state.right.forEach((item, idx)=>{
+    const div = document.createElement('div');
+    div.className = 'answer selectable sameHeight';
+    div.dataset.key = item.key;
+    div.dataset.origin = 'right';
+
+    const num = document.createElement('div');
+    num.className = 'num';
+    num.textContent = String.fromCharCode(65 + idx);
+
+    const tx = document.createElement('div');
+    tx.className = 'text';
+    tx.textContent = item.text;
+
+    div.appendChild(num);
+    div.appendChild(tx);
+
+    // Click answer to place it into the selected slot
+    div.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      if(selectedSlot === null) return;
+
+      const target = selectedSlot;
+
+      // Return any existing answer in that slot to the bank
+      if(state.center[target]){
+        state.right.push(state.center[target]);
+      }
+
+      // Remove this answer from the right bank
+      const key = item.key;
+      const idxInRight = state.right.findIndex(a => a.key === key);
+      if(idxInRight >= 0) state.right.splice(idxInRight,1);
+
+      // Place into center
+      state.center[target] = { key:item.key, text:item.text };
+
+      // Clear selection
+      selectedSlot = null;
+
+      renderCenter();
+      renderRight();
+      updateProgress();
+      requestAnimationFrame(equalizeHeights);
+    });
+
+    R.appendChild(div);
+  });
+}
+
+function updateSelectedSlotHighlights(){
+  const slots = document.querySelectorAll('#center .slot');
+  slots.forEach((slot, i)=>{
+    slot.classList.toggle('selected-slot', i === selectedSlot);
+  });
+}
+
+// ===== Finish & Review =====
+function finishRound(){
+  stopTimer();
+  const total = state.center.length;
+  let correct = 0;
+  state.misses = [];
+
+  state.center.forEach((ans, idx)=>{
+    const pair = state.pairs[idx];
+    const correctKey = idx; // we created key === index
+    const ok = !!ans && ans.key === correctKey;
+    const chosenText = ans ? ans.text : '—';
+
+    if(ok){
+      correct++;
+    } else {
+      state.misses.push({
+        term: pair.term,
+        chapter: pair.chapter,
+        definition: pair.definition,
+        chosen: chosenText
+      });
+    }
+  });
+
+  document.getElementById('quiz').classList.add('hidden');
+  document.getElementById('result').classList.remove('hidden');
+
+  if(!state.missedOnly){
+    setBest(bestKey(), state.seconds);
+  }
+
+  const pct = total ? Math.round(correct/total*100) : 0;
+  document.getElementById('scoreline').textContent =
+    `Score: ${correct} / ${total} (${pct}%)`;
+  document.getElementById('timeline').textContent =
+    `Time: ${fmtTime(state.seconds)}`;
+  document.getElementById('bestline').textContent =
+    `Best: ${getBest(bestKey())}`;
+
+  const review = document.getElementById('review');
+  review.innerHTML = '';
+
+  if(state.misses.length === 0){
+    review.innerHTML = '<p class="muted">Perfect — no missed vocab items this round.</p>';
+  } else {
+    const list = document.createElement('div');
+    list.className = 'grid';
+    list.style.gridTemplateColumns = '1fr';
+    list.style.gap = '10px';
+
+    state.misses.forEach((m, i)=>{
+      const row = document.createElement('div');
+      row.className = 'card';
+      row.style.padding = '12px';
+      row.innerHTML =
+        `<div style="font-weight:700; margin-bottom:4px">#${i+1} · ${m.term} (${chapterLabel(m.chapter)})</div>`+
+        `<div style="font-size:14px; margin-bottom:4px"><strong>Your answer:</strong> ${m.chosen}</div>`+
+        `<div style="font-size:14px;"><strong>Correct:</strong> ${m.definition}</div>`;
+      list.appendChild(row);
+    });
+
+    review.appendChild(list);
+  }
+}
+
+function startRoundMissed(){
+  if(!state.misses || state.misses.length === 0){
+    alert('No missed items to retry.');
+    return;
+  }
+  startRound(true);
+}
+
+// ===== Equal heights for nicer alignment =====
+function equalizeHeights(){
+  const all = [
+    ...document.querySelectorAll('.left .prompt'),
+    ...document.querySelectorAll('.center .slot'),
+    ...document.querySelectorAll('.right .answer')
+  ];
+  if(!all.length) return;
+  all.forEach(n => { n.style.height = 'auto'; });
+  let max = 0;
+  all.forEach(n => { max = Math.max(max, n.offsetHeight); });
+  all.forEach(n => { n.style.height = max + 'px'; });
+}
+
+function debounce(fn, ms){
+  let t;
+  return (...args)=>{
+    clearTimeout(t);
+    t = setTimeout(()=>fn.apply(this,args), ms);
+  };
+}
+window.addEventListener('resize', debounce(()=> requestAnimationFrame(equalizeHeights), 120));
+
+// ===== Nav =====
+document.getElementById('begin').addEventListener('click', ()=> startRound(false));
+document.getElementById('newRound').addEventListener('click', ()=>{
+  stopTimer();
+  startRound(false);
+});
+document.getElementById('finish').addEventListener('click', finishRound);
+document.getElementById('back').addEventListener('click', ()=>{
+  stopTimer();
+  document.getElementById('quiz').classList.add('hidden');
+  document.getElementById('start').classList.remove('hidden');
+});
+document.getElementById('retry').addEventListener('click', ()=>{
+  stopTimer();
+  startRound(false);
+});
+document.getElementById('retryMissed').addEventListener('click', ()=>{
+  stopTimer();
+  startRoundMissed();
+});
+document.getElementById('restart').addEventListener('click', ()=>{
+  document.getElementById('result').classList.add('hidden');
+  document.getElementById('start').classList.remove('hidden');
+});
+</script>
+</body>
+</html>
