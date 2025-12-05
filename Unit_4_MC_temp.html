@@ -130,6 +130,22 @@
     color:#7f1d1d !important;
   }
 
+
+/* 🔵 High-contrast correct and incorrect colors (colorblind-friendly) */
+.tile.correct-strong {
+  background:#dbeafe !important;  /* soft blue */
+  border-color:#1e40af !important; /* strong navy */
+  color:#1e3a8a !important;
+}
+
+.tile.wrong-strong {
+  background:#fbcfe8 !important;  /* vivid pink (very readable for colorblind) */
+  border-color:#be185d !important;
+  color:#831843 !important;
+}
+
+  
+
   .muted{color:var(--muted)}
   .sep{height:1px; background:rgba(15,23,42,0.08); margin:12px 0}
 </style>
@@ -421,8 +437,12 @@ let state = {
   missedOnly: false,
   parts: [],
   partIndex: 0,
-  totalParts: 1
+  totalParts: 1,
+  // new: chapter stats for full Unit 4 runs
+  chapterTotals: null,   // {4: totalQ, 5: totalQ, 14: totalQ}
+  chapterCorrect: null   // {4: correctQ, 5: correctQ, 14: correctQ}
 };
+
 
 function bestKey(){
   // Track best time per set *and* per part
@@ -454,7 +474,22 @@ function startRound(){
 
   // Base items: chapters use their 50; unit uses all 150
   const base = (sk === 'unit4') ? [...BANK] : [...SETS[sk]];
-  let items = (ord === 'shuf') ? shuffle(base) : base;
+  let items  = (ord === 'shuf') ? shuffle(base) : base;
+
+  // NEW: set up chapter totals / correct for full Unit 4 run
+  if(sk === 'unit4'){
+    const totals = {4:0, 5:0, 14:0};
+    base.forEach(q=>{
+      if(q && (q.chapter === 4 || q.chapter === 5 || q.chapter === 14)){
+        totals[q.chapter] = (totals[q.chapter] || 0) + 1;
+      }
+    });
+    state.chapterTotals  = totals;
+    state.chapterCorrect = {4:0, 5:0, 14:0};
+  } else {
+    state.chapterTotals  = null;
+    state.chapterCorrect = null;
+  }
 
   // Part sizes: 25 for chapters, 30 for unit (5×30 =150)
   const partSize = (sk === 'unit4') ? 30 : 25;
@@ -474,6 +509,7 @@ function startRound(){
 
   startPart(0);
 }
+
 
 function startPart(index){
   state.partIndex = index;
@@ -528,18 +564,59 @@ function renderQ(){
 }
 
 function pick(isCorrect, node, item){
-  node.classList.add(isCorrect ? 'correct' : 'wrong');
-  if(!isCorrect){
-    state.misses.push(item);
-  }
-  setTimeout(()=>{
-    if(state.idx < state.list.length - 1){
-      state.idx++;
-      renderQ();
-    } else {
-      finish();
+  const choicesBox = document.getElementById('choices');
+  const allTiles = [...choicesBox.querySelectorAll('.tile')];
+
+  // NEW: track chapter-correct counts for full Unit 4 runs (all 5 parts)
+  if(!state.missedOnly &&
+     state.setKey === 'unit4' &&
+     state.chapterCorrect &&
+     item &&
+     typeof item.chapter !== 'undefined'){
+    if(isCorrect){
+      state.chapterCorrect[item.chapter] =
+        (state.chapterCorrect[item.chapter] || 0) + 1;
     }
-  }, 550);
+  }
+
+  if(isCorrect){
+
+    // ⭐ KEEP CURRENT BEHAVIOR FOR CORRECT ANSWERS
+    node.classList.add('correct');
+    setTimeout(()=>{
+      if(state.idx < state.list.length - 1){
+        state.idx++;
+        renderQ();
+      } else {
+        finish();
+      }
+    }, 500);
+
+  } else {
+    // ❌ WRONG ANSWER BEHAVIOR
+    state.misses.push(item);
+
+    // 1. Mark student's wrong choice
+    node.classList.add('wrong-strong');
+
+    // 2. Highlight the correct choice
+    const correctText = item.choices[item.answer];
+    allTiles.forEach(btn=>{
+      if(btn.innerText.trim() === correctText.trim()){
+        btn.classList.add('correct-strong');
+      }
+    });
+
+    // 3. Pause 3 seconds
+    setTimeout(()=>{
+      if(state.idx < state.list.length - 1){
+        state.idx++;
+        renderQ();
+      } else {
+        finish();
+      }
+    }, 4000);
+  }
 }
 
 function finish(){
@@ -555,9 +632,9 @@ function finish(){
   document.getElementById('quiz').classList.add('hidden');
   document.getElementById('result').classList.remove('hidden');
 
-  const isMulti = state.totalParts > 1;
+  const isMulti    = state.totalParts > 1;
   const isLastPart = state.partIndex === state.totalParts - 1;
-  const titleEl = document.getElementById('resultTitle');
+  const titleEl    = document.getElementById('resultTitle');
 
   if(isMulti && !state.missedOnly){
     titleEl.textContent = isLastPart
@@ -584,8 +661,50 @@ function finish(){
 
   const rev = document.getElementById('review');
   rev.innerHTML = '';
+
+  // NEW: show per-chapter % at the end of a full Unit 4 (5-part) run
+  const showChapterSummary =
+    state.setKey === 'unit4' &&
+    isMulti &&
+    isLastPart &&
+    !state.missedOnly &&
+    state.chapterTotals &&
+    state.chapterCorrect;
+
+  if(showChapterSummary){
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.padding = '12px';
+
+    let html = '<div style="font-weight:700; margin-bottom:6px">Score by Chapter (full Unit 4 run)</div>';
+    html += '<ul style="margin:0; padding-left:18px; font-size:14px">';
+
+    const chapters = [
+      {ch:4,  label:'Ch. 4 — Civil Liberties'},
+      {ch:5,  label:'Ch. 5 — Civil Rights'},
+      {ch:14, label:'Ch. 14 — Judiciary'}
+    ];
+
+    chapters.forEach(({ch,label})=>{
+      const totalCh   = state.chapterTotals[ch] || 0;
+      if(totalCh > 0){
+        const correctCh = (state.chapterCorrect[ch] || 0);
+        const pctCh     = Math.round((correctCh / totalCh) * 100);
+        html += `<li>${label}: ${pctCh}% (${correctCh} / ${totalCh})</li>`;
+      }
+    });
+
+    html += '</ul>';
+    card.innerHTML = html;
+    rev.appendChild(card);
+  }
+
+  // Existing missed-question review
   if(missed === 0){
-    rev.innerHTML = '<p class="muted">Perfect! No missed items to review.</p>';
+    const p = document.createElement('p');
+    p.className = 'muted';
+    p.textContent = 'Perfect! No missed items to review.';
+    rev.appendChild(p);
   } else {
     const list = document.createElement('div');
     list.className = 'grid';
