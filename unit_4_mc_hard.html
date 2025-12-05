@@ -233,8 +233,7 @@
 <script>
 // ===== Question bank =====
 const QUESTIONS = [
-  // (same questions as before – unchanged)
-  // ===== Chapter 4 — Civil Liberties =====
+  // ===== Chapter 4 — Civil Liberties (original hard set) =====
   {
     id: '4-1',
     chapter: 4,
@@ -327,7 +326,7 @@ const QUESTIONS = [
     explanation: 'Cases involving contraception and certain intimate decisions are examples where the Court has recognized an implied right to privacy.'
   },
 
-  // ===== Chapter 5 — Civil Rights =====
+  // ===== Chapter 5 — Civil Rights (original hard set) =====
   {
     id: '5-1',
     chapter: 5,
@@ -433,7 +432,7 @@ const QUESTIONS = [
     explanation: 'Title IX bans sex discrimination in education programs that receive federal funds, including athletics.'
   },
 
-  // ===== Chapter 14 — Judiciary =====
+  // ===== Chapter 14 — Judiciary (original hard set) =====
   {
     id: '14-1',
     chapter: 14,
@@ -537,6 +536,493 @@ const QUESTIONS = [
     ],
     correct: 1,
     explanation: 'A justiciable controversy is a real, concrete dispute appropriate for court resolution, not a hypothetical or political question.'
+  },
+
+  // ===== EXTRA HARD QUESTIONS — CIVIL LIBERTIES (Ch. 4) =====
+  {
+    id: '4-8',
+    chapter: 4,
+    stem: 'A state argues that the Bill of Rights does not limit what state police can do, only what federal agents can do. In response, a lawyer cites Gitlow v. New York and the Fourteenth Amendment. What idea is the lawyer using?',
+    choices: [
+      'Dual federalism',
+      'Selective incorporation of fundamental rights against the states',
+      'Judicial restraint',
+      'The political question doctrine'
+    ],
+    correct: 1,
+    explanation: 'Gitlow v. New York is one of the first cases where the Court said parts of the Bill of Rights (like free speech) apply to the states through the Fourteenth Amendment—this is selective incorporation.'
+  },
+  {
+    id: '4-9',
+    chapter: 4,
+    stem: 'A public school district allows student religious clubs to meet after school but refuses to let a Bible club use empty classrooms, even though other clubs can. The Bible club sues. Which is the strongest argument for the club?',
+    choices: [
+      'The school is violating the Free Exercise Clause by singling out religious expression for worse treatment.',
+      'The school is required to promote religion under the Establishment Clause.',
+      'The school is required to fund religious activities directly.',
+      'The school must eliminate all clubs to comply with separation of church and state.'
+    ],
+    correct: 0,
+    explanation: 'When a public school creates an open forum for clubs but excludes a religious club, it is treating religious speech worse than other speech, raising a Free Exercise and free-speech problem.'
+  },
+  {
+    id: '4-10',
+    chapter: 4,
+    stem: 'A state requires that a large Ten Commandments monument be placed alone in front of every courthouse with no other historical displays. A challenger argues it violates the Establishment Clause under the Lemon test. Which part of Lemon is the challenger MOST likely to focus on?',
+    choices: [
+      'The law’s primary effect is to advance a particular religion, not to educate about history.',
+      'The law has no effect on religion at all.',
+      'The law does not involve any government action.',
+      'The law clearly avoids any entanglement with religion.'
+    ],
+    correct: 0,
+    explanation: 'A stand-alone religious monument at the courthouse looks like government endorsement of one religion, failing the “primary effect” prong of the Lemon test.'
+  },
+  {
+    id: '4-11',
+    chapter: 4,
+    stem: 'A protester burns a U.S. flag on the steps of the state capitol to criticize government policy. He is arrested under a state law banning flag desecration. Which precedent is most helpful to his case?',
+    choices: [
+      'Texas v. Johnson, protecting flag burning as symbolic speech',
+      'Mapp v. Ohio, applying the exclusionary rule to the states',
+      'Miranda v. Arizona, protecting rights during interrogation',
+      'Roe v. Wade, protecting privacy in abortion decisions'
+    ],
+    correct: 0,
+    explanation: 'Texas v. Johnson held that flag burning in political protest is protected symbolic speech under the First Amendment.'
+  },
+  {
+    id: '4-12',
+    chapter: 4,
+    stem: 'A state passes a law saying “It is illegal to publish any criticism of the governor during a public health emergency.” Which First Amendment principle is most clearly violated?',
+    choices: [
+      'Prior restraint and protections for political speech',
+      'The right to petition the government',
+      'Free exercise of religion',
+      'The Takings Clause'
+    ],
+    correct: 0,
+    explanation: 'Banning criticism of officials, especially by stopping publication beforehand, is classic prior restraint and directly conflicts with strong protection for political speech.'
+  },
+  {
+    id: '4-13',
+    chapter: 4,
+    stem: 'Police get a warrant that mistakenly lists the wrong apartment number, but they reasonably believe they are at the correct address and find evidence of a crime. The defense argues for exclusion. Which concept gives prosecutors the best response?',
+    choices: [
+      'The good-faith exception to the exclusionary rule',
+      'The clear and present danger test',
+      'The political question doctrine',
+      'De facto segregation'
+    ],
+    correct: 0,
+    explanation: 'Under the good-faith exception, evidence may be admitted if police reasonably relied on a warrant that turned out to be defective.'
+  },
+  {
+    id: '4-14',
+    chapter: 4,
+    stem: 'A state bans the sale of contraception even to married couples. A couple challenges the law, pointing to Griswold v. Connecticut. What constitutional idea did Griswold rely on?',
+    choices: [
+      'An implied right to privacy created by “penumbras” of several amendments',
+      'The explicit text of the Tenth Amendment',
+      'The Commerce Clause',
+      'The Guarantee Clause'
+    ],
+    correct: 0,
+    explanation: 'Griswold recognized a right to privacy in marital decisions based on “penumbras” and “emanations” from various Bill of Rights provisions.'
+  },
+  {
+    id: '4-15',
+    chapter: 4,
+    stem: 'A state passes a law requiring women seeking abortions to receive extensive counseling, undergo multiple invasive tests, and travel to one clinic in the state that is only open one day per month. Under modern abortion jurisprudence, what is the key standard used to evaluate whether these rules are constitutional?',
+    choices: [
+      'Whether the law places an “undue burden” on the exercise of the right',
+      'Whether the law satisfies the Lemon test',
+      'Whether the law passes the clear and present danger test',
+      'Whether the law supports separate but equal facilities'
+    ],
+    correct: 0,
+    explanation: 'After Roe, cases like Planned Parenthood v. Casey used the “undue burden” standard to judge whether abortion regulations are too restrictive.'
+  },
+  {
+    id: '4-16',
+    chapter: 4,
+    stem: 'Police stop a car for a broken taillight and then search the entire trunk without consent or probable cause. They find stolen goods. Which amendment is most directly involved when deciding whether the search was lawful?',
+    choices: [
+      'Fourth Amendment protection against unreasonable searches and seizures',
+      'Fifth Amendment protection against self-incrimination',
+      'Sixth Amendment right to counsel',
+      'Eighth Amendment protection from cruel and unusual punishment'
+    ],
+    correct: 0,
+    explanation: 'Whether the trunk search is lawful depends on Fourth Amendment rules about probable cause and the scope of a traffic-stop search.'
+  },
+  {
+    id: '4-17',
+    chapter: 4,
+    stem: 'A defendant is sentenced to death after a trial where the jury is given no guidance about when to impose the death penalty, leading to arbitrary results. Which case provides the strongest precedent to challenge this system?',
+    choices: [
+      'Furman v. Georgia, which struck down arbitrary death penalty schemes',
+      'Gregg v. Georgia, which banned the death penalty forever',
+      'Schenck v. United States, which limited speech',
+      'Gitlow v. New York, which began incorporation'
+    ],
+    correct: 0,
+    explanation: 'Furman v. Georgia halted the death penalty because it was being imposed in an arbitrary and capricious manner.'
+  },
+  {
+    id: '4-18',
+    chapter: 4,
+    stem: 'A journalist is arrested for publishing leaked documents that embarrass the government but reveal no military secrets or ongoing operations. The government claims “national security” and demands punishment. Historically, how has the Court treated such attempts to punish critical press?',
+    choices: [
+      'The Court has usually protected the press unless the speech creates a serious, immediate threat to national security.',
+      'The Court always sides with the president in national security cases.',
+      'The Court bans all publication of leaked information.',
+      'The Court treats criticism of the government as fighting words.'
+    ],
+    correct: 0,
+    explanation: 'Cases like the Pentagon Papers show a strong presumption against punishing press criticism absent a clear, immediate danger.'
+  },
+  {
+    id: '4-19',
+    chapter: 4,
+    stem: 'A student silently kneels during the national anthem at a football game to protest racial injustice. The school wants to punish the student for being “disrespectful.” Which earlier student-speech case gives the student the strongest support?',
+    choices: [
+      'Tinker v. Des Moines, protecting symbolic student protest',
+      'Miller v. California, defining obscenity',
+      'Engel v. Vitale, banning school-sponsored prayer',
+      'Gideon v. Wainwright, providing counsel for indigent defendants'
+    ],
+    correct: 0,
+    explanation: 'Tinker held that students do not “shed their constitutional rights at the schoolhouse gate” and protected silent, non-disruptive protest.'
+  },
+  {
+    id: '4-20',
+    chapter: 4,
+    stem: 'A suspect asks clearly for a lawyer during police questioning, but officers continue to interrogate and get a confession. Which combination of rights is most clearly violated?',
+    choices: [
+      'The Fifth Amendment right against self-incrimination and the Sixth Amendment right to counsel',
+      'The Establishment and Free Exercise Clauses',
+      'The Third Amendment ban on quartering soldiers',
+      'The Tenth Amendment reserved powers'
+    ],
+    correct: 0,
+    explanation: 'Miranda and related cases protect the right to remain silent and to have counsel present; questioning should stop once the suspect asks for a lawyer.'
+  },
+
+  // ===== EXTRA HARD QUESTIONS — CIVIL RIGHTS (Ch. 5) =====
+  {
+    id: '5-9',
+    chapter: 5,
+    stem: 'A city redraws its school attendance zones so that, on paper, they are race-neutral. However, the lines are drawn in a way that keeps nearly all schools one-race because of known housing patterns. Which type of segregation is this MOST likely to be?',
+    choices: [
+      'De jure segregation enforced directly by law',
+      'De facto segregation resulting from housing and policy choices',
+      'Segregation required by the Voting Rights Act',
+      'Segregation protected by the Fifteenth Amendment'
+    ],
+    correct: 1,
+    explanation: 'When segregation results from housing patterns and seemingly neutral policies, it is usually described as de facto segregation.'
+  },
+  {
+    id: '5-10',
+    chapter: 5,
+    stem: 'A hotel near an interstate highway refuses to rent rooms to Black travelers. Congress passes a law banning discrimination in public accommodations based on its power to regulate interstate commerce. Which case upheld this sort of law?',
+    choices: [
+      'Heart of Atlanta Motel v. United States',
+      'Plessy v. Ferguson',
+      'Dred Scott v. Sandford',
+      'Engel v. Vitale'
+    ],
+    correct: 0,
+    explanation: 'Heart of Atlanta Motel v. United States upheld the Civil Rights Act of 1964’s public accommodations provisions using the Commerce Clause.'
+  },
+  {
+    id: '5-11',
+    chapter: 5,
+    stem: 'A state university uses a rigid quota system: exactly 20% of spots are reserved for applicants of a certain race, regardless of other qualifications. An applicant rejected because of the quota sues. Which precedent is most directly on point?',
+    choices: [
+      'Regents of the University of California v. Bakke, which disallowed rigid racial quotas',
+      'Brown v. Board of Education, which ended school segregation',
+      'Loving v. Virginia, which invalidated interracial marriage bans',
+      'Shelby County v. Holder, which limited the Voting Rights Act'
+    ],
+    correct: 0,
+    explanation: 'Bakke struck down strict quotas but allowed race to be one factor in a holistic admissions process.'
+  },
+  {
+    id: '5-12',
+    chapter: 5,
+    stem: 'A state law says only men can inherit property in certain situations. The law is challenged under the Equal Protection Clause. What level of scrutiny is most likely applied to this gender-based classification?',
+    choices: [
+      'Intermediate scrutiny—substantially related to an important government interest',
+      'Strict scrutiny—necessary to achieve a compelling interest',
+      'Rational basis—any legitimate interest',
+      'No judicial review at all'
+    ],
+    correct: 0,
+    explanation: 'Gender classifications are generally reviewed under intermediate scrutiny, which is tougher than rational basis but not as strict as strict scrutiny.'
+  },
+  {
+    id: '5-13',
+    chapter: 5,
+    stem: 'A state requires voters to pass a complex test about constitutional trivia, but local officials only enforce it against minority voters. Which combination of constitutional provisions and laws gives the strongest challenge?',
+    choices: [
+      'Fifteenth Amendment plus the Voting Rights Act of 1965',
+      'Tenth Amendment plus the Twenty-Second Amendment',
+      'Third Amendment plus the Commerce Clause',
+      'Establishment Clause plus the Free Exercise Clause'
+    ],
+    correct: 0,
+    explanation: 'The Fifteenth Amendment bars racial discrimination in voting, and the Voting Rights Act was designed specifically to eliminate practices like literacy tests that target minorities.'
+  },
+  {
+    id: '5-14',
+    chapter: 5,
+    stem: 'A landlord uses “whites only” language in all written leases and refuses to rent to minority tenants. Which best describes this behavior?',
+    choices: [
+      'A clear violation of modern civil rights and fair housing laws',
+      'An example of de facto segregation only',
+      'A political question protected from court review',
+      'A form of symbolic speech fully protected by the First Amendment'
+    ],
+    correct: 0,
+    explanation: 'Modern civil rights and fair housing laws prohibit explicit racial discrimination in renting and housing.'
+  },
+  {
+    id: '5-15',
+    chapter: 5,
+    stem: 'A transgender student is denied access to any restroom facilities that match their gender identity, even though other students are freely allowed to use facilities that fit their identity. A lawsuit is filed under federal civil rights laws. Which trend in civil rights policy does this BEST reflect?',
+    choices: [
+      'The extension of equality claims to new groups over time',
+      'The elimination of all equal protection claims in federal court',
+      'The dominance of de jure segregation',
+      'The end of strict scrutiny for race cases'
+    ],
+    correct: 0,
+    explanation: 'Recent civil rights developments have involved extending equality arguments to LGBTQ+ individuals, including in schools.'
+  },
+  {
+    id: '5-16',
+    chapter: 5,
+    stem: 'After Brown v. Board of Education, some states responded slowly or not at all to desegregation orders. Which branch of the federal government most directly enforced school desegregation in some of these conflicts?',
+    choices: [
+      'The executive branch, sometimes sending federal troops or marshals to enforce court orders',
+      'The Federal Reserve, through interest rates',
+      'The House of Representatives, through impeachment',
+      'The United Nations, through peacekeepers'
+    ],
+    correct: 0,
+    explanation: 'Presidents sometimes had to use executive power, including sending troops or federal marshals, to enforce the Court’s desegregation decisions.'
+  },
+  {
+    id: '5-17',
+    chapter: 5,
+    stem: 'A state constitution is amended to say that no city or county in the state may pass any law protecting gay or lesbian people from discrimination, even though other groups can be protected. Which case is most similar?',
+    choices: [
+      'Romer v. Evans, which struck down a similar Colorado amendment',
+      'Brown v. Board of Education',
+      'Plessy v. Ferguson',
+      'Schenck v. United States'
+    ],
+    correct: 0,
+    explanation: 'Romer v. Evans invalidated a state amendment that singled out LGBTQ+ people by forbidding any local protections for them.'
+  },
+  {
+    id: '5-18',
+    chapter: 5,
+    stem: 'A law classifies people based on race. Under modern equal protection analysis, what standard of review will the Court typically apply?',
+    choices: [
+      'Strict scrutiny, requiring a compelling government interest and narrow tailoring',
+      'Intermediate scrutiny, requiring an important interest',
+      'Rational basis, requiring only a legitimate interest',
+      'No scrutiny, because race classifications are always allowed'
+    ],
+    correct: 0,
+    explanation: 'Race-based classifications are suspect and receive strict scrutiny under equal protection analysis.'
+  },
+  {
+    id: '5-19',
+    chapter: 5,
+    stem: 'Employees in a company experience repeated unwanted sexual comments and touching from a supervisor. The behavior is severe and pervasive, and the company does nothing. Under civil rights law, how is this most likely categorized?',
+    choices: [
+      'Sexual harassment creating a hostile work environment',
+      'A political question',
+      'De facto segregation',
+      'A form of symbolic speech'
+    ],
+    correct: 0,
+    explanation: 'Hostile work environment sexual harassment is treated as a form of sex discrimination under civil rights law.'
+  },
+  {
+    id: '5-20',
+    chapter: 5,
+    stem: 'A school district claims that it has completely eliminated racial barriers because there are no segregation laws on the books, even though neighborhoods and schools remain sharply divided by race and income. Which insight from civil rights policy BEST challenges the district’s claim?',
+    choices: [
+      'Ending de jure segregation does not automatically end de facto segregation or inequality.',
+      'Civil rights only apply to federal laws.',
+      'Judicial review does not apply to education.',
+      'Equal protection applies only in criminal trials.'
+    ],
+    correct: 0,
+    explanation: 'The history of civil rights shows that ending explicit legal segregation (de jure) doesn’t automatically fix inequality caused by housing, income, and other factors.'
+  },
+
+  // ===== EXTRA HARD QUESTIONS — JUDICIARY (Ch. 14) =====
+  {
+    id: '14-9',
+    chapter: 14,
+    stem: 'Congress creates a new federal environmental court and gives it the power to hear cases involving federal pollution laws. A lawsuit about a local traffic ticket is filed there and dismissed. What is the best explanation for the dismissal?',
+    choices: [
+      'The environmental court lacks subject-matter jurisdiction over traffic tickets.',
+      'The case is not justiciable because it involves the environment.',
+      'The Supreme Court must hear all traffic cases first.',
+      'State courts have no jurisdiction over any criminal case.'
+    ],
+    correct: 0,
+    explanation: 'Jurisdiction refers to a court’s authority to hear certain types of cases; an environmental court would not have jurisdiction over an ordinary traffic ticket.'
+  },
+  {
+    id: '14-10',
+    chapter: 14,
+    stem: 'A losing party in a civil case wants a higher court to examine whether the trial judge applied the law correctly, but does not present new witnesses or evidence. Into what kind of court is this party moving the case?',
+    choices: [
+      'A court with appellate jurisdiction, such as a U.S. Court of Appeals',
+      'A court with original jurisdiction, such as a district court',
+      'A court of limited jurisdiction, such as a traffic court',
+      'A military tribunal'
+    ],
+    correct: 0,
+    explanation: 'Appellate courts review the application of law and procedures from lower courts; they do not hold a new trial with new evidence.'
+  },
+  {
+    id: '14-11',
+    chapter: 14,
+    stem: 'A federal judge issues a controversial ruling striking down a major federal law. Some members of Congress are furious and want to fire the judge immediately. Under the Constitution, which is the proper way to remove a federal judge?',
+    choices: [
+      'Impeachment by the House and conviction by the Senate for serious misconduct',
+      'A simple majority vote in the Supreme Court',
+      'A presidential executive order',
+      'A national referendum'
+    ],
+    correct: 0,
+    explanation: 'Federal judges hold office during “good behavior” and can only be removed through impeachment and conviction.'
+  },
+  {
+    id: '14-12',
+    chapter: 14,
+    stem: 'In a controversial case, the Court declines to decide whether a foreign war is constitutional and says the issue is for Congress and the president. Which idea is the Court applying?',
+    choices: [
+      'The political question doctrine and judicial restraint',
+      'Judicial activism',
+      'Stare decisis',
+      'Strict scrutiny'
+    ],
+    correct: 0,
+    explanation: 'Some issues are treated as political questions better resolved by the elected branches; declining to decide them is a form of judicial restraint.'
+  },
+  {
+    id: '14-13',
+    chapter: 14,
+    stem: 'A Supreme Court majority overrules a long-standing precedent because it believes the earlier case was wrongly decided and conflicts with the Constitution’s text. Which tension in judicial decision-making does this illustrate?',
+    choices: [
+      'The tension between stare decisis (respecting precedent) and correcting constitutional errors',
+      'The tension between the House and the Senate',
+      'The conflict between the Bill of Rights and the Preamble',
+      'The conflict between civil and criminal law'
+    ],
+    correct: 0,
+    explanation: 'Sometimes the Court must choose between following precedent and overturning it to align the law more closely with the Constitution.'
+  },
+  {
+    id: '14-14',
+    chapter: 14,
+    stem: 'A criminal defendant claims that the police violated the Fourth Amendment by searching his home without a proper warrant. The trial judge agrees the search was unconstitutional but still allows the evidence to be used. On appeal, what doctrine is the defendant MOST likely to rely on?',
+    choices: [
+      'The exclusionary rule, which bars illegally obtained evidence',
+      'The Lemon test',
+      'The clear and present danger test',
+      'The rule of four'
+    ],
+    correct: 0,
+    explanation: 'The exclusionary rule prohibits the government from using evidence obtained in violation of the Fourth Amendment.'
+  },
+  {
+    id: '14-15',
+    chapter: 14,
+    stem: 'Two neighboring states disagree about water usage in a shared river. Which court has original jurisdiction over a lawsuit between the states?',
+    choices: [
+      'The U.S. Supreme Court',
+      'A state trial court in either state',
+      'A U.S. Court of Appeals',
+      'A local magistrate court'
+    ],
+    correct: 0,
+    explanation: 'The Constitution gives the Supreme Court original jurisdiction in cases between states.'
+  },
+  {
+    id: '14-16',
+    chapter: 14,
+    stem: 'Interest groups that are not directly involved in a case often want to influence the Supreme Court’s decision. Which tool do they commonly use?',
+    choices: [
+      'Filing amicus curiae (“friend of the court”) briefs',
+      'Impeaching the justices',
+      'Vetoing the Court’s opinion',
+      'Declaring the case nonjusticiable'
+    ],
+    correct: 0,
+    explanation: 'Amicus briefs let nonparties present legal arguments or policy concerns to the Court.'
+  },
+  {
+    id: '14-17',
+    chapter: 14,
+    stem: 'The president nominates a justice with a very controversial record. Advocacy groups run national TV ads urging the Senate to reject the nominee. What does this episode BEST illustrate about modern judicial politics?',
+    choices: [
+      'Supreme Court confirmations have become highly visible and politically contested because of the Court’s role in major policy areas.',
+      'The Court is no longer independent of Congress.',
+      'Judicial review has been abolished.',
+      'The Constitution requires direct popular election of justices.'
+    ],
+    correct: 0,
+    explanation: 'Because the Court affects major policies, confirmation battles have become political and high profile.'
+  },
+  {
+    id: '14-18',
+    chapter: 14,
+    stem: 'A case challenging a federal law goes through a U.S. District Court, then a U.S. Court of Appeals, and finally reaches the Supreme Court. At each level, the judges interpret the same constitutional text. What does this show about the nature of civil liberties policy making?',
+    choices: [
+      'Civil liberties are shaped over time by multiple levels of courts interpreting the Constitution.',
+      'Only the Supreme Court matters for civil liberties.',
+      'Congress alone decides civil liberties.',
+      'Civil liberties are not affected by court decisions.'
+    ],
+    correct: 0,
+    explanation: 'Civil liberties policy emerges from many decisions made by different courts, not just a single case.'
+  },
+  {
+    id: '14-19',
+    chapter: 14,
+    stem: 'A plaintiff sues the federal government, claiming a new law violates the First Amendment. The federal trial court rules against the plaintiff, and the plaintiff appeals. After the Court of Appeals rules, the plaintiff wants the Supreme Court to review the case. What must the plaintiff typically ask the Court to issue?',
+    choices: [
+      'A writ of certiorari',
+      'A writ of habeas corpus',
+      'A bill of attainder',
+      'A line-item veto'
+    ],
+    correct: 0,
+    explanation: 'Most cases reach the Supreme Court by writ of certiorari, where the Court agrees to review the lower court’s decision.'
+  },
+  {
+    id: '14-20',
+    chapter: 14,
+    stem: 'A majority of justices agree that a law is unconstitutional and strike it down. One justice writes separately to say the law is constitutional but should still be struck down for a different technical reason. What is that separate opinion called?',
+    choices: [
+      'A concurring opinion, because it agrees with the result but uses different reasoning',
+      'A dissenting opinion, because it disagrees',
+      'A per curiam opinion, because it is unsigned',
+      'A plurality opinion, because it has no majority'
+    ],
+    correct: 0,
+    explanation: 'A concurring opinion agrees with the outcome but offers different or additional reasoning.'
   }
 ];
 
@@ -787,23 +1273,22 @@ function checkAnswers(){
         const row = document.createElement('div');
         row.className = 'choice';
 
-       // Style for correct answer
-if (selectedIndex === null) {
-  // Unanswered question: highlight correct in BLUE
-  if (cIdx === q.correct) {
-    row.style.background = '#dbeafe';          // light blue
-    row.style.border = '1px solid #2563eb';    // blue border
-  }
-} else {
-  // Question was answered
-  if (cIdx === q.correct) {
-    row.classList.add('correct');              // green
-  }
-  if (cIdx === selectedIndex && selectedIndex !== q.correct) {
-    row.classList.add('wrong');                // red
-  }
-}
-
+        // Style for correct answer vs wrong vs blank
+        if (selectedIndex === null) {
+          // Unanswered question: highlight correct in BLUE
+          if (cIdx === q.correct) {
+            row.style.background = '#dbeafe';
+            row.style.border = '1px solid #2563eb';
+          }
+        } else {
+          // Question was answered
+          if (cIdx === q.correct) {
+            row.classList.add('correct');
+          }
+          if (cIdx === selectedIndex && selectedIndex !== q.correct) {
+            row.classList.add('wrong');
+          }
+        }
 
         const bullet = document.createElement('div');
         bullet.style.fontSize = '13px';
@@ -813,9 +1298,6 @@ if (selectedIndex === null) {
         const label = document.createElement('label');
         label.style.cursor = 'default';
         label.textContent = choiceText;
-
-        row.appendChild(bullet);
-        row.appendChild(label);
 
         // tag your answer
         if(selectedIndex !== null && cIdx === selectedIndex){
@@ -836,16 +1318,17 @@ if (selectedIndex === null) {
           label.appendChild(tag);
         }
 
-
         if(cIdx === q.correct){
-          const tag = document.createElement('span');
-          tag.style.fontSize = '11px';
-          tag.style.marginLeft = '6px';
-          tag.style.color = '#065f46';
-          tag.textContent = ' (correct)';
-          label.appendChild(tag);
+          const tag2 = document.createElement('span');
+          tag2.style.fontSize = '11px';
+          tag2.style.marginLeft = '6px';
+          tag2.style.color = '#065f46';
+          tag2.textContent = ' (correct)';
+          label.appendChild(tag2);
         }
 
+        row.appendChild(bullet);
+        row.appendChild(label);
         choicesDiv.appendChild(row);
       });
 
