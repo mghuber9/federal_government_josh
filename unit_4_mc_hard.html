@@ -165,28 +165,14 @@
     </p>
 
     <!-- START -->
-    <section id="start" class="card grid">
-      <div class="grid grid-2">
-        <div>
-          <label for="section">Question set</label>
-          <select id="section">
-            <option value="all" selected>All Unit 4 (Ch. 4 + 5 + 14)</option>
-            <option value="4">Ch. 4 — Civil Liberties only</option>
-            <option value="5">Ch. 5 — Civil Rights only</option>
-            <option value="14">Ch. 14 — Judiciary only</option>
-          </select>
-        </div>
-        <div>
-          <label for="count">Round size</label>
-          <select id="count">
-            <option value="10">10 questions</option>
-            <option value="15" selected>15 questions</option>
-            <option value="20">20 questions</option>
-          </select>
-        </div>
-      </div>
+    <section id="start" class="card">
+      <p class="muted">
+        This hard-mode run uses <strong>60 questions total</strong>, split into
+        <strong>2 parts of 30 questions</strong>. Questions are shuffled each time,
+        and you’ll work through Part 1 and then Part 2.
+      </p>
       <div class="hud">
-        <button id="begin">Start Hard-Mode Round</button>
+        <button id="begin">Start Part 1 (30 questions)</button>
         <span class="pill">
           Don’t rush. Think: “What idea is this really testing?” before picking an answer.
         </span>
@@ -203,17 +189,17 @@
         <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
           <span class="pill" id="timer">00:00</span>
           <button id="check">Check Answers</button>
-          <button id="newRound">New Round</button>
           <button id="back">Back to Start</button>
         </div>
       </div>
+
       <div class="sep"></div>
       <div id="questions"></div>
     </section>
 
-    <!-- RESULT (now with full missed-question review) -->
+    <!-- RESULT (now with full missed-question review + multi-part) -->
     <section id="result" class="card hidden">
-      <h2>Round Summary</h2>
+      <h2 id="resultTitle">Round Summary</h2>
       <div class="hud" style="margin-bottom:6px">
         <span class="pill" id="scoreline">Score</span>
         <span class="pill" id="timeline">Time</span>
@@ -223,11 +209,13 @@
 
       <div id="reviewBlock" style="margin-top:12px;"></div>
 
-      <div class="hud" style="margin-top:10px">
-        <button id="retry">New Round (same settings)</button>
+      <div class="hud" style="margin-top:10px; gap:8px; flex-wrap:wrap">
+        <button id="nextPart" class="hidden">Go to Next Part (next 30)</button>
+        <button id="retry">New 2-Part Round</button>
         <button id="restart">Back to Start</button>
       </div>
     </section>
+
   </div>
 
 <script>
@@ -1050,9 +1038,11 @@ function chapterLabel(ch){
 // ===== State =====
 let state = {
   roundQuestions: [],
+  parts: [],
+  totalParts: 1,
+  partIndex: 0,
   timer: null,
-  seconds: 0,
-  setKey: 'all'
+  seconds: 0
 };
 
 function startTimer(){
@@ -1069,6 +1059,50 @@ function stopTimer(){
     clearInterval(state.timer);
     state.timer = null;
   }
+}
+
+// ===== Build 2-part round (2 × 30) =====
+function startRound(){
+  // Shuffle the full hard-mode bank
+  const shuffled = shuffle(QUESTIONS);
+
+  // Split into parts of 30; we only care about the first 2 parts
+  const partSize = 30;
+  const parts = [];
+  for(let i=0; i<shuffled.length && parts.length<2; i+=partSize){
+    parts.push(shuffled.slice(i, i+partSize));
+  }
+
+  state.parts = parts;
+  state.totalParts = parts.length;
+  state.partIndex = 0;
+
+  startPart(0);
+}
+
+function startPart(index){
+  state.partIndex = index;
+  state.roundQuestions = state.parts[index] || [];
+
+  document.getElementById('start').classList.add('hidden');
+  document.getElementById('result').classList.add('hidden');
+  document.getElementById('quiz').classList.remove('hidden');
+
+  const label = (state.totalParts > 1)
+    ? `Unit 4 Hard — Part ${state.partIndex+1} of ${state.totalParts}`
+    : 'Unit 4 Hard — Single Part';
+  document.getElementById('setTag').textContent = label;
+
+  renderQuestions();
+  updateProgress();
+  startTimer();
+}
+
+function goToNextPart(){
+  if(state.partIndex >= state.totalParts - 1) return;
+  startPart(state.partIndex + 1);
+}
+
 }
 
 // ===== Build round =====
@@ -1361,28 +1395,58 @@ function checkAnswers(){
   } else {
     coaching.textContent = 'Good practice rep. The goal here is not the grade but pattern recognition: which concept matches which kind of scenario? Re-run a smaller set and talk through each answer out loud.';
   }
+
+  // --- Part-aware title + Next Part button ---
+  const titleEl = document.getElementById('resultTitle');
+  const nextBtn = document.getElementById('nextPart');
+  const isMulti = state.totalParts > 1;
+  const isLastPart = state.partIndex === state.totalParts - 1;
+
+  if(isMulti){
+    titleEl.textContent = isLastPart
+      ? 'All Parts Complete'
+      : `Part ${state.partIndex+1} Complete`;
+  } else {
+    titleEl.textContent = 'Round Summary';
+  }
+
+  if(isMulti && !isLastPart){
+    nextBtn.classList.remove('hidden');
+  } else {
+    nextBtn.classList.add('hidden');
+  }
 }
 
+
 // ===== Nav wiring =====
-document.getElementById('begin').addEventListener('click', buildRound);
-document.getElementById('newRound').addEventListener('click', ()=>{
-  stopTimer();
-  buildRound();
-});
+document.getElementById('begin').addEventListener('click', startRound);
+
 document.getElementById('back').addEventListener('click', ()=>{
   stopTimer();
   document.getElementById('quiz').classList.add('hidden');
-  document.getElementById('start').classList.remove('hidden');
-});
-document.getElementById('check').addEventListener('click', checkAnswers);
-document.getElementById('retry').addEventListener('click', ()=>{
-  stopTimer();
-  buildRound();
-});
-document.getElementById('restart').addEventListener('click', ()=>{
   document.getElementById('result').classList.add('hidden');
   document.getElementById('start').classList.remove('hidden');
 });
+
+document.getElementById('check').addEventListener('click', checkAnswers);
+
+document.getElementById('retry').addEventListener('click', ()=>{
+  stopTimer();
+  startRound();
+});
+
+document.getElementById('restart').addEventListener('click', ()=>{
+  stopTimer();
+  document.getElementById('result').classList.add('hidden');
+  document.getElementById('quiz').classList.add('hidden');
+  document.getElementById('start').classList.remove('hidden');
+});
+
+document.getElementById('nextPart').addEventListener('click', ()=>{
+  stopTimer();
+  goToNextPart();
+});
+
 </script>
 </body>
 </html>
