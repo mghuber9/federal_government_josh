@@ -130,21 +130,18 @@
     color:#7f1d1d !important;
   }
 
+  /* 🔵 High-contrast correct and incorrect colors (colorblind-friendly) */
+  .tile.correct-strong {
+    background:#dbeafe !important;  /* soft blue */
+    border-color:#1e40af !important; /* strong navy */
+    color:#1e3a8a !important;
+  }
 
-/* 🔵 High-contrast correct and incorrect colors (colorblind-friendly) */
-.tile.correct-strong {
-  background:#dbeafe !important;  /* soft blue */
-  border-color:#1e40af !important; /* strong navy */
-  color:#1e3a8a !important;
-}
-
-.tile.wrong-strong {
-  background:#fbcfe8 !important;  /* vivid pink (very readable for colorblind) */
-  border-color:#be185d !important;
-  color:#831843 !important;
-}
-
-  
+  .tile.wrong-strong {
+    background:#fbcfe8 !important;  /* vivid pink (very readable for colorblind) */
+    border-color:#be185d !important;
+    color:#831843 !important;
+  }
 
   .muted{color:var(--muted)}
   .sep{height:1px; background:rgba(15,23,42,0.08); margin:12px 0}
@@ -167,6 +164,7 @@
             <option value="ch5">Ch. 5 — Civil Rights (all 50)</option>
             <option value="ch14">Ch. 14 — Judiciary (all 50)</option>
             <option value="unit4" selected>Unit 4 — Mixed (all 150 in 5 parts)</option>
+            <option value="supp">Unit 4 — Supplemental (24)</option>
           </select>
         </div>
         <div>
@@ -179,7 +177,7 @@
       </div>
       <div class="hud">
         <button id="begin">Start Round</button>
-        <span class="pill" id="hint">Multi-part: chapters = 2×25; unit = 5×30.</span>
+        <span class="pill" id="hint">Multi-part: chapters = 2×25; unit = 5×30; supplemental = 1×24.</span>
       </div>
     </section>
 
@@ -245,7 +243,7 @@ function getBest(key){
   return v ? fmtTime(Number(v)) : '—';
 }
 
-// ---------- Question Bank (150 total) ----------
+// ---------- Question Bank (150 original) ----------
 // Each item: {chapter:4|5|14, set:'ch4'|'ch5'|'ch14', q:'stem', choices:[...4+], answer:index}
 const BANK = [
   // ===== Ch. 4 — Civil Liberties (50) =====
@@ -411,19 +409,216 @@ const BANK = [
   {chapter:14,set:'ch14',q:'“Civil liberties policy making” by courts and “judicial terms” such as precedent and jurisdiction matter because they:',choices:['Shape how civil liberties and civil rights are actually protected in practice','Only affect historical trivia','Apply only to federal taxation','Have no impact beyond the Supreme Court building'],answer:0}
 ];
 
+// ---------- Supplemental Bank (24) ----------
+const SUPP = [
+  // 1. Ex post facto (Ch. 4)
+  {chapter:4,set:'supp',q:'What is an “ex post facto” law?',choices:[
+    'A law that makes an action criminal after it was already performed',
+    'A law that applies only to civil cases',
+    'A law that reduces punishments retroactively',
+    'A law that only Congress can pass'
+  ],answer:0},
+
+  // 2. Weeks v. United States (Ch. 4)
+  {chapter:4,set:'supp',q:'What did Weeks v. United States (1914) establish?',choices:[
+    'The exclusionary rule for federal law enforcement',
+    'The right of privacy in marital decisions',
+    'That school-sponsored prayer is unconstitutional',
+    'That flag burning is protected symbolic speech'
+  ],answer:0},
+
+  // 3. Katz v. United States (Ch. 4)
+  {chapter:4,set:'supp',q:'Katz v. United States (1967) held that the Fourth Amendment:',choices:[
+    'Protects people, not just physical places',
+    'Applies only inside the home',
+    'Does not apply to conversations',
+    'Requires physical trespass to occur'
+  ],answer:0},
+
+  // 4. Malloy v. Hogan (Ch. 4)
+  {chapter:4,set:'supp',q:'Malloy v. Hogan (1964) incorporated which right to the states?',choices:[
+    'Protection against self-incrimination',
+    'The right to bear arms',
+    'The right to a jury trial in civil cases',
+    'Freedom from quartering soldiers'
+  ],answer:0},
+
+  // 5. West Virginia v. Barnette (Ch. 4)
+  {chapter:4,set:'supp',q:'West Virginia v. Barnette (1943) ruled that public schools:',choices:[
+    'Cannot force students to salute the flag',
+    'Must begin the day with a teacher-led prayer',
+    'May expel students for wearing armbands',
+    'May censor all political speech on campus'
+  ],answer:0},
+
+  // 6. Reynolds v. United States (Ch. 4)
+  {chapter:4,set:'supp',q:'Reynolds v. United States (1879) held that:',choices:[
+    'Religious belief is protected, but religiously motivated polygamy can be banned',
+    'States must allow all religious practices',
+    'The government can establish an official church',
+    'Religious freedom does not apply in federal territories'
+  ],answer:0},
+
+  // 7. Edwards v. Aguillard (Ch. 4)
+  {chapter:4,set:'supp',q:'Edwards v. Aguillard (1987) struck down a law that:',choices:[
+    'Required teaching creationism alongside evolution in public schools',
+    'Banned the teaching of evolution in all schools',
+    'Required a moment of silence in schools',
+    'Allowed student-led prayer at football games'
+  ],answer:0},
+
+  // 8. New York Times v. United States (Pentagon Papers, Ch. 4)
+  {chapter:4,set:'supp',q:'New York Times v. United States (1971), the “Pentagon Papers” case, limited the government’s power to:',choices:[
+    'Use prior restraint to stop publication',
+    'Tax newspapers',
+    'Regulate campaign contributions',
+    'Enforce libel laws against public officials'
+  ],answer:0},
+
+  // 9. Chaplinsky v. New Hampshire (Ch. 4)
+  {chapter:4,set:'supp',q:'Chaplinsky v. New Hampshire (1942) is best known for defining:',choices:[
+    '“Fighting words” as unprotected speech',
+    'Obscenity under the Miller test',
+    'Symbolic speech protections',
+    'The clear and present danger test'
+  ],answer:0},
+
+  // 10. Cohen v. California (Ch. 4)
+  {chapter:4,set:'supp',q:'Cohen v. California (1971) protected which kind of expression?',choices:[
+    'Offensive political speech on a jacket',
+    'Obscene material mailed to homes',
+    'True threats of violence',
+    'Commercial false advertising'
+  ],answer:0},
+
+  // 11. Amicus curiae (Ch. 14)
+  {chapter:14,set:'supp',q:'An “amicus curiae” is:',choices:[
+    'A “friend of the court” who is not a party but offers information',
+    'The chief judge on a court of appeals',
+    'A defendant in a civil lawsuit',
+    'A special type of criminal prosecutor'
+  ],answer:0},
+
+  // 12. Amicus brief (Ch. 14)
+  {chapter:14,set:'supp',q:'An amicus brief is:',choices:[
+    'A written argument submitted to a court by a non-party “friend of the court”',
+    'The written opinion of the majority justices',
+    'The formal charging document in a criminal case',
+    'The transcript of oral arguments'
+  ],answer:0},
+
+  // 13. Writ of mandamus (Ch. 14)
+  {chapter:14,set:'supp',q:'A writ of mandamus is:',choices:[
+    'A court order directing a government official to perform a duty',
+    'An order sending a case from the Supreme Court back to a lower court',
+    'A type of appeal from a state court to a federal court',
+    'A written question from Congress to the Court'
+  ],answer:0},
+
+  // 14. Example of civil law (Ch. 14)
+  {chapter:14,set:'supp',q:'Which of the following is the best example of a civil law case?',choices:[
+    'A lawsuit over a broken contract between two businesses',
+    'A prosecution for armed robbery',
+    'A case about violating federal gun laws',
+    'A trial for tax evasion'
+  ],answer:0},
+
+  // 15. De jure segregation (Ch. 5)
+  {chapter:5,set:'supp',q:'“De jure” segregation refers to racial separation that:',choices:[
+    'Is mandated by law or official policy',
+    'Results only from private choice and housing patterns',
+    'Occurs only in private schools',
+    'Is required by federal courts'
+  ],answer:0},
+
+  // 16. De facto segregation (Ch. 5)
+  {chapter:5,set:'supp',q:'“De facto” segregation refers to racial separation that:',choices:[
+    'Arises from housing patterns and social factors, not explicit law',
+    'Is mandated by state law',
+    'Is required by the Constitution',
+    'Is ordered by the Supreme Court'
+  ],answer:0},
+
+  // 17. Capital crime (Ch. 14)
+  {chapter:14,set:'supp',q:'A capital crime is a crime that:',choices:[
+    'Can be punished by the death penalty',
+    'Always results in a life sentence without parole',
+    'Is prosecuted only in federal courts',
+    'Involves damage to property only'
+  ],answer:0},
+
+  // 18. Grand jury (Ch. 14)
+  {chapter:14,set:'supp',q:'The primary role of a grand jury is to:',choices:[
+    'Decide whether there is enough evidence to indict (formally charge) someone',
+    'Decide guilt or innocence at trial',
+    'Sentence convicted defendants',
+    'Review decisions of appellate courts'
+  ],answer:0},
+
+  // 19. Petit jury (Ch. 14)
+  {chapter:14,set:'supp',q:'A petit (trial) jury is responsible for:',choices:[
+    'Determining guilt or innocence at trial',
+    'Issuing indictments in secret',
+    'Appointing judges to office',
+    'Reviewing laws for constitutionality'
+  ],answer:0},
+
+  // 20. Jurisdiction — District Courts (Ch. 14)
+  {chapter:14,set:'supp',q:'Which cases are most likely to begin in a U.S. District Court?',choices:[
+    'Federal criminal and civil trials with original jurisdiction',
+    'Appeals from state supreme courts',
+    'Disputes between foreign governments',
+    'Only cases involving the president'
+  ],answer:0},
+
+  // 21. Jurisdiction — Courts of Appeals (Ch. 14)
+  {chapter:14,set:'supp',q:'The U.S. Courts of Appeals primarily have:',choices:[
+    'Appellate jurisdiction, reviewing decisions of district courts',
+    'Original jurisdiction in all federal cases',
+    'Jurisdiction only over state law disputes',
+    'Jurisdiction only when the president is a party'
+  ],answer:0},
+
+  // 22. Jurisdiction — Supreme Court (Ch. 14)
+  {chapter:14,set:'supp',q:'The U.S. Supreme Court’s jurisdiction is mostly:',choices:[
+    'Appellate, with limited original jurisdiction',
+    'Original in all federal cases',
+    'Limited to criminal cases',
+    'Limited to advisory opinions requested by Congress'
+  ],answer:0},
+
+  // 23. Right to privacy source (Ch. 4)
+  {chapter:4,set:'supp',q:'In Griswold v. Connecticut, the Supreme Court said the right to privacy comes from:',choices:[
+    '“Penumbras” or implied zones of privacy created by several amendments',
+    'An explicit privacy clause in the First Amendment',
+    'A federal statute passed by Congress',
+    'The Tenth Amendment only'
+  ],answer:0},
+
+  // 24. Selective incorporation effect (Ch. 4)
+  {chapter:4,set:'supp',q:'Selective incorporation through the Fourteenth Amendment has mainly:',choices:[
+    'Required states to honor most protections in the Bill of Rights',
+    'Eliminated the Bill of Rights at the state level',
+    'Prevented federal courts from reviewing state actions',
+    'Expanded state power over individual rights'
+  ],answer:0}
+];
+
 // Build sets
 const SETS = {
   ch4:  BANK.filter(x => x.set === 'ch4'),
   ch5:  BANK.filter(x => x.set === 'ch5'),
   ch14: BANK.filter(x => x.set === 'ch14'),
-  unit4: [...BANK] // all 150
+  unit4: [...BANK],   // all 150
+  supp: [...SUPP]     // supplemental only
 };
 
 const SET_LABELS = {
   ch4:  'Ch. 4 — Civil Liberties (50)',
   ch5:  'Ch. 5 — Civil Rights (50)',
   ch14: 'Ch. 14 — Judiciary (50)',
-  unit4: 'Unit 4 — Mixed (150)'
+  unit4: 'Unit 4 — Mixed (150)',
+  supp: 'Unit 4 — Supplemental (24)'
 };
 
 // ---------- State ----------
@@ -442,7 +637,6 @@ let state = {
   chapterTotals: null,   // {4: totalQ, 5: totalQ, 14: totalQ}
   chapterCorrect: null   // {4: correctQ, 5: correctQ, 14: correctQ}
 };
-
 
 function bestKey(){
   // Track best time per set *and* per part
@@ -472,7 +666,7 @@ function startRound(){
   const ord = document.getElementById('order').value;
   state.setKey = sk;
 
-  // Base items: chapters use their 50; unit uses all 150
+  // Base items: chapters use their 50; unit uses all 150; supp uses its 24
   const base = (sk === 'unit4') ? [...BANK] : [...SETS[sk]];
   let items  = (ord === 'shuf') ? shuffle(base) : base;
 
@@ -491,8 +685,16 @@ function startRound(){
     state.chapterCorrect = null;
   }
 
-  // Part sizes: 25 for chapters, 30 for unit (5×30 =150)
-  const partSize = (sk === 'unit4') ? 30 : 25;
+  // Part sizes: 25 for chapters, 30 for unit (5×30 =150), 24 for supp
+  let partSize;
+  if(sk === 'unit4'){
+    partSize = 30;
+  } else if(sk === 'supp'){
+    partSize = items.length; // single part of 24
+  } else {
+    partSize = 25;
+  }
+
   const parts = [];
   for(let i=0;i<items.length;i+=partSize){
     parts.push(items.slice(i, i+partSize));
@@ -509,7 +711,6 @@ function startRound(){
 
   startPart(0);
 }
-
 
 function startPart(index){
   state.partIndex = index;
@@ -607,7 +808,7 @@ function pick(isCorrect, node, item){
       }
     });
 
-    // 3. Pause 3 seconds
+    // 3. Pause for a moment
     setTimeout(()=>{
       if(state.idx < state.list.length - 1){
         state.idx++;
